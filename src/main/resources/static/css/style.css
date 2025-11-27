@@ -1,0 +1,60 @@
+:root {
+    --couleur-asso-bg: #890b4d; /* Le violet/bordeaux de ton fond */
+    --couleur-asso-clair: #a82e68;
+    --couleur-fromage: #ffbc0d; /* Le jaune du fromage */
+    --couleur-texte: #ffffff;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* --- Navigation --- */
+.navbar-custom {
+    background-color: var(--couleur-asso-bg);
+}
+.navbar-custom .navbar-brand, .navbar-custom .nav-link {
+    color: white !important;
+    font-weight: bold;
+}
+.navbar-custom .nav-link:hover {
+    color: var(--couleur-fromage) !important;
+}
+
+/* --- Hero Section (L'accueil) --- */
+.hero-section {
+    /* On utilise ton image sunburst en fond */
+    background: url('../img/bg-hero.png') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+    box-shadow: inset 0 0 0 2000px rgba(137, 11, 77, 0.7); /* Petit filtre violet par dessus pour lire le texte */
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.btn-asso {
+    background-color: var(--couleur-fromage);
+    color: #333;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+}
+.btn-asso:hover {
+    background-color: #ffd65c;
+    color: #000;
+}
+
+/* --- Footer --- */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    margin-top: 50px;
+}

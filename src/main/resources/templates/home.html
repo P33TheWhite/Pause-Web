@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+    
+    <main>
+        <div class="hero-section">
+            <div class="container">
+                <img th:src="@{/img/logo-nav.png}" alt="Grand Logo" style="max-width: 200px; margin-bottom: 20px;">
+                <h1 class="hero-title">Bienvenue à La Pau'se</h1>
+                <p class="lead">Le QG des étudiants gourmands.</p>
+                <br>
+                <a href="/agenda" class="btn btn-asso btn-lg">Voir les prochains événements</a>
+            </div>
+        </div>
+
+        <div class="container my-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 style="color: var(--couleur-asso-bg);">Qui sommes-nous ?</h2>
+                    <p>
+                        La Pau'se, c'est bien plus qu'une association, c'est le cœur battant de la vie étudiante. 
+                        Situés au foyer, nous vous proposons des snacks, des événements et surtout de la bonne humeur
+                        entre deux cours.
+                    </p>
+                    <p>
+                        <strong>Notre mission :</strong> Vous régaler avec nos fameux croques-monsieur (regardez ce fromage qui coule !) 
+                        et organiser les meilleures soirées de l'année.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img th:src="@{/img/logo-carre.jpg}" class="img-fluid rounded shadow" alt="Logo La Pause" style="max-width: 80%;">
+                </div>
+            </div>
+        </div>
+    </main>
+
+</th:block>
+</html>
