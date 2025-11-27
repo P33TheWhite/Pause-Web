@@ -16,7 +16,21 @@
                     <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
                     <li class="nav-item"><a class="nav-link" href="/agenda">Agenda</a></li>
                     <li class="nav-item"><a class="nav-link" href="/photos">Galerie</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-light ms-2" href="/login">Connexion</a></li>
+
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link btn btn-outline-light ms-2" href="/login">Connexion</a>
+                    </li>
+
+                    <li class="nav-item dropdown" th:if="${session.user != null}">
+                        <a class="nav-link dropdown-toggle ms-2" href="#" role="button" data-bs-toggle="dropdown" style="color: var(--couleur-fromage) !important;">
+                            <span th:text="'Bonjour ' + ${session.user.prenom}">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li th:if="${session.user.estCotisant}"><a class="dropdown-item" href="/admin">Administration</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/logout">Se déconnecter</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>

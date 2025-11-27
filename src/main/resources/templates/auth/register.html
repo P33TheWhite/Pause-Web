@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header text-white" style="background-color: var(--couleur-asso-bg);">
+                        <h3 class="mb-0">Rejoindre La Pau'se</h3>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                        <form action="/register" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" name="prenom" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mot de passe</label>
+                                <input type="password" name="motDePasse" class="form-control" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-asso w-100 mt-3">S'inscrire</button>
+                        </form>
+                        <p class="mt-3 text-center">Déjà membre ? <a href="/login">Connectez-vous</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</th:block>
+</html>
