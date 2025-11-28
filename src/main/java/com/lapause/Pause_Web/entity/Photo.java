@@ -12,14 +12,12 @@ public class Photo {
     private String url;
     private String titre;
 
-    // Relation N-1 : Plusieurs photos appartiennent à un seul événement
     @ManyToOne
     @JoinColumn(name = "evenement_id")
     private Evenement evenement;
 
     public Photo() {}
 
-    // --- GETTERS ET SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUrl() { return url; }

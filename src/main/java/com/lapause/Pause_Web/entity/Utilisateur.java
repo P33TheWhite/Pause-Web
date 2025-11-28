@@ -18,14 +18,12 @@ public class Utilisateur {
     private boolean demandeCotisationEnCours;
 
 
-    // Relation 1-1 : Un utilisateur PEUT être membre du bureau
-    // "mappedBy" indique que c'est l'autre classe (InfoBureau) qui porte la clé étrangère
     @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     private InfoBureau infoBureau;
 
     public Utilisateur() {}
 
-    // --- GETTERS ET SETTERS (Indispensables) ---
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }

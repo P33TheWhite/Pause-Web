@@ -11,15 +11,13 @@ public class TypeEvenement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String libelle; // Ex: "Soirée", "Sport", "Culture"
+    private String libelle; 
 
-    // Relation N-N Inverse
     @ManyToMany(mappedBy = "types")
     private List<Evenement> evenements = new ArrayList<>();
 
     public TypeEvenement() {}
 
-    // --- GETTERS ET SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getLibelle() { return libelle; }

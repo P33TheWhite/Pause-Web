@@ -13,18 +13,15 @@ public class Evenement {
 
     private String titre;
     
-    @Column(length = 1000) // Pour permettre des descriptions longues
+    @Column(length = 1000) 
     private String description;
     
-    private String dateEvenement; // String "YYYY-MM-DD" pour simplifier
+    private String dateEvenement;
     private double prix;
 
-    // Relation 1-N : Un événement possède plusieurs photos
     @OneToMany(mappedBy = "evenement", cascade = CascadeType.ALL)
     private List<Photo> photos = new ArrayList<>();
 
-    // Relation N-N : Un événement a plusieurs types (Ex: Soirée + Caritatif)
-    // On crée une table de jointure "evenement_type"
     @ManyToMany
     @JoinTable(
         name = "evenement_type",
@@ -35,7 +32,6 @@ public class Evenement {
 
     public Evenement() {}
 
-    // --- GETTERS ET SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitre() { return titre; }

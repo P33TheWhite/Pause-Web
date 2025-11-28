@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "home"; // Cela correspond au fichier templates/home.html
+        return "home";
     }
 }
