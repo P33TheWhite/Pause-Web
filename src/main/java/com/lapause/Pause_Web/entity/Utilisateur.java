@@ -13,13 +13,19 @@ public class Utilisateur {
     private String motDePasse;
     private String nom;
     private String prenom;
-    private boolean estCotisant; 
+    private String classe; // "Ing1"
+    private boolean estCotisant; // Pour la gestion Admin
+    private boolean demandeCotisationEnCours;
 
+
+    // Relation 1-1 : Un utilisateur PEUT être membre du bureau
+    // "mappedBy" indique que c'est l'autre classe (InfoBureau) qui porte la clé étrangère
     @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     private InfoBureau infoBureau;
 
     public Utilisateur() {}
 
+    // --- GETTERS ET SETTERS (Indispensables) ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }
@@ -34,4 +40,8 @@ public class Utilisateur {
     public void setEstCotisant(boolean estCotisant) { this.estCotisant = estCotisant; }
     public InfoBureau getInfoBureau() { return infoBureau; }
     public void setInfoBureau(InfoBureau infoBureau) { this.infoBureau = infoBureau; }
+    public String getClasse() { return classe; }
+    public void setClasse(String classe) { this.classe = classe; }
+    public boolean isDemandeCotisationEnCours() { return demandeCotisationEnCours; }
+    public void setDemandeCotisationEnCours(boolean demandeCotisationEnCours) { this.demandeCotisationEnCours = demandeCotisationEnCours; }
 }
