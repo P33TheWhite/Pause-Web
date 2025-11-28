@@ -15,7 +15,7 @@
                 
                 <div class="d-flex justify-content-center gap-3">
                     <a href="/agenda" class="btn btn-asso btn-lg shadow">📅 Prochains repas</a>
-                    <a href="/login" class="btn btn-outline-light btn-lg shadow">🔒 Espace Adhérent</a>
+                    <a href="/profil" class="btn btn-outline-light btn-lg shadow">🔒 Espace Adhérent</a>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                             </svg>
                         </div>
                         <h3 class="h5 fw-bold">Prix Étudiants</h3>
-                        <p class="text-muted small">Parce qu'on sait ce que c'est la fin du mois. Nous nous engageons à proposer des tarifs imbattables pour que tout le monde puisse manger à sa faim.</p>
+                        <p class="text-muted small">Des tarifs imbattables pour que tout le monde puisse manger à sa faim, même en fin de mois.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -42,7 +42,7 @@
                             </svg>
                         </div>
                         <h3 class="h5 fw-bold">Variété & Goût</h3>
-                        <p class="text-muted small">Marre des pâtes au beurre ? On varie les plaisirs ! Croques, plats chauds, salades... on fait découvrir de nouvelles saveurs à vos papilles.</p>
+                        <p class="text-muted small">Croques, plats chauds, salades... on fait varier les plaisirs pour ne jamais s'ennuyer.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -53,7 +53,7 @@
                             </svg>
                         </div>
                         <h3 class="h5 fw-bold">Esprit CY Tech</h3>
-                        <p class="text-muted small">Plus qu'une cafétéria, un vrai QG. Située au cœur de l'école, La Pau'se est gérée par des étudiants, pour les étudiants. Entraide et bonne humeur garanties.</p>
+                        <p class="text-muted small">Un vrai QG géré par des étudiants, pour les étudiants. Ambiance garantie.</p>
                     </div>
                 </div>
             </div>
@@ -61,17 +61,82 @@
 
         <hr class="container" style="color: var(--couleur-fromage); opacity: 0.5;">
 
+        <div class="container my-5" id="adhesion">
+            <div class="card shadow border-0 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-7 p-5">
+                        <h2 style="color: var(--couleur-asso-bg); font-weight: bold;">Devenir Adhérent</h2>
+                        <p class="lead">Rejoins la famille et profite des meilleurs tarifs toute l'année.</p>
+                        
+                        <div class="alert alert-warning d-inline-flex align-items-center mb-4">
+                            <span class="fs-4 me-2">🥤</span> 
+                            <strong>Ecocup offert</strong>&nbsp;avec la cotisation ! <small class="ms-1">(selon stocks)</small>
+                        </div>
+
+                        <ul class="list-group list-group-flush mb-4 shadow-sm rounded">
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span>Cotisation seule</span>
+                                <span class="fw-bold fs-5">8€</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span>En pack (avec autre asso)</span>
+                                <div>
+                                    <span class="badge bg-success me-2">-25%</span>
+                                    <span class="fw-bold fs-5">6€</span>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3" style="background-color: #fff8e1;">
+                                <span class="fw-bold text-dark">Full Asso</span>
+                                <div>
+                                    <span class="badge bg-danger me-2">-45%</span>
+                                    <span class="fw-bold fs-5 text-danger">5€</span>
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div th:if="${session.user == null}">
+                            <a href="/register" class="btn btn-asso">Créer un compte pour cotiser</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 d-flex align-items-center justify-content-center p-5 text-white text-center" 
+                         style="background-color: var(--couleur-asso-bg);">
+                        
+                        <div th:if="${session.user != null and session.user.estCotisant}">
+                            <h3 class="mb-3">Prêt pour le prochain event ?</h3>
+                            <div class="bg-white p-2 rounded d-inline-block mb-3">
+                                <img th:src="@{/img/qrcode-lydia.jpg}" alt="Payer Event" width="180" height="180">
+                            </div>
+                            <p class="mb-0">Scannez ce Lydia pour régler vos repas ou soirées.</p>
+                        </div>
+
+                        <div th:if="${session.user != null and !session.user.estCotisant}">
+                            <h3 class="mb-3">Régler ma cotisation</h3>
+                            <div class="bg-white p-2 rounded d-inline-block mb-3">
+                                <img th:src="@{/img/qrcode-lydia.jpg}" alt="QR Code" width="180" height="180">
+                            </div>
+                            <p class="mb-0">Scannez pour payer votre adhésion maintenant.</p>
+                            <small class="d-block mt-2 opacity-75">N'oubliez pas de faire la demande sur votre <a href="/profil" class="text-white text-decoration-underline">Profil</a> après paiement.</small>
+                        </div>
+
+                        <div th:if="${session.user == null}">
+                            <h3 class="mb-3">Rejoins la commu !</h3>
+                            <div class="bg-white p-2 rounded d-inline-block mb-3">
+                                <img th:src="@{/img/qrcode-join.jpg}" alt="QR Code" width="180" height="180">
+                            </div>
+                            <p class="mb-0">Scannez pour nous rejoindre et régler l'adhésion.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container my-5 py-3">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <span class="text-uppercase fw-bold" style="color: var(--couleur-fromage); letter-spacing: 1px;">Notre Mission</span>
                     <h2 class="display-6 fw-bold mb-4" style="color: var(--couleur-asso-bg);">Réinventer la pause déjeuner</h2>
-                    <p class="lead text-muted">Manger bien ne devrait pas être un luxe, surtout quand on est étudiant.</p>
-                    <p>
-                        À CY Tech, les journées sont longues et intenses. La Pau'se est née d'une volonté simple : offrir une alternative 
-                        conviviale et abordable. Nous sélectionnons nos produits pour garantir de la qualité, tout en maintenant 
-                        des prix qui font du bien au porte-monnaie.
-                    </p>
+                    <p class="lead text-muted">Manger bien ne devrait pas être un luxe.</p>
                     <p>
                         Que tu sois fan de fromage dégoulinant ou à la recherche d'un repas équilibré pour tenir l'après-midi, 
                         tu trouveras ta place chez nous.
@@ -95,23 +160,8 @@
                     <div class="col-lg-6 ps-lg-5">
                         <h2 class="display-6 fw-bold mb-4" style="color: var(--couleur-asso-bg);">Au cœur de la vie associative</h2>
                         <p>
-                            La Pau'se, ce n'est pas qu'un comptoir. C'est un acteur majeur de la vie associative de CY Tech. 
-                            Nous collaborons régulièrement avec les autres associations pour des événements spéciaux (BDE, BDS, Tech de Co...).
+                            La Pau'se collabore avec le BDE, BDS et toutes les assos de l'école.
                         </p>
-                        <ul class="list-unstyled mt-3">
-                            <li class="mb-2 d-flex align-items-center">
-                                <i class="bi bi-check-circle-fill me-2" style="color: var(--couleur-fromage);"></i>
-                                Soutien aux initiatives étudiantes
-                            </li>
-                            <li class="mb-2 d-flex align-items-center">
-                                <i class="bi bi-check-circle-fill me-2" style="color: var(--couleur-fromage);"></i>
-                                Lieu de rencontre et de partage
-                            </li>
-                            <li class="mb-2 d-flex align-items-center">
-                                <i class="bi bi-check-circle-fill me-2" style="color: var(--couleur-fromage);"></i>
-                                Ouvert à tous, toute l'année
-                            </li>
-                        </ul>
                         <div class="mt-4">
                             <a href="/photos" class="btn btn-outline-dark">Voir la galerie photo</a>
                         </div>
