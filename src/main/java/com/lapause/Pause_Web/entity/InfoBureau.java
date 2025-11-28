@@ -9,18 +9,16 @@ public class InfoBureau {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String poste; // Ex: "Président", "Trésorier"
+    private String poste;
     private String bio;
     private String photoUrl;
 
-    // Relation 1-1 Inverse : La clé étrangère est ici
     @OneToOne
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
     public InfoBureau() {}
 
-    // --- GETTERS ET SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getPoste() { return poste; }
