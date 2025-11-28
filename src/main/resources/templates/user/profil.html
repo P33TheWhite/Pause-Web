@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+<main class="container mt-5">
+    <h2>Mon Profil</h2>
+    <div class="card p-4">
+        <p><strong>Nom :</strong> <span th:text="${user.nom}"></span></p>
+        <p><strong>Prénom :</strong> <span th:text="${user.prenom}"></span></p>
+        <p><strong>Statut :</strong> 
+            <span th:if="${user.estCotisant}" class="badge bg-success">Cotisant</span>
+            <span th:if="${!user.estCotisant}" class="badge bg-secondary">Non Cotisant</span>
+        </p>
+
+        <hr>
+
+        <div th:if="${!user.estCotisant}">
+            <div th:if="${user.demandeCotisationEnCours}" class="alert alert-warning">
+                Votre demande de cotisation est en attente de validation par le bureau.
+            </div>
+
+            <form th:if="${!user.demandeCotisationEnCours}" action="/profil/demande-cotisation" method="post">
+                <h4>Devenir Cotisant</h4>
+                <div class="mb-3">
+                    <label>Votre Classe (ex: ING1, PREPA2)</label>
+                    <input type="text" name="classe" class="form-control" required placeholder="Votre classe...">
+                </div>
+                <button type="submit" class="btn btn-asso">Demander la validation</button>
+            </form>
+        </div>
+    </div>
+</main>
+</th:block>
+</html>

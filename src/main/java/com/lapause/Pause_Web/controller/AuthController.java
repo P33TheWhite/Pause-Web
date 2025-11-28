@@ -16,8 +16,6 @@ public class AuthController {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    // --- PARTIE INSCRIPTION ---
-
     @GetMapping("/register")
     public String showRegisterForm() {
         return "auth/register";
@@ -25,22 +23,18 @@ public class AuthController {
 
     @PostMapping("/register")
     public String processRegister(Utilisateur utilisateur, Model model) {
-        // Vérifier si l'email existe déjà
         if (utilisateurRepository.findByEmail(utilisateur.getEmail()) != null) {
             model.addAttribute("error", "Cet email est déjà utilisé !");
             return "auth/register";
         }
 
-        // Par défaut, un nouveau n'est pas cotisant (seul l'admin le validera)
         utilisateur.setEstCotisant(false);
         
-        // Sauvegarde en BDD
         utilisateurRepository.save(utilisateur);
 
         return "redirect:/login?success";
     }
 
-    // --- PARTIE CONNEXION ---
 
     @GetMapping("/login")
     public String showLoginForm() {
@@ -53,25 +47,44 @@ public class AuthController {
                                HttpSession session, 
                                Model model) {
         
-        // On cherche l'utilisateur dans la BDD
         Utilisateur user = utilisateurRepository.findByEmail(email);
 
-        // Vérification basique
         if (user != null && user.getMotDePasse().equals(password)) {
-            // SUCCÈS : On stocke l'utilisateur dans la session
             session.setAttribute("user", user);
-            return "redirect:/"; // Retour à l'accueil
+            return "redirect:/";
         } else {
-            // ECHEC
             model.addAttribute("error", "Email ou mot de passe incorrect.");
             return "auth/login";
         }
     }
 
-    // --- DECONNEXION ---
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // On vide la session
+        session.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/profil")
+    public String showProfile(HttpSession session, Model model) {
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+        
+        Utilisateur userAJour = utilisateurRepository.findById(user.getId()).orElse(null);
+        model.addAttribute("user", userAJour);
+        return "user/profil";
+    }
+
+    @PostMapping("/profil/demande-cotisation")
+    public String demanderCotisation(@RequestParam String classe, HttpSession session) {
+        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        Utilisateur user = utilisateurRepository.findById(sessionUser.getId()).orElse(null);
+        
+        if (user != null) {
+            user.setClasse(classe); 
+            user.setDemandeCotisationEnCours(true);
+            utilisateurRepository.save(user);
+            session.setAttribute("user", user);
+        }
+        return "redirect:/profil?success";
     }
 }
