@@ -1,36 +1,30 @@
 :root {
-    --couleur-asso-bg: #890b4d; /* Le violet/bordeaux de ton fond */
+    --couleur-asso-bg: #890b4d; 
     --couleur-asso-clair: #a82e68;
-    --couleur-fromage: #ffbc0d; /* Le jaune du fromage */
+    --couleur-fromage: #ffbc0d;
     --couleur-texte: #ffffff;
+}
+
+html {
+    height: 100%;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }
 
-/* --- Navigation --- */
-.navbar-custom {
-    background-color: var(--couleur-asso-bg);
-}
-.navbar-custom .navbar-brand, .navbar-custom .nav-link {
-    color: white !important;
-    font-weight: bold;
-}
-.navbar-custom .nav-link:hover {
-    color: var(--couleur-fromage) !important;
-}
-
-/* --- Hero Section (L'accueil) --- */
 .hero-section {
-    /* On utilise ton image sunburst en fond */
     background: url('../img/bg-hero.png') no-repeat center center;
     background-size: cover;
     color: white;
     padding: 100px 0;
     text-align: center;
-    box-shadow: inset 0 0 0 2000px rgba(137, 11, 77, 0.7); /* Petit filtre violet par dessus pour lire le texte */
+    box-shadow: inset 0 0 0 2000px rgba(137, 11, 77, 0.7);
 }
 
 .hero-title {
@@ -46,15 +40,119 @@ body {
     border: none;
     padding: 10px 20px;
 }
+
 .btn-asso:hover {
     background-color: #ffd65c;
     color: #000;
 }
 
-/* --- Footer --- */
 footer {
-    background-color: #333;
+    background-color: #2c2c2c;
     color: white;
-    padding: 20px 0;
-    margin-top: 50px;
+    padding: 30px 0;
+    margin-top: auto;
+    border-top: 5px solid var(--couleur-fromage);
+}
+
+.navbar-custom {
+    background-color: var(--couleur-asso-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.5rem;
+    color: white !important;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 60px;
+}
+
+.navbar-custom .navbar-brand img {
+    height: 90px;
+    width: auto;
+    position: relative;
+    top : -3px;
+    z-index: 100;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+
+.navbar-custom .navbar-brand:hover img {
+    transform: rotate(-5deg) scale(1.1);
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 5px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.navbar-custom .nav-link:not(.dropdown-toggle)::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--couleur-fromage);
+    transition: all 0.3s ease-in-out;
+    transform: translateX(-50%);
+}
+
+.navbar-custom .nav-link:not(.dropdown-toggle):hover::after {
+    width: 100%;
+}
+
+.navbar-custom .nav-link.dropdown-toggle {
+    border: 2px solid transparent;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.navbar-custom .nav-link.dropdown-toggle:hover, 
+.navbar-custom .nav-link.dropdown-toggle:focus {
+    border-color: var(--couleur-fromage);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-custom .nav-link:hover {
+    color: var(--couleur-fromage) !important;
+}
+
+.btn-nav-login {
+    border: 2px solid var(--couleur-fromage);
+    color: var(--couleur-fromage) !important;
+    border-radius: 50px;
+    padding: 6px 20px !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .btn-nav-login:hover {
+    background-color: var(--couleur-fromage);
+    color: var(--couleur-asso-bg) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 188, 13, 0.4);
+}
+
+.btn-nav-login::after {
+    display: none;
+}
+
+.dropdown-menu {
+    border: none;
+    border-top: 4px solid var(--couleur-fromage);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 0 0 8px 8px;
+}
+
+.dropdown-item:active {
+    background-color: var(--couleur-asso-clair);
 }
