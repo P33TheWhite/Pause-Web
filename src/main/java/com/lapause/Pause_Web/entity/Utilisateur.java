@@ -17,29 +17,91 @@ public class Utilisateur {
     private boolean estCotisant; // Pour la gestion Admin
     private boolean demandeCotisationEnCours;
 
+    private Integer points = 0;
 
     @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     private InfoBureau infoBureau;
 
-    public Utilisateur() {}
+    public Utilisateur() {
+    }
 
-    
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getMotDePasse() { return motDePasse; }
-    public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
-    public String getPrenom() { return prenom; }
-    public void setPrenom(String prenom) { this.prenom = prenom; }
-    public boolean isEstCotisant() { return estCotisant; }
-    public void setEstCotisant(boolean estCotisant) { this.estCotisant = estCotisant; }
-    public InfoBureau getInfoBureau() { return infoBureau; }
-    public void setInfoBureau(InfoBureau infoBureau) { this.infoBureau = infoBureau; }
-    public String getClasse() { return classe; }
-    public void setClasse(String classe) { this.classe = classe; }
-    public boolean isDemandeCotisationEnCours() { return demandeCotisationEnCours; }
-    public void setDemandeCotisationEnCours(boolean demandeCotisationEnCours) { this.demandeCotisationEnCours = demandeCotisationEnCours; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public boolean isEstCotisant() {
+        return estCotisant;
+    }
+
+    public void setEstCotisant(boolean estCotisant) {
+        this.estCotisant = estCotisant;
+    }
+
+    public InfoBureau getInfoBureau() {
+        return infoBureau;
+    }
+
+    public void setInfoBureau(InfoBureau infoBureau) {
+        this.infoBureau = infoBureau;
+    }
+
+    public String getClasse() {
+        return classe;
+    }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
+    }
+
+    public boolean isDemandeCotisationEnCours() {
+        return demandeCotisationEnCours;
+    }
+
+    public void setDemandeCotisationEnCours(boolean demandeCotisationEnCours) {
+        this.demandeCotisationEnCours = demandeCotisationEnCours;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
 }

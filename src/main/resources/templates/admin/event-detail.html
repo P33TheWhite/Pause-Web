@@ -1,70 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-<main class="container mt-4">
-    
-    <a href="/admin" class="btn btn-outline-secondary mb-3">← Retour Dashboard</a>
+    <main class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 th:text="'Gestion : ' + ${event.titre}">Titre</h2>
-        <div>
-            <span class="badge bg-primary fs-6" th:text="'Inscrits : ' + ${stats[0]}"></span>
-            <span class="badge bg-success fs-6" th:text="'Payés : ' + ${stats[1]}"></span>
-            <span class="badge bg-warning text-dark fs-6" th:text="'Repas servis : ' + ${stats[2]}"></span>
+        <a href="/admin" class="btn btn-outline-secondary mb-3">← Retour Dashboard</a>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 th:text="${event.titre}">Titre de l'événement</h2>
+            <div>
+                <a th:href="@{/admin/event/{id}/edit(id=${event.id})}" class="btn btn-warning">Modifier</a>
+
+                <form th:unless="${event.estArchive}" th:action="@{/admin/event/{id}/archive(id=${event.id})}"
+                    method="post" style="display:inline;"
+                    onsubmit="return confirm('Êtes-vous sûr de vouloir clôturer cet événement ? Il sera déplacé dans les archives.');">
+                    <button type="submit" class="btn btn-danger ms-2">Clôturer l'événement</button>
+                </form>
+            </div>
         </div>
-    </div>
-
-    <input type="text" id="searchBar" class="form-control my-3" placeholder="🔍 Rechercher un nom ou prénom..." onkeyup="filtrerTableau()">
-
-    <div class="card shadow">
-        <div class="card-body p-0">
-            <table class="table table-striped mb-0" id="tableInscrits">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nom Prénom</th>
-                        <th>Classe</th>
-                        <th>Statut Asso</th>
-                        <th>A Payé ?</th>
-                        <th>A Mangé ?</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="ins : ${inscriptions}">
-                        <td class="nom-prenom" th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}"></td>
-                        <td th:text="${ins.utilisateur.classe}"></td>
-                        <td>
-                            <span th:if="${ins.utilisateur.estCotisant}" class="badge bg-success">Cotisant</span>
-                            <span th:if="${!ins.utilisateur.estCotisant}" class="badge bg-secondary">Non</span>
-                        </td>
-                        
-                        <form method="post" th:action="@{/admin/inscription/{id}/update(id=${ins.id})}">
-                            <td>
-                                <input type="checkbox" name="aPaye" th:checked="${ins.aPaye}" onchange="this.form.submit()">
-                            </td>
-                            <td>
-                                <input type="checkbox" name="aMange" th:checked="${ins.aRecupereRepas}" onchange="this.form.submit()">
-                            </td>
-                            <td>
-                                <button type="submit" class="btn btn-sm btn-primary">💾</button>
-                            </td>
-                        </form>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 th:text="'Gestion : ' + ${event.titre}">Titre</h2>
+            <div>
+                <span class="badge bg-primary" th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}">Date</span>
+                <span class="badge bg-primary fs-6" th:text="'Inscrits : ' + ${stats[0]}"></span>
+                <span class="badge bg-success fs-6" th:text="'Payés : ' + ${stats[1]}"></span>
+                <span class="badge bg-warning text-dark fs-6" th:text="'Repas servis : ' + ${stats[2]}"></span>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function filtrerTableau() {
-            let input = document.getElementById("searchBar").value.toLowerCase();
-            let rows = document.querySelectorAll("#tableInscrits tbody tr");
-            rows.forEach(row => {
-                let name = row.querySelector(".nom-prenom").innerText.toLowerCase();
-                row.style.display = name.includes(input) ? "" : "none";
-            });
-        }
-    </script>
-</main>
+        <input type="text" id="searchBar" class="form-control my-3" placeholder="🔍 Rechercher un nom ou prénom..."
+            onkeyup="filtrerTableau()">
+
+        <div class="card shadow">
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0" id="tableInscrits">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nom Prénom</th>
+                            <th>Classe</th>
+                            <th>Statut Asso</th>
+                            <th>A Payé ?</th>
+                            <th>A Mangé ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="ins : ${inscriptions}">
+                            <td class="nom-prenom" th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}">
+                            </td>
+                            <td th:text="${ins.utilisateur.classe}"></td>
+                            <td>
+                                <span th:if="${ins.utilisateur.estCotisant}" class="badge bg-success">Cotisant</span>
+                                <span th:if="${!ins.utilisateur.estCotisant}" class="badge bg-secondary">Non</span>
+                            </td>
+
+                            <form method="post" th:action="@{/admin/inscription/{id}/update(id=${ins.id})}">
+                                <td>
+                                    <input type="checkbox" name="aPaye" th:checked="${ins.aPaye}"
+                                        onchange="this.form.submit()">
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="aMange" th:checked="${ins.aRecupereRepas}"
+                                        onchange="this.form.submit()">
+                                </td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            function filtrerTableau() {
+                let input = document.getElementById("searchBar").value.toLowerCase();
+                let rows = document.querySelectorAll("#tableInscrits tbody tr");
+                rows.forEach(row => {
+                    let name = row.querySelector(".nom-prenom").innerText.toLowerCase();
+                    row.style.display = name.includes(input) ? "" : "none";
+                });
+            }
+        </script>
+    </main>
 </th:block>
+
 </html>

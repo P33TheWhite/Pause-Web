@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+    <main class="container mt-5">
+        <h2 th:text="${evenement.id == null ? 'Nouvel Événement' : 'Modifier Événement'}">Événement</h2>
+
+        <form th:action="@{/admin/event/save}" th:object="${evenement}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="mb-3">
+                <label for="titre" class="form-label">Nom de l'événement</label>
+                <input type="text" class="form-control" id="titre" th:field="*{titre}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" th:field="*{date}" required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="heureDebut" class="form-label">Heure de début (Optionnel)</label>
+                    <input type="time" class="form-control" id="heureDebut" th:field="*{heureDebut}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="heureFin" class="form-label">Heure de fin (Optionnel)</label>
+                    <input type="time" class="form-control" id="heureFin" th:field="*{heureFin}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="prixCotisant" class="form-label">Prix Cotisant (€)</label>
+                    <input type="number" step="0.01" class="form-control" id="prixCotisant" th:field="*{prixCotisant}"
+                        required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="prixNonCotisant" class="form-label">Prix Non-Cotisant (€)</label>
+                    <input type="number" step="0.01" class="form-control" id="prixNonCotisant"
+                        th:field="*{prixNonCotisant}" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="lienPaiement" class="form-label">Lien de paiement (Lydia, PayPal...)</label>
+                <input type="url" class="form-control" id="lienPaiement" th:field="*{lienPaiement}">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Photo de l'événement</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/png, image/jpeg">
+            </div>
+
+            <div class="mb-3">
+                <label for="nbPlacesMax" class="form-label">Nombre de places max (Laisser vide pour illimité)</label>
+                <input type="number" class="form-control" id="nbPlacesMax" th:field="*{nbPlacesMax}">
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="/admin" class="btn btn-secondary">Annuler</a>
+        </form>
+    </main>
+</th:block>
+
+</html>

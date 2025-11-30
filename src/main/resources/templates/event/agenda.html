@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-    
+
     <main>
         <div class="container mt-5 mb-4">
             <h1 style="color: var(--couleur-asso-bg); font-weight: bold;">L'Agenda de La Pau'se</h1>
             <p class="lead">Ne ratez aucun croque-monsieur ni aucune soirée !</p>
             <hr>
-            
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
             <div th:if="${session.user != null}" class="mb-4">
                 <a href="/event/new" class="btn btn-outline-dark">+ Proposer un événement</a>
             </div>
@@ -15,34 +18,111 @@
 
         <div class="container mb-5">
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                
+
                 <div class="col" th:each="event : ${events}">
                     <div class="card h-100 shadow-sm border-0">
-                        
-                        <div style="height: 200px; background-color: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                            <img th:if="${!event.photos.isEmpty()}" th:src="${event.photos[0].url}" class="card-img-top" alt="Event photo" style="object-fit: cover; height: 100%; width: 100%;">
+
+                        <div
+                            style="height: 200px; background-color: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img th:if="${!event.photos.isEmpty()}" th:src="${event.photos[0].url}" class="card-img-top"
+                                alt="Event photo" style="object-fit: cover; height: 100%; width: 100%;">
                             <span th:if="${event.photos.isEmpty()}" style="font-size: 3rem;">🎉</span>
                         </div>
 
                         <div class="card-body">
                             <div class="mb-2">
-                                <span th:each="type : ${event.types}" 
-                                      class="badge rounded-pill bg-warning text-dark me-1" 
-                                      th:text="${type.libelle}">Type</span>
+                                <span th:each="type : ${event.types}"
+                                    class="badge rounded-pill bg-warning text-dark me-1"
+                                    th:text="${type.libelle}">Type</span>
                             </div>
-
                             <h5 class="card-title fw-bold" th:text="${event.titre}">Titre Event</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">
-                                🗓 <span th:text="${event.dateEvenement}">Date</span>
-                            </h6>
-                            
+                            <p class="card-text text-muted">
+                                <span th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}">Date</span>
+                                <span th:if="${event.heureDebut != null}"
+                                    th:text="' ' + ${#temporals.format(event.heureDebut, 'HH''h''mm')}"></span>
+                                <span th:if="${event.heureFin != null}"
+                                    th:text="'-' + ${#temporals.format(event.heureFin, 'HH''h''mm')}"></span>
+                            </p>
                             <p class="card-text" th:text="${event.description}">Description...</p>
                         </div>
-                        
-                        <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pb-3">
-                            <span class="fw-bold" style="color: var(--couleur-asso-bg);" th:text="${event.prix} + ' €'">0 €</span>
-                            
-                            <a href="#" class="btn btn-sm btn-asso">S'inscrire</a>
+
+                        <div
+                            class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pb-3">
+                            <div th:if="${session.user != null}">
+                                <span class="fw-bold" style="color: var(--couleur-asso-bg);"
+                                    th:if="${session.user.estCotisant}" th:text="${event.prixCotisant} + ' €'">0
+                                    €</span>
+                                <span class="fw-bold" style="color: var(--couleur-asso-bg);"
+                                    th:if="${!session.user.estCotisant}" th:text="${event.prixNonCotisant} + ' €'">0
+                                    €</span>
+
+                                <div th:if="${session.user.points != null && session.user.points > 5 && userStatus.get(event.id) == 'NONE'}"
+                                    class="mt-1">
+                                    <span class="badge bg-warning text-dark">Réduction VIP disponible (-1€)</span>
+                                </div>
+                            </div>
+                            <div th:if="${session.user == null}">
+                                <small class="text-muted">Cotisant: <span th:text="${event.prixCotisant} + '€'"></span>
+                                    / Non: <span th:text="${event.prixNonCotisant} + '€'"></span></small>
+                            </div>
+
+                            <div th:if="${session.user != null}">
+                                <div th:if="${userStatus.get(event.id) == 'REGISTERED'}">
+                                    <button class="btn btn-sm btn-success" disabled>Inscrit ✅</button>
+
+                                    <div class="mt-2 mb-2">
+                                        <span class="text-muted">Montant à régler : </span>
+                                        <span class="fw-bold" th:text="${userPrices.get(event.id)} + ' €'">0 €</span>
+
+                                        <!-- Check if price is discounted (VIP) -->
+                                        <span
+                                            th:if="${session.user.estCotisant && userPrices.get(event.id) < event.prixCotisant}"
+                                            class="badge bg-warning text-dark ms-1">Réduction VIP -1€</span>
+                                        <span
+                                            th:if="${!session.user.estCotisant && userPrices.get(event.id) < event.prixNonCotisant}"
+                                            class="badge bg-warning text-dark ms-1">Réduction VIP -1€</span>
+                                    </div>
+
+                                    <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
+                                        th:href="${event.lienPaiement}" target="_blank"
+                                        class="btn btn-sm btn-primary ms-1">Payer 💳</a>
+
+                                    <form th:action="@{/event/{id}/unregister(id=${event.id})}" method="post"
+                                        style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Se
+                                            désinscrire</button>
+                                    </form>
+                                </div>
+
+                                <div th:if="${userStatus.get(event.id) == 'WAITING'}">
+                                    <button class="btn btn-sm btn-warning text-dark" disabled>En attente ⏳</button>
+                                    <form th:action="@{/event/{id}/unregister(id=${event.id})}" method="post"
+                                        style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Se
+                                            désinscrire</button>
+                                    </form>
+                                </div>
+
+                                <div th:if="${userStatus.get(event.id) == 'NONE'}">
+                                    <form th:action="@{/event/{id}/register(id=${event.id})}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-asso"
+                                            th:if="${placesRestantes.get(event.id) > 0}">S'inscrire</button>
+                                        <button type="submit" class="btn btn-sm btn-warning text-dark"
+                                            th:if="${placesRestantes.get(event.id) == 0}">S'inscrire (Liste
+                                            d'attente)</button>
+
+                                        <small class="text-muted ms-2"
+                                            th:if="${placesRestantes.get(event.id) != 2147483647 && placesRestantes.get(event.id) > 0}"
+                                            th:text="'(' + ${placesRestantes.get(event.id)} + ' places)'"></small>
+                                        <small class="text-muted ms-2"
+                                            th:if="${placesRestantes.get(event.id) == 0}">(Complet)</small>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div th:if="${session.user == null}">
+                                <a href="/login" class="btn btn-sm btn-outline-primary">Se connecter</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -55,4 +135,5 @@
     </main>
 
 </th:block>
+
 </html>

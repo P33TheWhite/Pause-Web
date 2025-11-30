@@ -1,7 +1,7 @@
 package com.lapause.Pause_Web.controller;
 
 import com.lapause.Pause_Web.entity.Utilisateur;
-import com.lapause.Pause_Web.repository.UtilisateurRepository;
+import com.lapause.Pause_Web.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,12 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthController {
 
     @Autowired
-    private UtilisateurRepository utilisateurRepository;
+    private UserService userService;
 
     @GetMapping("/register")
     public String showRegisterForm() {
@@ -23,18 +24,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public String processRegister(Utilisateur utilisateur, Model model) {
-        if (utilisateurRepository.findByEmail(utilisateur.getEmail()) != null) {
+        Utilisateur registeredUser = userService.registerUser(utilisateur);
+        if (registeredUser == null) {
             model.addAttribute("error", "Cet email est déjà utilisé !");
             return "auth/register";
         }
-
-        utilisateur.setEstCotisant(false);
-        
-        utilisateurRepository.save(utilisateur);
-
         return "redirect:/login?success";
     }
-
 
     @GetMapping("/login")
     public String showLoginForm() {
@@ -42,14 +38,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String processLogin(@RequestParam String email, 
-                               @RequestParam String password, 
-                               HttpSession session, 
-                               Model model) {
-        
-        Utilisateur user = utilisateurRepository.findByEmail(email);
-
-        if (user != null && user.getMotDePasse().equals(password)) {
+    public String processLogin(@RequestParam String email,
+            @RequestParam String password,
+            HttpSession session,
+            Model model) {
+        Utilisateur user = userService.authenticate(email, password);
+        if (user != null) {
             session.setAttribute("user", user);
             return "redirect:/";
         } else {
@@ -67,9 +61,10 @@ public class AuthController {
     @GetMapping("/profil")
     public String showProfile(HttpSession session, Model model) {
         Utilisateur user = (Utilisateur) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
-        
-        Utilisateur userAJour = utilisateurRepository.findById(user.getId()).orElse(null);
+        if (user == null)
+            return "redirect:/login";
+
+        Utilisateur userAJour = userService.getUserById(user.getId());
         model.addAttribute("user", userAJour);
         return "user/profil";
     }
@@ -77,14 +72,29 @@ public class AuthController {
     @PostMapping("/profil/demande-cotisation")
     public String demanderCotisation(@RequestParam String classe, HttpSession session) {
         Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
-        Utilisateur user = utilisateurRepository.findById(sessionUser.getId()).orElse(null);
-        
-        if (user != null) {
-            user.setClasse(classe); 
-            user.setDemandeCotisationEnCours(true);
-            utilisateurRepository.save(user);
-            session.setAttribute("user", user);
+        if (sessionUser != null) {
+            userService.requestCotisation(sessionUser.getId(), classe);
+            session.setAttribute("user", userService.getUserById(sessionUser.getId()));
         }
         return "redirect:/profil?success";
+    }
+
+    @PostMapping("/profil/change-password")
+    public String changePassword(@RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        if (sessionUser == null)
+            return "redirect:/login";
+
+        String result = userService.changePassword(sessionUser.getId(), oldPassword, newPassword, confirmPassword);
+        if ("success".equals(result)) {
+            redirectAttributes.addFlashAttribute("success", "Mot de passe modifié avec succès !");
+        } else {
+            redirectAttributes.addFlashAttribute("error", result);
+        }
+        return "redirect:/profil";
     }
 }

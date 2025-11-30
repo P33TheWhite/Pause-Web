@@ -1,33 +1,98 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-<main class="container mt-5">
-    <h2>Mon Profil</h2>
-    <div class="card p-4">
-        <p><strong>Nom :</strong> <span th:text="${user.nom}"></span></p>
-        <p><strong>Prénom :</strong> <span th:text="${user.prenom}"></span></p>
-        <p><strong>Statut :</strong> 
-            <span th:if="${user.estCotisant}" class="badge bg-success">Cotisant</span>
-            <span th:if="${!user.estCotisant}" class="badge bg-secondary">Non Cotisant</span>
-        </p>
+    <main class="container mt-5">
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <hr>
+        <div class="row">
+            <!-- Left Column: Profile Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow text-center p-4">
+                    <div class="mx-auto mb-3"
+                        style="background-color: var(--couleur-fromage); color: #333; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold;">
+                        <span th:text="${#strings.substring(user.prenom,0,1)}">U</span>
+                    </div>
+                    <h3 th:text="${user.prenom} + ' ' + ${user.nom}">Prénom Nom</h3>
+                    <p class="text-muted" th:text="${user.email}">email@example.com</p>
+                    <p class="text-muted" th:text="${user.classe}">Classe</p>
 
-        <div th:if="${!user.estCotisant}">
-            <div th:if="${user.demandeCotisationEnCours}" class="alert alert-warning">
-                Votre demande de cotisation est en attente de validation par le bureau.
+                    <hr>
+
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <h5>Statut</h5>
+                            <span th:if="${user.estCotisant}" class="badge bg-success">Cotisant ✅</span>
+                            <span th:if="${!user.estCotisant}" class="badge bg-secondary">Non Cotisant</span>
+                        </div>
+                        <div>
+                            <h5>Points</h5>
+                            <span class="badge bg-primary fs-6"
+                                th:text="${user.points != null ? user.points : 0} + ' pts'">0 pts</span>
+                        </div>
+                    </div>
+
+                    <div th:if="${user.points != null && user.points > 5}" class="mt-3">
+                        <span class="badge bg-warning text-dark w-100 py-2">👑 MEMBRE VIP 👑</span>
+                    </div>
+                </div>
             </div>
 
-            <form th:if="${!user.demandeCotisationEnCours}" action="/profil/demande-cotisation" method="post">
-                <h4>Devenir Cotisant</h4>
-                <div class="mb-3">
-                    <label>Votre Classe (ex: ING1, PREPA2)</label>
-                    <input type="text" name="classe" class="form-control" required placeholder="Votre classe...">
+            <!-- Right Column: Actions -->
+            <div class="col-md-8">
+
+                <!-- Cotisation Section -->
+                <div class="card shadow mb-4" th:if="${!user.estCotisant}">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">Devenir Cotisant</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${user.demandeCotisationEnCours}" class="alert alert-info mb-0">
+                            ⏳ Votre demande de cotisation est en attente de validation par le bureau.
+                        </div>
+
+                        <form th:if="${!user.demandeCotisationEnCours}" action="/profil/demande-cotisation"
+                            method="post">
+                            <p>Rejoignez l'association pour bénéficier de tarifs réduits !</p>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Votre Classe</span>
+                                <input type="text" name="classe" class="form-control" required
+                                    placeholder="ex: ING1, PREPA2" th:value="${user.classe}">
+                                <button type="submit" class="btn btn-asso">Demander la validation</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-asso">Demander la validation</button>
-            </form>
+
+                <!-- Password Change Section -->
+                <div class="card shadow">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Sécurité</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/profil/change-password" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Ancien mot de passe</label>
+                                <input type="password" name="oldPassword" class="form-control" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nouveau mot de passe</label>
+                                    <input type="password" name="newPassword" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Confirmer le mot de passe</label>
+                                    <input type="password" name="confirmPassword" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline-dark">Modifier mon mot de passe</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 </th:block>
+
 </html>
