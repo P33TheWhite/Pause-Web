@@ -157,7 +157,7 @@ footer {
     background-color: var(--couleur-asso-clair);
 }
 
-/* --- Team Page Styles --- */
+
 
 .team-hero {
     background: linear-gradient(rgba(44, 44, 44, 0.8), rgba(44, 44, 44, 0.8)), url('../img/bg-hero.png') no-repeat center center;
@@ -201,7 +201,7 @@ footer {
     object-fit: cover;
 }
 
-/* Hierarchy Connectors */
+
 .connector-vertical {
     position: absolute;
     bottom: -50px;
@@ -233,7 +233,7 @@ footer {
     transform: translateX(-50%);
 }
 
-/* --- Gallery Page Styles (Event Cards) --- */
+
 
 .gallery-hero {
     background: linear-gradient(rgba(137, 11, 77, 0.8), rgba(137, 11, 77, 0.8)), url('../img/bg-hero.png') no-repeat center center;

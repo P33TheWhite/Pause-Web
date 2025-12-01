@@ -17,6 +17,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private com.lapause.Pause_Web.repository.InscriptionRepository inscriptionRepo;
+
     @GetMapping("/register")
     public String showRegisterForm() {
         return "auth/register";
@@ -66,6 +69,7 @@ public class AuthController {
 
         Utilisateur userAJour = userService.getUserById(user.getId());
         model.addAttribute("user", userAJour);
+        model.addAttribute("inscriptions", inscriptionRepo.findByUtilisateurId(user.getId()));
         return "user/profil";
     }
 
