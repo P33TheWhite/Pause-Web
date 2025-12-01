@@ -96,6 +96,7 @@ public class EventService {
     public Long updateInscription(Long id, boolean aPaye, boolean aMange) {
         Inscription ins = inscriptionRepo.findById(id).orElse(null);
         if (ins != null) {
+            boolean oldMange = ins.isaRecupereRepas();
             ins.setaPaye(aPaye);
             ins.setaRecupereRepas(aMange);
 
@@ -191,20 +192,16 @@ public class EventService {
                 ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
                 : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
 
-        String message = "Inscription validée !";
+        String initialMessage = "Inscription validée !";
         if (user.getPoints() != null && user.getPoints() >= 5) {
-            user.setPoints(user.getPoints() - 5);
-            userService.saveUser(user);
-            prixBase = Math.max(0, prixBase - 1.0);
-            message = "Inscription validée ! Réduction VIP appliquée (-1€). Nouveau prix : "
-                    + String.format("%.2f", prixBase) + " €";
+            // Logic moved to else block for actual registration
         }
         inscription.setMontantAPayer(prixBase);
 
         if (waitingList) {
             inscription.setEnAttente(true);
             inscriptionRepo.save(inscription);
-            return "Complet ! Vous êtes sur liste d'attente. " + message;
+            return "Complet ! Vous êtes sur liste d'attente. " + initialMessage;
         } else {
 
             double finalPrice = user.isEstCotisant()
@@ -213,13 +210,15 @@ public class EventService {
 
             StringBuilder message = new StringBuilder("Inscription validée !");
 
-            // Réduction VIP
-            if (user.getPoints() != null && user.getPoints() > 5) {
-                user.setPoints(user.getPoints() - 5);
-                inscription.setPointsUtilises(5); // Save used points
-                finalPrice = Math.max(0, finalPrice - 1.0);
-                message.append(" Réduction VIP appliquée (-1€).");
-            }
+            // Réduction VIP (SUPPRIMÉE SUR DEMANDE)
+            /*
+             * if (user.getPoints() != null && user.getPoints() > 5) {
+             * user.setPoints(user.getPoints() - 5);
+             * inscription.setPointsUtilises(5); // Save used points
+             * finalPrice = Math.max(0, finalPrice - 1.0);
+             * message.append(" Réduction VIP appliquée (-1€).");
+             * }
+             */
 
             // Réduction Vouchers (Boutique)
             if (user.getSoldeReduction() != null && user.getSoldeReduction() > 0) {
