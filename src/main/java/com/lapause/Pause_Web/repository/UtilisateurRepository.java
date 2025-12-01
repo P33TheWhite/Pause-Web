@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
     Utilisateur findByEmail(String email);
-    
+
     List<Utilisateur> findByDemandeCotisationEnCoursTrue();
+
+    List<Utilisateur> findAllByOrderByPointsDesc();
+
+    List<Utilisateur> findAllByOrderByPointsAllTimeDesc();
 }

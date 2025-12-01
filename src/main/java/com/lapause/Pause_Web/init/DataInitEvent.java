@@ -58,6 +58,8 @@ public class DataInitEvent {
                 admin.setPrenom("Admin");
                 admin.setClasse("Bureau");
                 admin.setEstCotisant(true);
+                admin.setPoints(1000);
+                admin.setPointsAllTime(1000);
 
                 Utilisateur paul = new Utilisateur();
                 paul.setEmail("paul@test.com");

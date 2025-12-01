@@ -58,15 +58,13 @@ public class EventService {
             for (Inscription ins : inscriptions) {
                 if (ins.isaRecupereRepas()) {
                     Utilisateur u = ins.getUtilisateur();
-                    if (u.getPoints() == null)
-                        u.setPoints(0);
-                    u.setPoints(u.getPoints() + 1);
-                    userService.saveUser(u);
+                    userService.addPoints(u.getId(), 1);
 
                     // Update session if this user is the one logged in
                     Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
                     if (sessionUser != null && sessionUser.getId().equals(u.getId())) {
-                        session.setAttribute("user", u);
+                        // Re-fetch user to get updated points
+                        session.setAttribute("user", userService.getUserById(u.getId()));
                     }
                 }
             }
@@ -103,17 +101,14 @@ public class EventService {
 
             // Si l'événement est archivé, on met à jour les points immédiatement
             if (ins.getEvenement().isEstArchive()) {
-                Utilisateur user = ins.getUtilisateur();
-                // Logique simplifiée : on recalcule ou on ajuste.
-                // Ici on suppose que si on coche "aMange", on donne les points.
-                // Attention : il faudrait gérer le cas où on décoche (retirer les points).
-                // Pour faire simple et robuste : on ne touche pas aux points ici pour l'instant
-                // sauf demande explicite. Le user a demandé "si event archivé, correction =
-                // update points".
-                // Implémentation basique : +10 si aMange passe à true, -10 si false.
-                // Mais on ne sait pas l'état précédent facilement sans recharger.
-                // On va laisser la logique d'archivage faire le gros du travail,
-                // et ici on suppose que c'est une correction mineure.
+                if (aMange != oldMange) {
+                    Utilisateur u = ins.getUtilisateur();
+                    if (aMange) {
+                        userService.addPoints(u.getId(), 1);
+                    } else {
+                        userService.addPoints(u.getId(), -1);
+                    }
+                }
             }
 
             inscriptionRepo.save(ins);
@@ -211,8 +206,41 @@ public class EventService {
             inscriptionRepo.save(inscription);
             return "Complet ! Vous êtes sur liste d'attente. " + message;
         } else {
+
+            double finalPrice = user.isEstCotisant()
+                    ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
+                    : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
+
+            StringBuilder message = new StringBuilder("Inscription validée !");
+
+            // Réduction VIP
+            if (user.getPoints() != null && user.getPoints() > 5) {
+                user.setPoints(user.getPoints() - 5);
+                inscription.setPointsUtilises(5); // Save used points
+                finalPrice = Math.max(0, finalPrice - 1.0);
+                message.append(" Réduction VIP appliquée (-1€).");
+            }
+
+            // Réduction Vouchers (Boutique)
+            if (user.getSoldeReduction() != null && user.getSoldeReduction() > 0) {
+                double reduction = user.getSoldeReduction();
+                double priceBeforeVoucher = finalPrice;
+                finalPrice = Math.max(0, finalPrice - reduction);
+                double usedReduction = priceBeforeVoucher - finalPrice;
+
+                // On déduit seulement ce qui a été utilisé
+                user.setSoldeReduction(Math.max(0, user.getSoldeReduction() - usedReduction));
+                inscription.setMontantReductionVoucher(usedReduction); // Save used voucher amount
+                message.append(" Réduction Boutique appliquée (-").append(String.format("%.2f", usedReduction))
+                        .append("€).");
+            }
+
+            userService.saveUser(user);
+            inscription.setMontantAPayer(finalPrice);
             inscriptionRepo.save(inscription);
-            return message;
+
+            message.append(" Nouveau prix : ").append(String.format("%.2f", finalPrice)).append(" €");
+            return message.toString();
         }
     }
 
@@ -220,6 +248,21 @@ public class EventService {
         Inscription ins = inscriptionRepo.findByUtilisateurIdAndEvenementId(user.getId(), eventId);
         if (ins != null) {
             boolean wasActive = !ins.isEnAttente();
+
+            // Refund logic
+            if (ins.getPointsUtilises() != null && ins.getPointsUtilises() > 0) {
+                // Refund points (do NOT add to all-time points, just restore balance)
+                // We use setPoints directly to avoid inflating all-time score
+                user.setPoints(user.getPoints() + ins.getPointsUtilises());
+            }
+
+            if (ins.getMontantReductionVoucher() != null && ins.getMontantReductionVoucher() > 0) {
+                if (user.getSoldeReduction() == null)
+                    user.setSoldeReduction(0.0);
+                user.setSoldeReduction(user.getSoldeReduction() + ins.getMontantReductionVoucher());
+            }
+            userService.saveUser(user);
+
             inscriptionRepo.delete(ins);
 
             if (wasActive) {
@@ -231,7 +274,7 @@ public class EventService {
                     inscriptionRepo.save(luckyWinner);
                 }
             }
-            return "Désinscription prise en compte.";
+            return "Désinscription prise en compte. Points et réductions remboursés.";
         }
         return "Inscription introuvable.";
     }

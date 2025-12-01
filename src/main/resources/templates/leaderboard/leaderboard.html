@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Classement - La Pau'se</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<th:block th:replace="~{layout :: layout(~{::main})}">
+    <main>
+        <style>
+            .leaderboard-table {
+                width: 80%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                background-color: white;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .leaderboard-table th {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .leaderboard-table tr:hover {
+                background-color: #f5f5f5;
+            }
+
+            .rank-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                vertical-align: middle;
+                margin-right: 10px;
+            }
+
+            .rank-number {
+                font-weight: bold;
+                font-size: 1.2em;
+                color: #555;
+            }
+
+            .top-3 {
+                background-color: #fff8e1;
+                /* Gold-ish tint for top 3 */
+            }
+        </style>
+
+        <div class="container">
+            <h1 style="text-align: center; margin-top: 20px;">Classement Général</h1>
+
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Utilisateur</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user, iterStat : ${leaderboard}" th:classappend="${iterStat.index < 3} ? ' top-3'">
+                        <td>
+                            <span class="rank-number" th:text="${iterStat.count}">1</span>
+                            <span th:if="${iterStat.index == 0}">🥇</span>
+                            <span th:if="${iterStat.index == 1}">🥈</span>
+                            <span th:if="${iterStat.index == 2}">🥉</span>
+                        </td>
+                        <td>
+                            <img th:src="@{'/images/' + ${user.icon}}" alt="Icon" class="rank-icon">
+                            <span th:text="${user.prenom} + ' ' + ${user.nom}">Jean Dupont</span>
+                        </td>
+                        <td th:text="${user.pointsAllTime}">1500</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</th:block>
+
+</html>

@@ -2,8 +2,10 @@ package com.lapause.Pause_Web.entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
-public class Utilisateur {
+public class Utilisateur implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +20,14 @@ public class Utilisateur {
     private boolean demandeCotisationEnCours;
 
     private Integer points = 0;
+    private Integer pointsAllTime = 0;
+
+    private Double soldeReduction = 0.0;
+
+    private String icon = "default.png"; // Icone par défaut
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private java.util.List<String> unlockedIcons = new java.util.ArrayList<>();
 
     @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     private InfoBureau infoBureau;
@@ -103,5 +113,37 @@ public class Utilisateur {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public Integer getPointsAllTime() {
+        return pointsAllTime;
+    }
+
+    public void setPointsAllTime(Integer pointsAllTime) {
+        this.pointsAllTime = pointsAllTime;
+    }
+
+    public Double getSoldeReduction() {
+        return soldeReduction;
+    }
+
+    public void setSoldeReduction(Double soldeReduction) {
+        this.soldeReduction = soldeReduction;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public java.util.List<String> getUnlockedIcons() {
+        return unlockedIcons;
+    }
+
+    public void setUnlockedIcons(java.util.List<String> unlockedIcons) {
+        this.unlockedIcons = unlockedIcons;
     }
 }

@@ -26,8 +26,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/agenda">Agenda</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/photos">Galerie</a>
+
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" href="/shop">Boutique</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" href="/leaderboard">Classement</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Découvrir
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li><a class="dropdown-item" href="/photos">Galerie</a></li>
+                            <li><a class="dropdown-item" href="/equipe">Notre équipe</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item" th:if="${session.user != null && session.user.estCotisant}">
                         <a class="nav-link" href="/admin/archives">Archives</a>
@@ -51,7 +65,9 @@
                     <li class="nav-item dropdown" th:if="${session.user != null}">
                         <a class="nav-link dropdown-toggle ms-2 d-flex align-items-center gap-2" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <div
+                            <img th:if="${session.user.icon != null}" th:src="@{'/images/' + ${session.user.icon}}"
+                                alt="Icon" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                            <div th:if="${session.user.icon == null}"
                                 style="background-color: var(--couleur-fromage); color: #333; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
                                 <span th:text="${#strings.substring(session.user.prenom,0,1)}">U</span>
                             </div>
@@ -63,7 +79,7 @@
                                         th:text="${session.user.points} + ' pts'" class="badge bg-secondary">0
                                         pts</span>
                                     <span th:if="${session.user.points != null && session.user.points > 5}"
-                                        class="badge bg-warning text-dark">VIP 👑</span>
+                                        class="badge bg-warning text-dark">VIP</span>
                                 </div>
                             </div>
                         </a>
