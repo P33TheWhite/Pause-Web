@@ -18,6 +18,7 @@ public class UserService {
             return null;
         }
         utilisateur.setEstCotisant(false);
+        utilisateur.getUnlockedIcons().add("default.png");
         return utilisateurRepository.save(utilisateur);
     }
 
@@ -95,5 +96,61 @@ public class UserService {
 
     public void saveUser(Utilisateur user) {
         utilisateurRepository.save(user);
+    }
+
+    public boolean buyItem(Long userId, String itemId, int cost) {
+        Utilisateur user = getUserById(userId);
+        if (user != null && user.getPoints() >= cost) {
+            user.setPoints(user.getPoints() - cost);
+
+            if (itemId.equals("croque")) {
+                // Consommable croque : rien de plus pour l'instant
+            } else if (itemId.startsWith("reduction_")) {
+                // Gestion des réductions
+                double montant = 0.0;
+                if (itemId.equals("reduction_1"))
+                    montant = 1.0;
+                else if (itemId.equals("reduction_2"))
+                    montant = 2.0;
+                else if (itemId.equals("reduction_5"))
+                    montant = 5.0;
+
+                if (user.getSoldeReduction() == null)
+                    user.setSoldeReduction(0.0);
+                user.setSoldeReduction(user.getSoldeReduction() + montant);
+            } else {
+                // C'est une icône
+                if (!user.getUnlockedIcons().contains(itemId)) {
+                    user.getUnlockedIcons().add(itemId);
+                }
+            }
+
+            utilisateurRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean equipIcon(Long userId, String iconName) {
+        Utilisateur user = getUserById(userId);
+        if (user != null && (user.getUnlockedIcons().contains(iconName) || iconName.equals("default.png"))) {
+            user.setIcon(iconName);
+            utilisateurRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Utilisateur> getLeaderboard() {
+        return utilisateurRepository.findAllByOrderByPointsAllTimeDesc();
+    }
+
+    public void addPoints(Long userId, int pointsToAdd) {
+        Utilisateur user = getUserById(userId);
+        if (user != null) {
+            user.setPoints(user.getPoints() + pointsToAdd);
+            user.setPointsAllTime(user.getPointsAllTime() + pointsToAdd);
+            utilisateurRepository.save(user);
+        }
     }
 }

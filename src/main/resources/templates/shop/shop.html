@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+    <main>
+        <style>
+            .shop-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .shop-item {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 15px;
+                text-align: center;
+                width: 200px;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .shop-item img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                margin-bottom: 10px;
+            }
+
+            .shop-item h3 {
+                margin: 10px 0;
+                font-size: 1.2em;
+            }
+
+            .shop-item p {
+                color: #666;
+            }
+
+            .btn-buy {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                margin-top: 10px;
+            }
+
+            .btn-buy:hover {
+                background-color: #218838;
+            }
+
+            .btn-equip {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                margin-top: 10px;
+            }
+
+            .btn-equip:hover {
+                background-color: #0069d9;
+            }
+
+            .btn-disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+            }
+
+            .user-points {
+                text-align: center;
+                font-size: 1.5em;
+                margin: 20px 0;
+                font-weight: bold;
+            }
+
+            .alert {
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                text-align: center;
+            }
+
+            .alert-success {
+                color: #155724;
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+            }
+
+            .alert-danger {
+                color: #721c24;
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+            }
+        </style>
+
+        <div class="container">
+            <h1 style="text-align: center; margin-top: 20px;">Boutique</h1>
+
+            <div class="user-points">
+                Vos points : <span th:text="${user.points}">0</span>
+                <br>
+                <span style="font-size: 0.8em; color: #666;">Réduction cumulée : <span
+                        th:text="${user.soldeReduction != null ? user.soldeReduction : 0} + ' €'">0 €</span></span>
+            </div>
+
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <h2 style="text-align: center;">Consommables</h2>
+            <div class="shop-container">
+                <div class="shop-item">
+                    <img src="/images/croque.png" alt="Croque Monsieur">
+                    <h3>Croque Monsieur</h3>
+                    <p>Coût : 100 points</p>
+                    <form action="/shop/buy" method="post">
+                        <input type="hidden" name="itemId" value="croque">
+                        <input type="hidden" name="cost" value="100">
+                        <button type="submit" class="btn-buy" th:disabled="${user.points < 100}"
+                            th:classappend="${user.points < 100} ? ' btn-disabled'">Acheter</button>
+                    </form>
+                </div>
+
+                <!-- Voucher 1 Euro -->
+                <div class="shop-item">
+                    <img src="/images/voucher_1.png" alt="Réduction 1€">
+                    <h3>Réduction 1€</h3>
+                    <p>1€ de réduction sur le prochain événement.</p>
+                    <p>Coût : 100 points</p>
+                    <form action="/shop/buy" method="post">
+                        <input type="hidden" name="itemId" value="reduction_1">
+                        <input type="hidden" name="cost" value="100">
+                        <button type="submit" class="btn-buy" th:disabled="${user.points < 100}"
+                            th:classappend="${user.points < 100} ? ' btn-disabled'">Acheter</button>
+                    </form>
+                </div>
+
+                <!-- Voucher 2 Euros -->
+                <div class="shop-item">
+                    <img src="/images/voucher_2.png" alt="Réduction 2€">
+                    <h3>Réduction 2€</h3>
+                    <p>2€ de réduction sur le prochain événement.</p>
+                    <p>Coût : 200 points</p>
+                    <form action="/shop/buy" method="post">
+                        <input type="hidden" name="itemId" value="reduction_2">
+                        <input type="hidden" name="cost" value="200">
+                        <button type="submit" class="btn-buy" th:disabled="${user.points < 200}"
+                            th:classappend="${user.points < 200} ? ' btn-disabled'">Acheter</button>
+                    </form>
+                </div>
+
+                <!-- Voucher 5 Euros -->
+                <div class="shop-item">
+                    <img src="/images/voucher_5.png" alt="Réduction 5€">
+                    <h3>Réduction 5€</h3>
+                    <p>5€ de réduction sur le prochain événement.</p>
+                    <p>Coût : 500 points</p>
+                    <form action="/shop/buy" method="post">
+                        <input type="hidden" name="itemId" value="reduction_5">
+                        <input type="hidden" name="cost" value="500">
+                        <button type="submit" class="btn-buy" th:disabled="${user.points < 500}"
+                            th:classappend="${user.points < 500} ? ' btn-disabled'">Acheter</button>
+                    </form>
+                </div>
+            </div>
+
+            <h2 style="text-align: center;">Icônes de Profil</h2>
+            <div class="shop-container">
+                <!-- Icon 1 -->
+                <div class="shop-item">
+                    <img src="/images/icon1.png" alt="Icone 1">
+                    <h3>Icone Cool</h3>
+                    <p>Coût : 200 points</p>
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon1.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon1.png'}">
+                            <input type="hidden" name="iconName" value="icon1.png">
+                            <button type="submit" class="btn-equip">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon1.png'}" style="color: green; font-weight: bold;">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon1.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon1.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-buy" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' btn-disabled'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Icon 2 -->
+                <div class="shop-item">
+                    <img src="/images/icon2.png" alt="Icone 2">
+                    <h3>Icone Super</h3>
+                    <p>Coût : 200 points</p>
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon2.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon2.png'}">
+                            <input type="hidden" name="iconName" value="icon2.png">
+                            <button type="submit" class="btn-equip">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon2.png'}" style="color: green; font-weight: bold;">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon2.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon2.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-buy" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' btn-disabled'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Icon 3 -->
+                <div class="shop-item">
+                    <img src="/images/icon3.png" alt="Icone 3">
+                    <h3>Icone 3</h3>
+                    <p>Coût : 200 points</p>
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon3.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon3.png'}">
+                            <input type="hidden" name="iconName" value="icon3.png">
+                            <button type="submit" class="btn-equip">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon3.png'}" style="color: green; font-weight: bold;">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon3.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon3.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-buy" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' btn-disabled'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Default Icon (Always unlocked) -->
+                <div class="shop-item">
+                    <img src="/images/default.png" alt="Défaut">
+                    <h3>Classique</h3>
+                    <p>Gratuit</p>
+                    <div th:if="${user.icon != 'default.png'}">
+                        <form action="/shop/equip" method="post">
+                            <input type="hidden" name="iconName" value="default.png">
+                            <button type="submit" class="btn-equip">Équiper</button>
+                        </form>
+                    </div>
+                    <span th:if="${user.icon == 'default.png'}" style="color: green; font-weight: bold;">Équipé</span>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</th:block>
+
+</html>

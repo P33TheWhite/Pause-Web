@@ -16,6 +16,9 @@ public class Inscription {
 
     private Double montantAPayer;
 
+    private Integer pointsUtilises = 0;
+    private Double montantReductionVoucher = 0.0;
+
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
@@ -93,5 +96,21 @@ public class Inscription {
 
     public void setMontantAPayer(Double montantAPayer) {
         this.montantAPayer = montantAPayer;
+    }
+
+    public Integer getPointsUtilises() {
+        return pointsUtilises;
+    }
+
+    public void setPointsUtilises(Integer pointsUtilises) {
+        this.pointsUtilises = pointsUtilises;
+    }
+
+    public Double getMontantReductionVoucher() {
+        return montantReductionVoucher;
+    }
+
+    public void setMontantReductionVoucher(Double montantReductionVoucher) {
+        this.montantReductionVoucher = montantReductionVoucher;
     }
 }
