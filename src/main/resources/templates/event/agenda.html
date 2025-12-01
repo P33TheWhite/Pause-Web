@@ -10,10 +10,6 @@
 
             <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-            <div th:if="${session.user != null}" class="mb-4">
-                <a href="/event/new" class="btn btn-outline-dark">+ Proposer un événement</a>
-            </div>
         </div>
 
         <div class="container mb-5">
@@ -55,11 +51,6 @@
                                 <span class="fw-bold" style="color: var(--couleur-asso-bg);"
                                     th:if="${!session.user.estCotisant}" th:text="${event.prixNonCotisant} + ' €'">0
                                     €</span>
-
-                                <div th:if="${session.user.points != null && session.user.points > 5 && userStatus.get(event.id) == 'NONE'}"
-                                    class="mt-1">
-                                    <span class="badge bg-warning text-dark">Réduction VIP disponible (-1€)</span>
-                                </div>
                             </div>
                             <div th:if="${session.user == null}">
                                 <small class="text-muted">Cotisant: <span th:text="${event.prixCotisant} + '€'"></span>
@@ -69,20 +60,6 @@
                             <div th:if="${session.user != null}">
                                 <div th:if="${userStatus.get(event.id) == 'REGISTERED'}">
                                     <button class="btn btn-sm btn-success" disabled>Inscrit ✅</button>
-
-                                    <div class="mt-2 mb-2">
-                                        <span class="text-muted">Montant à régler : </span>
-                                        <span class="fw-bold" th:text="${userPrices.get(event.id)} + ' €'">0 €</span>
-
-                                        <!-- Check if price is discounted (VIP) -->
-                                        <span
-                                            th:if="${session.user.estCotisant && userPrices.get(event.id) < event.prixCotisant}"
-                                            class="badge bg-warning text-dark ms-1">Réduction VIP -1€</span>
-                                        <span
-                                            th:if="${!session.user.estCotisant && userPrices.get(event.id) < event.prixNonCotisant}"
-                                            class="badge bg-warning text-dark ms-1">Réduction VIP -1€</span>
-                                    </div>
-
                                     <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
                                         th:href="${event.lienPaiement}" target="_blank"
                                         class="btn btn-sm btn-primary ms-1">Payer 💳</a>

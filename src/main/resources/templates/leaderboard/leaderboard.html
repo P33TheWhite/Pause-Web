@@ -50,7 +50,7 @@
 
             .top-3 {
                 background-color: #fff8e1;
-                /* Gold-ish tint for top 3 */
+
             }
         </style>
 
@@ -75,6 +75,7 @@
                         </td>
                         <td>
                             <img th:src="@{'/images/' + ${user.icon}}" alt="Icon" class="rank-icon">
+                            <span th:if="${user.points > 5}" title="VIP">⭐</span>
                             <span th:text="${user.prenom} + ' ' + ${user.nom}">Jean Dupont</span>
                         </td>
                         <td th:text="${user.pointsAllTime}">1500</td>

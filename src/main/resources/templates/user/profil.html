@@ -6,7 +6,7 @@
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
         <div class="row">
-            <!-- Left Column: Profile Card -->
+
             <div class="col-md-4 mb-4">
                 <div class="card shadow text-center p-4">
                     <div class="mx-auto mb-3">
@@ -42,10 +42,10 @@
                 </div>
             </div>
 
-            <!-- Right Column: Actions -->
+
             <div class="col-md-8">
 
-                <!-- Cotisation Section -->
+
                 <div class="card shadow mb-4" th:if="${!user.estCotisant}">
                     <div class="card-header bg-warning text-dark">
                         <h5 class="mb-0">Devenir Cotisant</h5>
@@ -68,33 +68,79 @@
                     </div>
                 </div>
 
-                <!-- Password Change Section -->
-                <div class="card shadow">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0">Sécurité</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="/profil/change-password" method="post">
-                            <div class="mb-3">
-                                <label class="form-label">Ancien mot de passe</label>
-                                <input type="password" name="oldPassword" class="form-control" required>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nouveau mot de passe</label>
-                                    <input type="password" name="newPassword" class="form-control" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Confirmer le mot de passe</label>
-                                    <input type="password" name="confirmPassword" class="form-control" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-outline-dark">Modifier mon mot de passe</button>
-                        </form>
-                    </div>
-                </div>
-
+                </form>
             </div>
+        </div>
+
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Mes Événements</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${inscriptions.isEmpty()}" class="alert alert-info mb-0">
+                    Vous n'êtes inscrit à aucun événement pour le moment.
+                    <a href="/agenda" class="alert-link">Voir l'agenda</a>
+                </div>
+                <div th:if="${!inscriptions.isEmpty()}" class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Événement</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Prix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ins : ${inscriptions}">
+                                <td class="fw-bold" th:text="${ins.evenement.titre}">Soirée</td>
+                                <td th:text="${#temporals.format(ins.evenement.date, 'dd/MM/yyyy')}">01/01/2025
+                                </td>
+                                <td>
+                                    <span th:if="${!ins.enAttente}" class="badge bg-success">Inscrit ✅</span>
+                                    <span th:if="${ins.enAttente}" class="badge bg-warning text-dark">En attente
+                                        ⏳</span>
+                                </td>
+                                <td>
+                                    <span th:if="${ins.montantAPayer != null}" th:text="${ins.montantAPayer} + ' €'">10
+                                        €</span>
+                                    <span th:if="${ins.montantAPayer == null}" class="text-muted">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card shadow">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Sécurité</h5>
+            </div>
+            <div class="card-body">
+                <form action="/profil/change-password" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Ancien mot de passe</label>
+                        <input type="password" name="oldPassword" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nouveau mot de passe</label>
+                            <input type="password" name="newPassword" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirmer le mot de passe</label>
+                            <input type="password" name="confirmPassword" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-dark">Modifier mon mot de passe</button>
+                </form>
+            </div>
+        </div>
+
+        </div>
         </div>
     </main>
 </th:block>

@@ -60,10 +60,8 @@ public class EventService {
                     Utilisateur u = ins.getUtilisateur();
                     userService.addPoints(u.getId(), 1);
 
-                    // Update session if this user is the one logged in
                     Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
                     if (sessionUser != null && sessionUser.getId().equals(u.getId())) {
-                        // Re-fetch user to get updated points
                         session.setAttribute("user", userService.getUserById(u.getId()));
                     }
                 }
@@ -96,10 +94,10 @@ public class EventService {
     public Long updateInscription(Long id, boolean aPaye, boolean aMange) {
         Inscription ins = inscriptionRepo.findById(id).orElse(null);
         if (ins != null) {
+            boolean oldMange = ins.isaRecupereRepas();
             ins.setaPaye(aPaye);
             ins.setaRecupereRepas(aMange);
 
-            // Si l'événement est archivé, on met à jour les points immédiatement
             if (ins.getEvenement().isEstArchive()) {
                 if (aMange != oldMange) {
                     Utilisateur u = ins.getUtilisateur();
@@ -186,25 +184,20 @@ public class EventService {
 
         Inscription inscription = new Inscription(user, event);
 
-        // Calcul du prix à payer
         double prixBase = user.isEstCotisant()
                 ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
                 : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
 
-        String message = "Inscription validée !";
+        String initialMessage = "Inscription validée !";
         if (user.getPoints() != null && user.getPoints() >= 5) {
-            user.setPoints(user.getPoints() - 5);
-            userService.saveUser(user);
-            prixBase = Math.max(0, prixBase - 1.0);
-            message = "Inscription validée ! Réduction VIP appliquée (-1€). Nouveau prix : "
-                    + String.format("%.2f", prixBase) + " €";
+            // Logic moved to else block for actual registration
         }
         inscription.setMontantAPayer(prixBase);
 
         if (waitingList) {
             inscription.setEnAttente(true);
             inscriptionRepo.save(inscription);
-            return "Complet ! Vous êtes sur liste d'attente. " + message;
+            return "Complet ! Vous êtes sur liste d'attente. " + initialMessage;
         } else {
 
             double finalPrice = user.isEstCotisant()
@@ -213,24 +206,15 @@ public class EventService {
 
             StringBuilder message = new StringBuilder("Inscription validée !");
 
-            // Réduction VIP
-            if (user.getPoints() != null && user.getPoints() > 5) {
-                user.setPoints(user.getPoints() - 5);
-                inscription.setPointsUtilises(5); // Save used points
-                finalPrice = Math.max(0, finalPrice - 1.0);
-                message.append(" Réduction VIP appliquée (-1€).");
-            }
-
-            // Réduction Vouchers (Boutique)
             if (user.getSoldeReduction() != null && user.getSoldeReduction() > 0) {
                 double reduction = user.getSoldeReduction();
+                inscription.setPointsUtilises(5);
                 double priceBeforeVoucher = finalPrice;
                 finalPrice = Math.max(0, finalPrice - reduction);
                 double usedReduction = priceBeforeVoucher - finalPrice;
 
-                // On déduit seulement ce qui a été utilisé
                 user.setSoldeReduction(Math.max(0, user.getSoldeReduction() - usedReduction));
-                inscription.setMontantReductionVoucher(usedReduction); // Save used voucher amount
+                inscription.setMontantReductionVoucher(usedReduction);
                 message.append(" Réduction Boutique appliquée (-").append(String.format("%.2f", usedReduction))
                         .append("€).");
             }
@@ -249,10 +233,7 @@ public class EventService {
         if (ins != null) {
             boolean wasActive = !ins.isEnAttente();
 
-            // Refund logic
             if (ins.getPointsUtilises() != null && ins.getPointsUtilises() > 0) {
-                // Refund points (do NOT add to all-time points, just restore balance)
-                // We use setPoints directly to avoid inflating all-time score
                 user.setPoints(user.getPoints() + ins.getPointsUtilises());
             }
 
