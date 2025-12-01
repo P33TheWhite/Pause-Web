@@ -18,6 +18,7 @@ public class Utilisateur implements Serializable {
     private String classe; // "Ing1"
     private boolean estCotisant; // Pour la gestion Admin
     private boolean demandeCotisationEnCours;
+    private boolean vip;
 
     private Integer points = 0;
     private Integer pointsAllTime = 0;
@@ -105,6 +106,14 @@ public class Utilisateur implements Serializable {
 
     public void setDemandeCotisationEnCours(boolean demandeCotisationEnCours) {
         this.demandeCotisationEnCours = demandeCotisationEnCours;
+    }
+
+    public boolean isVip() {
+        return vip;
+    }
+
+    public void setVip(boolean vip) {
+        this.vip = vip;
     }
 
     public Integer getPoints() {
