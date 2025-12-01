@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main})}">
+
+    <main>
+        <!-- Hero Section for Gallery -->
+        <div class="gallery-hero d-flex align-items-center justify-content-center">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bold mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Galerie Photo</h1>
+                <p class="lead" style="font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">
+                    Nos derniers événements en images
+                </p>
+            </div>
+        </div>
+
+        <div class="container my-5">
+
+            <!-- 4 Box Carousel / Feature Cards -->
+            <div class="row g-4 justify-content-center">
+
+                <!-- Card 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="event-card shadow-sm">
+                        <img th:src="@{/img/bg-hero.png}" alt="Event 1" class="event-card-img">
+                        <div class="event-card-overlay">
+                            <div class="event-card-content">
+                                <h5 class="fw-bold text-warning">Soirée d'Intégration</h5>
+                                <p class="small text-white mb-0">Une soirée inoubliable pour accueillir les nouveaux !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="event-card shadow-sm">
+                        <img th:src="@{/img/logo-carre.jpg}" alt="Event 2" class="event-card-img">
+                        <div class="event-card-overlay">
+                            <div class="event-card-content">
+                                <h5 class="fw-bold text-warning">Repas de Noël</h5>
+                                <p class="small text-white mb-0">Dinde, marrons et bonne humeur au programme.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="event-card shadow-sm">
+                        <img th:src="@{/img/bg-hero.png}" alt="Event 3" class="event-card-img"
+                            style="filter: hue-rotate(90deg);">
+                        <div class="event-card-overlay">
+                            <div class="event-card-content">
+                                <h5 class="fw-bold text-warning">Afterwork Jeux</h5>
+                                <p class="small text-white mb-0">Détente autour de jeux de société et de snacks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="event-card shadow-sm">
+                        <img th:src="@{/img/logo-carre.jpg}" alt="Event 4" class="event-card-img"
+                            style="filter: sepia(0.5);">
+                        <div class="event-card-overlay">
+                            <div class="event-card-content">
+                                <h5 class="fw-bold text-warning">Buffet de Fin d'Année</h5>
+                                <p class="small text-white mb-0">On finit l'année en beauté avec un festin !</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- More photos section (Optional, keeping it simple for now as requested) -->
+            <div class="text-center mt-5">
+                <p class="text-muted">Retrouvez toutes nos photos sur notre page Instagram !</p>
+                <a href="#" class="btn btn-outline-asso">
+                    <i class="bi bi-instagram"></i> Suivez-nous
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+</th:block>
+
+</html>
