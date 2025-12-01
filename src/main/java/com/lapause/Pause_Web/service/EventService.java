@@ -96,11 +96,10 @@ public class EventService {
     public Long updateInscription(Long id, boolean aPaye, boolean aMange) {
         Inscription ins = inscriptionRepo.findById(id).orElse(null);
         if (ins != null) {
-            boolean oldMange = ins.isaRecupereRepas();
             ins.setaPaye(aPaye);
             ins.setaRecupereRepas(aMange);
-            inscriptionRepo.save(ins);
 
+            // Si l'événement est archivé, on met à jour les points immédiatement
             if (ins.getEvenement().isEstArchive()) {
                 if (aMange != oldMange) {
                     Utilisateur u = ins.getUtilisateur();
@@ -111,9 +110,19 @@ public class EventService {
                     }
                 }
             }
+
+            inscriptionRepo.save(ins);
             return ins.getEvenement().getId();
         }
         return null;
+    }
+
+    public void updateEventCost(Long id, Double cost) {
+        Evenement evt = eventRepo.findById(id).orElse(null);
+        if (evt != null) {
+            evt.setCoutCourses(cost);
+            eventRepo.save(evt);
+        }
     }
 
     public Map<Long, Integer> getPlacesRestantes(List<Evenement> events) {
@@ -176,12 +185,28 @@ public class EventService {
         boolean waitingList = event.getNbPlacesMax() != null && currentInscrits >= event.getNbPlacesMax();
 
         Inscription inscription = new Inscription(user, event);
-        inscription.setEnAttente(waitingList);
+
+        // Calcul du prix à payer
+        double prixBase = user.isEstCotisant()
+                ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
+                : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
+
+        String message = "Inscription validée !";
+        if (user.getPoints() != null && user.getPoints() >= 5) {
+            user.setPoints(user.getPoints() - 5);
+            userService.saveUser(user);
+            prixBase = Math.max(0, prixBase - 1.0);
+            message = "Inscription validée ! Réduction VIP appliquée (-1€). Nouveau prix : "
+                    + String.format("%.2f", prixBase) + " €";
+        }
+        inscription.setMontantAPayer(prixBase);
 
         if (waitingList) {
+            inscription.setEnAttente(true);
             inscriptionRepo.save(inscription);
-            return "Complet ! Vous êtes sur liste d'attente.";
+            return "Complet ! Vous êtes sur liste d'attente. " + message;
         } else {
+
             double finalPrice = user.isEstCotisant()
                     ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
                     : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);

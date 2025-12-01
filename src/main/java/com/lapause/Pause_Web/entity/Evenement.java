@@ -26,6 +26,8 @@ public class Evenement {
 
     private Integer nbPlacesMax;
 
+    private Double coutCourses = 0.0;
+
     private boolean estArchive = false;
 
     @OneToMany(mappedBy = "evenement", cascade = CascadeType.ALL)
@@ -140,5 +142,13 @@ public class Evenement {
 
     public void setTypes(List<TypeEvenement> types) {
         this.types = types;
+    }
+
+    public Double getCoutCourses() {
+        return coutCourses;
+    }
+
+    public void setCoutCourses(Double coutCourses) {
+        this.coutCourses = coutCourses;
     }
 }

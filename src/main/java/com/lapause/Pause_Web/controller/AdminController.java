@@ -4,6 +4,7 @@ import com.lapause.Pause_Web.entity.Evenement;
 import com.lapause.Pause_Web.entity.Photo;
 import com.lapause.Pause_Web.service.EventService;
 import com.lapause.Pause_Web.service.FileStorageService;
+import com.lapause.Pause_Web.service.FinanceService;
 import com.lapause.Pause_Web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,7 +27,50 @@ public class AdminController {
     private EventService eventService;
 
     @Autowired
+    private FinanceService financeService;
+
+    @Autowired
     private FileStorageService fileStorageService;
+
+    @GetMapping("/finance")
+    public String showFinance(Model model) {
+        Map<String, Object> globalStats = financeService.getGlobalStats();
+        Map<Long, Map<String, Double>> eventStats = financeService.getEventStats();
+        List<Evenement> events = eventService.getAllActiveEvents();
+        events.addAll(eventService.getAllArchivedEvents());
+
+        // Prepare data for Chart.js
+        List<String> labels = new java.util.ArrayList<>();
+        List<Double> dataRecolte = new java.util.ArrayList<>();
+        List<Double> dataTheorique = new java.util.ArrayList<>();
+        List<Double> dataDepenses = new java.util.ArrayList<>();
+        List<Double> dataBenefice = new java.util.ArrayList<>();
+
+        for (Evenement evt : events) {
+            labels.add(evt.getTitre());
+            Map<String, Double> stats = eventStats.get(evt.getId());
+            if (stats != null) {
+                dataRecolte.add(stats.get("recolte"));
+                dataTheorique.add(stats.get("theorique"));
+                dataDepenses.add(stats.get("depenses"));
+                dataBenefice.add(stats.get("benefice"));
+            } else {
+                dataRecolte.add(0.0);
+                dataTheorique.add(0.0);
+                dataDepenses.add(0.0);
+                dataBenefice.add(0.0);
+            }
+        }
+
+        model.addAttribute("globalStats", globalStats);
+        model.addAttribute("chartLabels", labels);
+        model.addAttribute("chartRecolte", dataRecolte);
+        model.addAttribute("chartTheorique", dataTheorique);
+        model.addAttribute("chartDepenses", dataDepenses);
+        model.addAttribute("chartBenefice", dataBenefice);
+
+        return "admin/finance";
+    }
 
     @GetMapping
     public String adminDashboard(Model model) {
@@ -82,6 +127,12 @@ public class AdminController {
             return "redirect:/admin/event/" + eventId;
         }
         return "redirect:/admin";
+    }
+
+    @PostMapping("/event/{id}/update-cost")
+    public String updateCost(@PathVariable Long id, @RequestParam Double coutCourses) {
+        eventService.updateEventCost(id, coutCourses);
+        return "redirect:/admin/event/" + id;
     }
 
     @GetMapping("/event/new")
