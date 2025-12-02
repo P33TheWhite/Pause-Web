@@ -33,11 +33,35 @@ public class AdminController {
     private FileStorageService fileStorageService;
 
     @GetMapping("/finance")
-    public String showFinance(Model model) {
-        Map<String, Object> globalStats = financeService.getGlobalStats();
-        Map<Long, Map<String, Double>> eventStats = financeService.getEventStats();
-        List<Evenement> events = eventService.getAllActiveEvents();
-        events.addAll(eventService.getAllArchivedEvents());
+    public String showFinance(Model model,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Long eventId,
+            @RequestParam(required = false, defaultValue = "all") String status) {
+
+        // Get all events first
+        List<Evenement> allEvents = eventService.getAllActiveEvents();
+        allEvents.addAll(eventService.getAllArchivedEvents());
+
+        // Filter the list of events to display AND calculate stats
+        List<Evenement> displayedEvents = allEvents.stream()
+                .filter(e -> {
+                    boolean matchYear = (year == null || e.getDate().getYear() == year);
+                    boolean matchEvent = (eventId == null || e.getId().equals(eventId));
+                    boolean matchStatus = true;
+
+                    if ("archived".equals(status)) {
+                        matchStatus = e.isEstArchive();
+                    } else if ("active".equals(status)) {
+                        matchStatus = !e.isEstArchive();
+                    }
+                    // if "all", matchStatus remains true
+
+                    return matchYear && matchEvent && matchStatus;
+                })
+                .toList();
+
+        Map<String, Object> globalStats = financeService.getGlobalStats(displayedEvents);
+        Map<Long, Map<String, Double>> eventStats = financeService.getEventStats(displayedEvents);
 
         List<String> labels = new java.util.ArrayList<>();
         List<Double> dataRecolte = new java.util.ArrayList<>();
@@ -45,7 +69,7 @@ public class AdminController {
         List<Double> dataDepenses = new java.util.ArrayList<>();
         List<Double> dataBenefice = new java.util.ArrayList<>();
 
-        for (Evenement evt : events) {
+        for (Evenement evt : displayedEvents) {
             labels.add(evt.getTitre());
             Map<String, Double> stats = eventStats.get(evt.getId());
             if (stats != null) {
@@ -61,14 +85,28 @@ public class AdminController {
             }
         }
 
+        // Get unique years for the filter dropdown
+        List<Integer> years = allEvents.stream()
+                .map(e -> e.getDate().getYear())
+                .distinct()
+                .sorted(java.util.Comparator.reverseOrder())
+                .toList();
+
         model.addAttribute("globalStats", globalStats);
-        model.addAttribute("events", events);
+        model.addAttribute("events", displayedEvents);
         model.addAttribute("eventStats", eventStats);
         model.addAttribute("chartLabels", labels);
         model.addAttribute("chartRecolte", dataRecolte);
         model.addAttribute("chartTheorique", dataTheorique);
         model.addAttribute("chartDepenses", dataDepenses);
         model.addAttribute("chartBenefice", dataBenefice);
+
+        // Filter attributes
+        model.addAttribute("allEvents", allEvents);
+        model.addAttribute("years", years);
+        model.addAttribute("selectedYear", year);
+        model.addAttribute("selectedEventId", eventId);
+        model.addAttribute("selectedStatus", status);
 
         return "admin/finance";
     }

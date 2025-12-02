@@ -2,7 +2,7 @@ package com.lapause.Pause_Web.service;
 
 import com.lapause.Pause_Web.entity.Evenement;
 import com.lapause.Pause_Web.entity.Inscription;
-import com.lapause.Pause_Web.repository.EvenementRepository;
+
 import com.lapause.Pause_Web.repository.InscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,9 @@ import java.util.Map;
 public class FinanceService {
 
     @Autowired
-    private EvenementRepository eventRepo;
-
-    @Autowired
     private InscriptionRepository inscriptionRepo;
 
-    public Map<String, Object> getGlobalStats() {
-        List<Evenement> events = eventRepo.findAll();
+    public Map<String, Object> getGlobalStats(List<Evenement> events) {
         double totalRecolte = 0;
         double totalTheorique = 0;
         double totalDepenses = 0;
@@ -49,8 +45,7 @@ public class FinanceService {
         return stats;
     }
 
-    public Map<Long, Map<String, Double>> getEventStats() {
-        List<Evenement> events = eventRepo.findAll();
+    public Map<Long, Map<String, Double>> getEventStats(List<Evenement> events) {
         Map<Long, Map<String, Double>> eventStats = new HashMap<>();
 
         for (Evenement evt : events) {

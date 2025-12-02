@@ -18,6 +18,45 @@
             </div>
         </div>
 
+        <!-- Filters -->
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body">
+                <form method="get" action="/admin/finance" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Statut</label>
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="all" th:selected="${selectedStatus == 'all'}">Tous les événements</option>
+                            <option value="active" th:selected="${selectedStatus == 'active'}">Actifs uniquement
+                            </option>
+                            <option value="archived" th:selected="${selectedStatus == 'archived'}">Archivés uniquement
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Année</label>
+                        <select name="year" class="form-select" onchange="this.form.submit()">
+                            <option value="">Toutes les années</option>
+                            <option th:each="y : ${years}" th:value="${y}" th:text="${y}"
+                                th:selected="${y == selectedYear}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Événement</label>
+                        <select name="eventId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tous les événements</option>
+                            <option th:each="e : ${allEvents}" th:value="${e.id}" th:text="${e.titre}"
+                                th:selected="${e.id == selectedEventId}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a href="/admin/finance" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i>Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Global Stats Cards -->
         <div class="row g-4 mb-5">
             <!-- Total Recettes -->
