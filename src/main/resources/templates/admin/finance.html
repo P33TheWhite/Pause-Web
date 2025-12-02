@@ -2,50 +2,169 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <main class="container mt-4">
-        <h1>Tableau de Bord Financier</h1>
+    <main class="container-fluid px-4 py-5">
 
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card shadow border-success">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-success">Total Récolté</h5>
-                        <h2 th:text="${globalStats.totalRecolte} + ' €'">0 €</h2>
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="display-5 fw-bold text-dark mb-0">Finance</h1>
+                <p class="text-muted lead">Suivi de la trésorerie et des événements</p>
+            </div>
+            <div>
+                <a href="/admin" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Retour
+                </a>
+            </div>
+        </div>
+
+        <!-- Global Stats Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Total Recettes -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold text-success mb-1 small">Total Recettes</p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(globalStats.totalRecolte, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €</h2>
+                            </div>
+                            <div class="icon-shape bg-success bg-opacity-10 text-success rounded-3 p-3">
+                                <i class="bi bi-graph-up-arrow fs-4"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow border-danger">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-danger">Total Dépenses</h5>
-                        <h2 th:text="${globalStats.totalDepenses} + ' €'">0 €</h2>
+
+            <!-- Total Dépenses -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold text-danger mb-1 small">Total Dépenses</p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(globalStats.totalDepenses, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €</h2>
+                            </div>
+                            <div class="icon-shape bg-danger bg-opacity-10 text-danger rounded-3 p-3">
+                                <i class="bi bi-cart-x fs-4"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow border-primary">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-primary">Bénéfice Net</h5>
-                        <h2 th:text="${globalStats.benefice} + ' €'">0 €</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow border-warning">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-warning">Manque à Gagner</h5>
-                        <h2 th:text="${globalStats.totalManquant} + ' €'">0 €</h2>
+
+            <!-- Résultat Net -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold mb-1 small"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'text-primary' : 'text-warning'">
+                                    Résultat Net
+                                </p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'text-primary' : 'text-warning'"
+                                    th:text="${(globalStats.benefice >= 0 ? '+' : '') + #numbers.formatDecimal(globalStats.benefice, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    +0,00 €
+                                </h2>
+                            </div>
+                            <div class="icon-shape rounded-3 p-3"
+                                th:classappend="${globalStats.benefice >= 0} ? 'bg-primary bg-opacity-10 text-primary' : 'bg-warning bg-opacity-10 text-warning'">
+                                <i class="bi"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'bi-wallet2' : 'bi-exclamation-triangle'"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5>Analyse Financière par Événement</h5>
+        <!-- Detailed Table Section -->
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Détail par Événement</h5>
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#chartCollapse" aria-expanded="false" aria-controls="chartCollapse">
+                    <i class="bi bi-bar-chart-line me-1"></i>Voir le Graphique
+                </button>
             </div>
-            <div class="card-body">
-                <canvas id="financeChart" width="400" height="200"></canvas>
+
+            <!-- Collapsible Chart -->
+            <div class="collapse" id="chartCollapse">
+                <div class="card-body border-bottom">
+                    <canvas id="financeChart" width="100%" height="30"></canvas>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase small text-muted">
+                            <tr>
+                                <th class="ps-4 py-3">Événement</th>
+                                <th class="py-3">Date</th>
+                                <th class="py-3 text-end">Coût (Courses)</th>
+                                <th class="py-3 text-end">Recettes</th>
+                                <th class="py-3 text-center">Résultat</th>
+                                <th class="pe-4 py-3 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="event : ${events}">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="bi bi-calendar-event text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark" th:text="${event.titre}">Nom de
+                                                l'événement</h6>
+                                            <small class="text-muted" th:if="${event.estArchive}">Archivé</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">01 Jan
+                                    2024</td>
+
+                                <!-- Financial Data -->
+                                <td class="text-end fw-medium text-danger"
+                                    th:text="${#numbers.formatDecimal(eventStats.get(event.id).get('depenses'), 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €
+                                </td>
+                                <td class="text-end fw-medium text-success"
+                                    th:text="${#numbers.formatDecimal(eventStats.get(event.id).get('recolte'), 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €
+                                </td>
+
+                                <!-- Result Badge -->
+                                <td class="text-center">
+                                    <span class="badge rounded-pill px-3 py-2"
+                                        th:with="benefice=${eventStats.get(event.id).get('benefice')}"
+                                        th:classappend="${benefice >= 0} ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                        <i class="bi me-1"
+                                            th:classappend="${benefice >= 0} ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                                        <span
+                                            th:text="${(benefice >= 0 ? '+' : '') + #numbers.formatDecimal(benefice, 1, 'COMMA', 2, 'POINT')} + ' €'">+0,00
+                                            €</span>
+                                    </span>
+                                </td>
+
+                                <td class="pe-4 text-end">
+                                    <a th:href="@{/admin/event/{id}(id=${event.id})}"
+                                        class="btn btn-sm btn-light text-dark border">
+                                        Gérer <i class="bi bi-chevron-right ms-1 small"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -63,33 +182,43 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Récolté (€)',
+                            label: 'Recettes (€)',
                             data: dataRecolte,
-                            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                            borderColor: 'rgba(40, 167, 69, 1)',
-                            borderWidth: 1
+                            backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                            borderColor: 'rgba(25, 135, 84, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
                         },
                         {
                             label: 'Dépenses (€)',
                             data: dataDepenses,
                             backgroundColor: 'rgba(220, 53, 69, 0.7)',
                             borderColor: 'rgba(220, 53, 69, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Bénéfice (€)',
-                            data: dataBenefice,
-                            backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                            borderColor: 'rgba(0, 123, 255, 1)',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            borderRadius: 4
                         }
                     ]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [2, 4],
+                                color: '#e9ecef'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }

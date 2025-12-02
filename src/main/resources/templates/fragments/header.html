@@ -20,11 +20,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
 
-
                     <li class="nav-item">
                         <a class="nav-link" href="/">Accueil</a>
                     </li>
-
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -34,23 +32,8 @@
                         <ul class="dropdown-menu animate slideIn">
                             <li><a class="dropdown-item" href="/equipe">Notre Équipe</a></li>
                             <li><a class="dropdown-item" href="/photos">Galerie Photos</a></li>
-
-
-                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Bureau</h6>
-                            </li>
-                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                                <a class="dropdown-item" href="/admin/finance">Finance</a>
-                            </li>
-                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                                <a class="dropdown-item" href="/admin/archives">Archives</a>
-                            </li>
                         </ul>
                     </li>
-
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -69,6 +52,26 @@
 
                     <li class="nav-item d-none d-lg-block mx-2 text-white-50">|</li>
 
+                    <li class="nav-item dropdown" th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                        <a class="nav-link dropdown-toggle btn-bureau-tab" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Bureau
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Administration</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="/admin">Tableau de Bord</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Gestion</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/finance">Finance</a></li>
+                            <li><a class="dropdown-item" href="/admin/archives">Archives</a></li>
+                        </ul>
+                    </li>
 
                     <li class="nav-item" th:if="${session.user == null}">
                         <a class="nav-link btn-nav-login ms-2" href="/login">
@@ -79,7 +82,6 @@
                             Connexion
                         </a>
                     </li>
-
 
                     <li class="nav-item dropdown" th:if="${session.user != null}">
                         <a class="nav-link dropdown-toggle ms-2 d-flex align-items-center gap-2" href="#" role="button"
@@ -107,17 +109,6 @@
                                             d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-2.855l-.27-.477a.644.644 0 0 0-.063-.082 2.998 2.998 0 0 0-2.313-1.077H6.422a2.998 2.998 0 0 0-2.313 1.078l-.071.125a.642.642 0 0 0-.063.082l-.269.477A4.2 4.2 0 0 0 3 13.295V2.5z" />
                                     </svg>
                                     Mon Profil
-                                </a>
-                            </li>
-
-                            <li th:if="${session.user.classe == 'Bureau'}">
-                                <a class="dropdown-item" href="/admin">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-gear-fill me-2" viewBox="0 0 16 16">
-                                        <path
-                                            d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.86z" />
-                                    </svg>
-                                    Administration
                                 </a>
                             </li>
 
