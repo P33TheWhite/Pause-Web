@@ -161,4 +161,12 @@ public class UserService {
             utilisateurRepository.save(user);
         }
     }
+
+    public void becomeStaff(Long userId) {
+        Utilisateur user = getUserById(userId);
+        if (user != null) {
+            user.setEstStaffeur(true);
+            utilisateurRepository.save(user);
+        }
+    }
 }

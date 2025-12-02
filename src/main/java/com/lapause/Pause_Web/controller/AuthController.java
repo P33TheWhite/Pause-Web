@@ -101,4 +101,15 @@ public class AuthController {
         }
         return "redirect:/profil";
     }
+
+    @PostMapping("/profil/join-staff")
+    public String joinStaff(HttpSession session, RedirectAttributes redirectAttributes) {
+        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        if (sessionUser != null) {
+            userService.becomeStaff(sessionUser.getId());
+            session.setAttribute("user", userService.getUserById(sessionUser.getId()));
+            redirectAttributes.addFlashAttribute("success", "Félicitations ! Vous avez rejoint l'équipe Staff.");
+        }
+        return "redirect:/";
+    }
 }

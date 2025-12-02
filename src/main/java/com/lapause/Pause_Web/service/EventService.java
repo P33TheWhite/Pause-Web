@@ -178,6 +178,34 @@ public class EventService {
         return status;
     }
 
+    public Map<Long, Boolean> getUserStaffStatus(Utilisateur user, List<Evenement> events) {
+        Map<Long, Boolean> staffStatus = new HashMap<>();
+        if (user != null) {
+            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
+            for (Inscription ins : inscriptions) {
+                staffStatus.put(ins.getEvenement().getId(), ins.isEstStaff());
+            }
+        }
+        for (Evenement evt : events) {
+            staffStatus.putIfAbsent(evt.getId(), false);
+        }
+        return staffStatus;
+    }
+
+    public Map<Long, Boolean> getUserStaffValidatedStatus(Utilisateur user, List<Evenement> events) {
+        Map<Long, Boolean> staffValidated = new HashMap<>();
+        if (user != null) {
+            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
+            for (Inscription ins : inscriptions) {
+                staffValidated.put(ins.getEvenement().getId(), ins.isStaffValide());
+            }
+        }
+        for (Evenement evt : events) {
+            staffValidated.putIfAbsent(evt.getId(), false);
+        }
+        return staffValidated;
+    }
+
     public Map<Long, Double> getUserPrices(Utilisateur user) {
         Map<Long, Double> prices = new HashMap<>();
         if (user != null) {
@@ -270,6 +298,11 @@ public class EventService {
                     user.setSoldeReduction(0.0);
                 user.setSoldeReduction(user.getSoldeReduction() + ins.getMontantReductionVoucher());
             }
+
+            if (ins.isStaffValide() && ins.getPointsGagnes() != null) {
+                userService.addPoints(user.getId(), -ins.getPointsGagnes());
+            }
+
             userService.saveUser(user);
 
             inscriptionRepo.delete(ins);
@@ -286,5 +319,96 @@ public class EventService {
             return "Désinscription prise en compte. Points et réductions remboursés.";
         }
         return "Inscription introuvable.";
+    }
+
+    public String registerStaff(Utilisateur user, Long eventId) {
+        Evenement event = getEventById(eventId);
+        if (event == null)
+            return "Event not found";
+
+        if (!user.isEstStaffeur())
+            return "Vous n'êtes pas staffeur.";
+
+        Inscription existing = inscriptionRepo.findByEvenementId(eventId).stream()
+                .filter(i -> i.getUtilisateur().getId().equals(user.getId()))
+                .findFirst().orElse(null);
+
+        if (existing != null) {
+            if (existing.isEstStaff())
+                return "Vous êtes déjà staff sur cet événement.";
+            existing.setEstStaff(true);
+            existing.setMontantAPayer(0.0);
+            inscriptionRepo.save(existing);
+            return "Inscription mise à jour : Vous êtes maintenant Staff !";
+        }
+
+        Inscription inscription = new Inscription(user, event);
+        inscription.setEstStaff(true);
+        inscription.setMontantAPayer(0.0);
+
+        inscriptionRepo.save(inscription);
+        return "Inscription Staff validée !";
+    }
+
+    public String removeStaff(Utilisateur user, Long eventId) {
+        Inscription existing = inscriptionRepo.findByEvenementId(eventId).stream()
+                .filter(i -> i.getUtilisateur().getId().equals(user.getId()))
+                .findFirst().orElse(null);
+
+        if (existing == null)
+            return "Inscription introuvable.";
+        if (!existing.isEstStaff())
+            return "Vous n'êtes pas staff sur cet événement.";
+
+        if (existing.isStaffValide()) {
+            if (existing.getPointsGagnes() != null) {
+                userService.addPoints(user.getId(), -existing.getPointsGagnes());
+            }
+            existing.setStaffValide(false);
+            existing.setPointsGagnes(null);
+        }
+
+        existing.setEstStaff(false);
+
+        // Recalculate price
+        double price = user.isEstCotisant()
+                ? (existing.getEvenement().getPrixCotisant() != null ? existing.getEvenement().getPrixCotisant() : 0.0)
+                : (existing.getEvenement().getPrixNonCotisant() != null ? existing.getEvenement().getPrixNonCotisant()
+                        : 0.0);
+
+        existing.setMontantAPayer(price);
+        inscriptionRepo.save(existing);
+        return "Vous n'êtes plus staff sur cet événement.";
+    }
+
+    public void validateStaffPoints(Long eventId) {
+        List<Inscription> staffInscriptions = inscriptionRepo.findByEvenementId(eventId).stream()
+                .filter(Inscription::isEstStaff)
+                .sorted((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < staffInscriptions.size(); i++) {
+            Inscription ins = staffInscriptions.get(i);
+            if (!ins.isStaffValide()) {
+                int points = 10;
+                if (i < 3)
+                    points = 50;
+                else if (i < 7)
+                    points = 30; // 4th, 5th, 6th, 7th (4 people)
+
+                ins.setStaffValide(true);
+                ins.setPointsGagnes(points);
+                inscriptionRepo.save(ins);
+
+                userService.addPoints(ins.getUtilisateur().getId(), points);
+            }
+        }
+    }
+
+    public void removeStaffByAdmin(Long eventId, Long userId) {
+        Inscription ins = inscriptionRepo.findByUtilisateurIdAndEvenementId(userId, eventId);
+        if (ins != null) {
+            inscriptionRepo.delete(ins);
+        }
     }
 }

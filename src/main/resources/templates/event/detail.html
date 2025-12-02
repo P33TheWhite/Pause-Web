@@ -74,11 +74,30 @@
 
                     <div th:if="${session.user != null}">
                         <div th:if="${estInscrit}">
-                            <div class="d-flex align-items-center mb-3">
-                                <button class="btn btn-success btn-lg me-2" disabled th:if="${!inscriptionEnAttente}">✅
+                            <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+                                <button class="btn btn-success btn-lg" disabled th:if="${!inscriptionEnAttente}">✅
                                     Vous êtes inscrit !</button>
-                                <button class="btn btn-warning btn-lg me-2" disabled th:if="${inscriptionEnAttente}">⏳
+                                <button class="btn btn-warning btn-lg" disabled th:if="${inscriptionEnAttente}">⏳
                                     En liste d'attente</button>
+
+                                <!-- Staff Toggle Buttons -->
+                                <div th:if="${session.user.estStaffeur}">
+                                    <!-- If registered but NOT staff yet -->
+                                    <form th:if="${!estStaff}" method="post"
+                                        th:action="@{/event/{id}/staff(id=${event.id})}">
+                                        <button type="submit" class="btn btn-outline-dark btn-lg">
+                                            <i class="bi bi-person-badge me-2"></i>Rejoindre en tant que Staffeur
+                                        </button>
+                                    </form>
+
+                                    <!-- If ALREADY staff -->
+                                    <form th:if="${estStaff}" method="post"
+                                        th:action="@{/event/{id}/unstaff(id=${event.id})}">
+                                        <button type="submit" class="btn btn-outline-warning btn-lg">
+                                            <i class="bi bi-person-x me-2"></i>Annuler le Staff
+                                        </button>
+                                    </form>
+                                </div>
 
                                 <form method="post" th:action="@{/event/{id}/unregister(id=${event.id})}">
                                     <button type="submit" class="btn btn-outline-danger btn-lg">Se désinscrire</button>
@@ -87,6 +106,16 @@
                         </div>
 
                         <form th:if="${!estInscrit}" method="post" th:action="@{/event/{id}/register(id=${event.id})}">
+
+                            <div th:if="${session.user.estStaffeur}" class="mb-3">
+                                <button type="submit" formaction="/event/{id}/staff"
+                                    class="btn btn-outline-dark btn-lg w-100">
+                                    <i class="bi bi-person-badge me-2"></i>Staffer cet événement
+                                </button>
+                                <div class="text-center small text-muted mt-1">En tant que staff, vous ne payez pas
+                                    l'entrée.</div>
+                            </div>
+
                             <button type="submit" class="btn btn-asso btn-lg"
                                 th:text="${event.nbPlacesMax != null && nbInscrits >= event.nbPlacesMax ? 'S''inscrire (Liste d''attente)' : 'S''inscrire sur le site'}">
                                 S'inscrire sur le site

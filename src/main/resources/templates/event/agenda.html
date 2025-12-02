@@ -26,12 +26,14 @@
                         </div>
 
                         <div class="card-body">
-                            <div class="mb-2">
-                                <span th:each="type : ${event.types}"
-                                    class="badge rounded-pill bg-warning text-dark me-1"
-                                    th:text="${type.libelle}">Type</span>
-                            </div>
-                            <h5 class="card-title fw-bold" th:text="${event.titre}">Titre Event</h5>
+                            <a th:href="@{/event/{id}(id=${event.id})}" class="text-decoration-none text-dark">
+                                <div class="mb-2">
+                                    <span th:each="type : ${event.types}"
+                                        class="badge rounded-pill bg-warning text-dark me-1"
+                                        th:text="${type.libelle}">Type</span>
+                                </div>
+                                <h5 class="card-title fw-bold" th:text="${event.titre}">Titre Event</h5>
+                            </a>
                             <p class="card-text text-muted">
                                 <span th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}">Date</span>
                                 <span th:if="${event.heureDebut != null}"
@@ -64,42 +66,82 @@
 
                             <div class="d-grid gap-2" th:if="${session.user != null}">
 
-                                <div th:if="${userStatus.get(event.id) == 'REGISTERED'}" class="d-flex gap-2">
-                                    <button
-                                        class="btn btn-success flex-grow-1 d-flex align-items-center justify-content-center gap-2"
-                                        disabled>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        Inscrit
-                                    </button>
+                                <div th:if="${userStatus.get(event.id) == 'REGISTERED'}"
+                                    class="d-flex flex-column gap-2">
 
-                                    <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
-                                        th:href="${event.lienPaiement}" target="_blank"
-                                        class="btn btn-outline-primary d-flex align-items-center gap-2"
-                                        title="Payer en ligne">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-credit-card-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4zm0 3v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7H0zm3 2h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" />
-                                        </svg>
-                                        Payer
-                                    </a>
-
-                                    <form th:action="@{/event/{id}/unregister(id=${event.id})}" method="post">
-                                        <button type="submit"
-                                            class="btn btn-outline-danger d-flex align-items-center justify-content-center"
-                                            title="Se désinscrire"
-                                            onclick="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?')">
+                                    <!-- Row 1: Status + Staff -->
+                                    <div class="d-flex gap-2">
+                                        <button th:if="${!userStaffValidatedStatus.get(event.id)}"
+                                            class="btn btn-success flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+                                            disabled>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                 <path
-                                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
                                             </svg>
+                                            Inscrit
                                         </button>
-                                    </form>
+
+                                        <button th:if="${userStaffValidatedStatus.get(event.id)}"
+                                            class="btn btn-warning flex-grow-1 d-flex align-items-center justify-content-center gap-2 text-dark fw-bold"
+                                            disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                            </svg>
+                                            Staff Validé
+                                        </button>
+
+                                        <!-- Staff Toggle (Compact) -->
+                                        <div th:if="${session.user.estStaffeur}">
+                                            <form th:if="${!userStaffStatus.get(event.id)}" method="post"
+                                                th:action="@{/event/{id}/staff(id=${event.id})}">
+                                                <button type="submit" class="btn btn-outline-dark"
+                                                    title="Rejoindre Staff">
+                                                    <i class="bi bi-person-badge"></i> Staff
+                                                </button>
+                                            </form>
+
+                                            <form
+                                                th:if="${userStaffStatus.get(event.id) && !userStaffValidatedStatus.get(event.id)}"
+                                                method="post" th:action="@{/event/{id}/unstaff(id=${event.id})}">
+                                                <button type="submit" class="btn btn-outline-warning"
+                                                    title="Annuler Staff">
+                                                    <i class="bi bi-person-x"></i> Stop Staff
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 2: Payment + Unsubscribe -->
+                                    <div class="d-flex gap-2">
+                                        <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
+                                            th:href="${event.lienPaiement}" target="_blank"
+                                            class="btn btn-outline-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+                                            title="Payer en ligne">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-credit-card-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4zm0 3v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7H0zm3 2h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" />
+                                            </svg>
+                                            Payer
+                                        </a>
+
+                                        <form th:action="@{/event/{id}/unregister(id=${event.id})}" method="post"
+                                            class="ms-auto">
+                                            <button type="submit"
+                                                class="btn btn-outline-danger d-flex align-items-center justify-content-center px-3"
+                                                title="Se désinscrire"
+                                                onclick="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
 
 

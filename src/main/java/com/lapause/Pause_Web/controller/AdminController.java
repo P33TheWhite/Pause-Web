@@ -158,7 +158,16 @@ public class AdminController {
             throw new RuntimeException("Event introuvable");
 
         model.addAttribute("event", event);
-        model.addAttribute("inscriptions", eventService.getInscriptionsForEvent(id));
+        model.addAttribute("event", event);
+        List<com.lapause.Pause_Web.entity.Inscription> allInscriptions = eventService.getInscriptionsForEvent(id);
+
+        List<com.lapause.Pause_Web.entity.Inscription> staffInscriptions = allInscriptions.stream()
+                .filter(com.lapause.Pause_Web.entity.Inscription::isEstStaff)
+                .sorted((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()))
+                .toList();
+
+        model.addAttribute("inscriptions", allInscriptions);
+        model.addAttribute("staffInscriptions", staffInscriptions);
         model.addAttribute("stats", eventService.getDetailedStats(id));
 
         String backLink = "finance".equals(source) ? "/admin/finance" : "/admin";
@@ -192,6 +201,18 @@ public class AdminController {
             redirect += "?source=" + source;
         }
         return redirect;
+    }
+
+    @PostMapping("/event/{id}/validate-staff")
+    public String validateStaff(@PathVariable Long id) {
+        eventService.validateStaffPoints(id);
+        return "redirect:/admin/event/" + id;
+    }
+
+    @PostMapping("/event/{id}/staff/{userId}/remove")
+    public String removeStaffByAdmin(@PathVariable Long id, @PathVariable Long userId) {
+        eventService.removeStaffByAdmin(id, userId);
+        return "redirect:/admin/event/" + id;
     }
 
     @GetMapping("/event/new")

@@ -175,6 +175,7 @@
                             <th>Email</th>
                             <th>Classe</th>
                             <th>Statut</th>
+                            <th>Staffeur</th>
                             <th>VIP</th>
                             <th class="text-end pe-4">Gestion</th>
                         </tr>
@@ -192,6 +193,10 @@
                                 <span th:if="${!u.estCotisant}" class="status-badge secondary">Non Cotisant</span>
                                 <span th:if="${u.demandeCotisationEnCours}" class="status-badge warning">En
                                     attente</span>
+                            </td>
+                            <td>
+                                <span th:if="${u.estStaffeur}" class="badge bg-dark text-white">OUI</span>
+                                <span th:if="${!u.estStaffeur}" class="text-muted small">-</span>
                             </td>
                             <td>
                                 <form method="post" th:action="@{/admin/user/{id}/toggle-vip(id=${u.id})}">

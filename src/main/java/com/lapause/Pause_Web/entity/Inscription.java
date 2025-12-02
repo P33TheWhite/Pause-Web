@@ -12,6 +12,8 @@ public class Inscription {
     private boolean aPaye;
     private boolean aRecupereRepas;
     private boolean enAttente = false;
+    private boolean estStaff = false;
+    private boolean staffValide = false;
     private LocalDateTime dateInscription = LocalDateTime.now();
 
     private Double montantAPayer;
@@ -69,6 +71,22 @@ public class Inscription {
 
     public void setEnAttente(boolean enAttente) {
         this.enAttente = enAttente;
+    }
+
+    public boolean isEstStaff() {
+        return estStaff;
+    }
+
+    public void setEstStaff(boolean estStaff) {
+        this.estStaff = estStaff;
+    }
+
+    public boolean isStaffValide() {
+        return staffValide;
+    }
+
+    public void setStaffValide(boolean staffValide) {
+        this.staffValide = staffValide;
     }
 
     public Utilisateur getUtilisateur() {

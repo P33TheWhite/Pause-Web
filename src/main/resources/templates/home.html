@@ -112,6 +112,15 @@
                         <a href="/profil" class="btn btn-asso btn-lg px-5">
                             Devenir Cotisant
                         </a>
+
+                        <div th:if="${session.user != null && !session.user.estStaffeur}" class="mt-4 pt-4 border-top">
+                            <p class="small text-muted mb-3">Envie de t'investir encore plus ?</p>
+                            <form method="post" action="/profil/join-staff">
+                                <button type="submit" class="btn btn-outline-dark btn-sm rounded-pill px-4">
+                                    <i class="bi bi-people-fill me-2"></i>Rejoindre les Staffeurs
+                                </button>
+                            </form>
+                        </div>
                     </div>
                     <div class="col-lg-5 mt-4 mt-lg-0 text-center">
                         <img th:src="@{/img/logo-carre.jpg}" alt="Community" class="img-fluid rounded-4 shadow rotate-3"
