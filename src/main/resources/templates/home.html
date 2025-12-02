@@ -1,170 +1,120 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-    
+
     <main>
-        <div class="hero-section d-flex align-items-center">
-            <div class="container text-center">
-                <img th:src="@{/img/logo-nav.png}" alt="Logo La Pau'se" style="max-width: 150px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));">
-                
-                <h1 class="hero-title mb-3">Bienvenue à La Pau'se</h1>
-                <p class="lead fw-bold mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
-                    L'association qui régale CY Tech,<br>
-                    <span style="color: var(--couleur-fromage);">sans ruiner ton budget.</span>
-                </p>
-                
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="/agenda" class="btn btn-asso btn-lg shadow">📅 Prochains repas</a>
-                    <a href="/profil" class="btn btn-outline-light btn-lg shadow">🔒 Espace Adhérent</a>
-                </div>
-            </div>
-        </div>
 
-        <div class="container my-5">
-            <div class="row text-center g-4">
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm h-100 border-bottom border-4" style="border-color: var(--couleur-asso-bg) !important;">
-                        <div class="mb-3" style="color: var(--couleur-asso-bg);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
-                                <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"/>
-                            </svg>
-                        </div>
-                        <h3 class="h5 fw-bold">Prix Étudiants</h3>
-                        <p class="text-muted small">Des tarifs imbattables pour que tout le monde puisse manger à sa faim, même en fin de mois.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm h-100 border-bottom border-4" style="border-color: var(--couleur-fromage) !important;">
-                        <div class="mb-3" style="color: var(--couleur-fromage);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-egg-fried" viewBox="0 0 16 16">
-                                <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                <path d="M13.997 5.17a5 5 0 0 0-8.101-4.09A5 5 0 0 0 1.28 9.342a5 5 0 0 0 8.336 5.109 3.5 3.5 0 0 0 5.201-4.065 3.001 3.001 0 0 0-.822-5.216zm-1-.034a1 1 0 0 0 .668.977 2.001 2.001 0 0 1 .547 3.478 1 1 0 0 0-.341 1.113 2.5 2.5 0 1 1-3.715-2.905 1 1 0 0 0 1.262-1.523 4 4 0 0 1 6.693-1.14zm-5.761-1.675a1 1 0 0 0 .524-1.254 4 4 0 0 1 3.26-6.128 4 4 0 0 1 4.86 4.502 1 1 0 0 0 .765 1.114 2 2 0 0 1 1.354 1.76q.015.156.015.314a3.5 3.5 0 0 1-5.793 2.64 1 1 0 0 0-1.42 1.258 4 4 0 0 1-7.072-2.14 4 4 0 0 1 3.507-2.066z"/>
-                            </svg>
-                        </div>
-                        <h3 class="h5 fw-bold">Variété & Goût</h3>
-                        <p class="text-muted small">Croques, plats chauds, salades... on fait varier les plaisirs pour ne jamais s'ennuyer.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm h-100 border-bottom border-4" style="border-color: var(--couleur-asso-bg) !important;">
-                        <div class="mb-3" style="color: var(--couleur-asso-bg);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
-                            </svg>
-                        </div>
-                        <h3 class="h5 fw-bold">Esprit CY Tech</h3>
-                        <p class="text-muted small">Un vrai QG géré par des étudiants, pour les étudiants. Ambiance garantie.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="container" style="color: var(--couleur-fromage); opacity: 0.5;">
-
-        <div class="container my-5" id="adhesion">
-            <div class="card shadow border-0 overflow-hidden">
-                <div class="row g-0">
-                    <div class="col-md-7 p-5">
-                        <h2 style="color: var(--couleur-asso-bg); font-weight: bold;">Devenir Adhérent</h2>
-                        <p class="lead">Rejoins la famille et profite des meilleurs tarifs toute l'année.</p>
-                        
-                        <div class="alert alert-warning d-inline-flex align-items-center mb-4">
-                            <span class="fs-4 me-2">🥤</span> 
-                            <strong>Ecocup offert</strong>&nbsp;avec la cotisation ! <small class="ms-1">(selon stocks)</small>
-                        </div>
-
-                        <ul class="list-group list-group-flush mb-4 shadow-sm rounded">
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <span>Cotisation seule</span>
-                                <span class="fw-bold fs-5">8€</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <span>En pack (avec autre asso)</span>
-                                <div>
-                                    <span class="badge bg-success me-2">-25%</span>
-                                    <span class="fw-bold fs-5">6€</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3" style="background-color: #fff8e1;">
-                                <span class="fw-bold text-dark">Full Asso</span>
-                                <div>
-                                    <span class="badge bg-danger me-2">-45%</span>
-                                    <span class="fw-bold fs-5 text-danger">5€</span>
-                                </div>
-                            </li>
-                        </ul>
-                        
-                        <div th:if="${session.user == null}">
-                            <a href="/register" class="btn btn-asso">Créer un compte pour cotiser</a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-5 d-flex align-items-center justify-content-center p-5 text-white text-center" 
-                         style="background-color: var(--couleur-asso-bg);">
-                        
-                        <div th:if="${session.user != null and session.user.estCotisant}">
-                            <h3 class="mb-3">Prêt pour le prochain event ?</h3>
-                            <div class="bg-white p-2 rounded d-inline-block mb-3">
-                                <img th:src="@{/img/qrcode-lydia.jpg}" alt="Payer Event" width="180" height="180">
-                            </div>
-                            <p class="mb-0">Scannez ce Lydia pour régler vos repas ou soirées.</p>
-                        </div>
-
-                        <div th:if="${session.user != null and !session.user.estCotisant}">
-                            <h3 class="mb-3">Régler ma cotisation</h3>
-                            <div class="bg-white p-2 rounded d-inline-block mb-3">
-                                <img th:src="@{/img/qrcode-lydia.jpg}" alt="QR Code" width="180" height="180">
-                            </div>
-                            <p class="mb-0">Scannez pour payer votre adhésion maintenant.</p>
-                            <small class="d-block mt-2 opacity-75">N'oubliez pas de faire la demande sur votre <a href="/profil" class="text-white text-decoration-underline">Profil</a> après paiement.</small>
-                        </div>
-
-                        <div th:if="${session.user == null}">
-                            <h3 class="mb-3">Rejoins la commu !</h3>
-                            <div class="bg-white p-2 rounded d-inline-block mb-3">
-                                <img th:src="@{/img/qrcode-join.jpg}" alt="QR Code" width="180" height="180">
-                            </div>
-                            <p class="mb-0">Scannez pour nous rejoindre et régler l'adhésion.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container my-5 py-3">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <span class="text-uppercase fw-bold" style="color: var(--couleur-fromage); letter-spacing: 1px;">Notre Mission</span>
-                    <h2 class="display-6 fw-bold mb-4" style="color: var(--couleur-asso-bg);">Réinventer la pause déjeuner</h2>
-                    <p class="lead text-muted">Manger bien ne devrait pas être un luxe.</p>
-                    <p>
-                        Que tu sois fan de fromage dégoulinant ou à la recherche d'un repas équilibré pour tenir l'après-midi, 
-                        tu trouveras ta place chez nous.
-                    </p>
-                </div>
-                <div class="col-lg-6 mt-4 mt-lg-0">
-                    <div class="position-relative">
-                        <div style="position: absolute; top: -15px; right: -15px; width: 100%; height: 100%; border: 3px solid var(--couleur-fromage); border-radius: 10px; z-index: -1;"></div>
-                        <img th:src="@{/img/logo-carre.jpg}" class="img-fluid rounded shadow w-100" alt="Plat La Pause" style="object-fit: cover; height: 350px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white py-5">
+        <div class="hero-modern d-flex align-items-center text-center">
             <div class="container">
-                <div class="row align-items-center flex-row-reverse flex-lg-row">
-                    <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img th:src="@{/img/bg-hero.png}" class="img-fluid rounded shadow w-100" alt="Ambiance Asso" style="object-fit: cover; height: 350px; filter: grayscale(20%);">
-                    </div>
-                    <div class="col-lg-6 ps-lg-5">
-                        <h2 class="display-6 fw-bold mb-4" style="color: var(--couleur-asso-bg);">Au cœur de la vie associative</h2>
-                        <p>
-                            La Pau'se collabore avec le BDE, BDS et toutes les assos de l'école.
-                        </p>
-                        <div class="mt-4">
-                            <a href="/photos" class="btn btn-outline-dark">Voir la galerie photo</a>
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold text-uppercase"
+                    style="letter-spacing: 1px; font-size: 0.8rem;">Association CY Tech</span>
+                <h1 class="hero-title-modern">La Pau'se</h1>
+                <p class="hero-subtitle-modern">
+                    Le QG des étudiants pour manger, se détendre et profiter de la vie associative.
+                    <br><span style="color: var(--couleur-fromage); font-weight: 600;">Bon, pas cher, et
+                        convivial.</span>
+                </p>
+
+
+            </div>
+        </div>
+
+
+        <div class="container" style="margin-top: -3rem; position: relative; z-index: 3;">
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <a href="/agenda" class="text-decoration-none">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                📅
+                            </div>
+                            <h3 class="feature-title">Agenda & Événements</h3>
+                            <p class="feature-text">
+                                Ne ratez aucun repas ni aucune soirée. Inscrivez-vous en un clic et gérez votre emploi
+                                du temps associatif.
+                            </p>
                         </div>
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a href="/shop" class="text-decoration-none">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                🛍️
+                            </div>
+                            <h3 class="feature-title">Boutique Fidélité</h3>
+                            <p class="feature-text">
+                                Cumulez des points à chaque participation et échangez-les contre des goodies, des
+                                réductions ou des icônes exclusives.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a href="/leaderboard" class="text-decoration-none">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                🏆
+                            </div>
+                            <h3 class="feature-title">Classement</h3>
+                            <p class="feature-text">
+                                Qui sera le plus grand fan de La Pau'se ? Défiez vos amis et grimpez au sommet du
+                                classement général.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="cta-section mt-5">
+            <div class="container">
+                <div class="row align-items-center bg-white rounded-4 shadow-sm p-5 border">
+                    <div class="col-lg-7">
+                        <h2 class="fw-bold mb-3" style="color: var(--couleur-asso-bg);">Pourquoi devenir adhérent ?</h2>
+                        <p class="lead text-muted mb-4">Rejoignez la famille et profitez d'avantages exclusifs toute
+                            l'année.</p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-success fs-5">✔</span>
+                                    <span>Tarifs réduits sur les repas</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-success fs-5">✔</span>
+                                    <span>Priorité aux événements</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-success fs-5">✔</span>
+                                    <span>Ecocup offert</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-success fs-5">✔</span>
+                                    <span>Accès aux soirées privées</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="/profil" class="btn btn-asso btn-lg px-5">
+                            Devenir Cotisant
+                        </a>
+                    </div>
+                    <div class="col-lg-5 mt-4 mt-lg-0 text-center">
+                        <img th:src="@{/img/logo-carre.jpg}" alt="Community" class="img-fluid rounded-4 shadow rotate-3"
+                            style="transform: rotate(3deg); max-width: 80%;">
                     </div>
                 </div>
             </div>
@@ -173,4 +123,5 @@
     </main>
 
 </th:block>
+
 </html>

@@ -20,37 +20,55 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
 
+
                     <li class="nav-item">
                         <a class="nav-link" href="/">Accueil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/agenda">Agenda</a>
-                    </li>
 
-                    <li class="nav-item" th:if="${session.user != null}">
-                        <a class="nav-link" href="/shop">Boutique</a>
-                    </li>
-                    <li class="nav-item" th:if="${session.user != null}">
-                        <a class="nav-link" href="/leaderboard">Classement</a>
-                    </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            Découvrir
+                            L'Association
                         </a>
                         <ul class="dropdown-menu animate slideIn">
-                            <li><a class="dropdown-item" href="/photos">Galerie</a></li>
-                            <li><a class="dropdown-item" href="/equipe">Notre équipe</a></li>
+                            <li><a class="dropdown-item" href="/equipe">Notre Équipe</a></li>
+                            <li><a class="dropdown-item" href="/photos">Galerie Photos</a></li>
+
+
+                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Bureau</h6>
+                            </li>
+                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                                <a class="dropdown-item" href="/admin/finance">Finance</a>
+                            </li>
+                            <li th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                                <a class="dropdown-item" href="/admin/archives">Archives</a>
+                            </li>
                         </ul>
                     </li>
-                    <li class="nav-item" th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                        <a class="nav-link" href="/admin/archives">Archives</a>
-                    </li>
-                    <li class="nav-item" th:if="${session.user != null && session.user.classe == 'Bureau'}">
-                        <a class="nav-link" href="/admin/finance">Finance</a>
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Vie Étudiante
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li><a class="dropdown-item" href="/agenda">Agenda</a></li>
+                            <li th:if="${session.user != null}"><a class="dropdown-item" href="/shop">Boutique</a></li>
+                            <li th:if="${session.user != null}"><a class="dropdown-item"
+                                    href="/leaderboard">Classement</a></li>
+                            <li th:if="${session.user == null}"><a class="dropdown-item text-muted"
+                                    href="/login">Connectez-vous pour plus !</a></li>
+                        </ul>
                     </li>
 
                     <li class="nav-item d-none d-lg-block mx-2 text-white-50">|</li>
+
 
                     <li class="nav-item" th:if="${session.user == null}">
                         <a class="nav-link btn-nav-login ms-2" href="/login">
@@ -62,6 +80,7 @@
                         </a>
                     </li>
 
+
                     <li class="nav-item dropdown" th:if="${session.user != null}">
                         <a class="nav-link dropdown-toggle ms-2 d-flex align-items-center gap-2" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -72,15 +91,8 @@
                                 <span th:text="${#strings.substring(session.user.prenom,0,1)}">U</span>
                             </div>
                             <div>
-                                <span th:text="'Bonjour ' + ${session.user.prenom}"
-                                    style="color: var(--couleur-fromage);">User</span>
-                                <div style="font-size: 0.8em; line-height: 1;">
-                                    <span th:if="${session.user.points != null}"
-                                        th:text="${session.user.points} + ' pts'" class="badge bg-secondary">0
-                                        pts</span>
-                                    <span th:if="${session.user.points != null && session.user.points > 5}"
-                                        class="badge bg-warning text-dark">VIP</span>
-                                </div>
+                                <span th:text="${session.user.prenom}"
+                                    style="color: var(--couleur-fromage); font-weight: bold;">User</span>
                             </div>
                         </a>
 

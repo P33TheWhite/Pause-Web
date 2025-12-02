@@ -1,78 +1,173 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-    <main class="container mt-4">
-
-        <a href="/admin" class="btn btn-outline-secondary mb-3">← Retour Dashboard</a>
+    <main class="container py-5">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 th:text="${event.titre}">Titre de l'événement</h2>
-            <div>
-                <a th:href="@{/admin/event/{id}/edit(id=${event.id})}" class="btn btn-warning">Modifier</a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/admin" class="btn btn-light border shadow-sm rounded-circle p-2" title="Retour">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="fw-bold mb-0" th:text="${event.titre}">Titre de l'événement</h1>
+                    <div class="text-muted d-flex align-items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                            class="bi bi-calendar-event" viewBox="0 0 16 16">
+                            <path
+                                d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                            <path
+                                d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                        </svg>
+                        <span th:text="${#temporals.format(event.date, 'EEEE d MMMM yyyy')}">Date</span>
+                    </div>
+                </div>
+            </div>
 
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/event/{id}/edit(id=${event.id})}"
+                    class="btn btn-outline-warning d-flex align-items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path
+                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                        <path fill-rule="evenodd"
+                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg>
+                    Modifier
+                </a>
                 <form th:unless="${event.estArchive}" th:action="@{/admin/event/{id}/archive(id=${event.id})}"
-                    method="post" style="display:inline;"
-                    onsubmit="return confirm('Êtes-vous sûr de vouloir clôturer cet événement ? Il sera déplacé dans les archives.');">
-                    <button type="submit" class="btn btn-danger ms-2">Clôturer l'événement</button>
+                    method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir clôturer cet événement ?');">
+                    <button type="submit" class="btn btn-danger d-flex align-items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-archive-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z" />
+                        </svg>
+                        Clôturer
+                    </button>
                 </form>
             </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 th:text="'Gestion : ' + ${event.titre}">Titre</h2>
-            <div>
-                <span class="badge bg-primary" th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}">Date</span>
-                <span class="badge bg-primary fs-6" th:text="'Inscrits : ' + ${stats[0]}"></span>
-                <span class="badge bg-success fs-6" th:text="'Payés : ' + ${stats[1]}"></span>
-                <span class="badge bg-warning text-dark fs-6" th:text="'Repas servis : ' + ${stats[2]}"></span>
+
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div>
+                        <div class="metric-value" th:text="${stats[0]}">0</div>
+                        <div class="metric-label">Inscrits</div>
+                    </div>
+                    <div class="metric-icon users">👥</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div>
+                        <div class="metric-value text-success" th:text="${stats[1]}">0</div>
+                        <div class="metric-label">Ont Payé</div>
+                    </div>
+                    <div class="metric-icon pending" style="background-color: rgba(25, 135, 84, 0.1); color: #198754;">
+                        💰</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div>
+                        <div class="metric-value text-warning" th:text="${stats[2]}">0</div>
+                        <div class="metric-label">Repas Servis</div>
+                    </div>
+                    <div class="metric-icon events" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                        🍽️</div>
+                </div>
             </div>
         </div>
 
-        <div class="card bg-light mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">💰 Coût des Courses</h5>
+
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body d-flex justify-content-between align-items-center p-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-light p-3 rounded-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-cart-check text-muted" viewBox="0 0 16 16">
+                            <path
+                                d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z" />
+                            <path
+                                d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Coût des Courses</h5>
+                        <small class="text-muted">Saisissez le montant total des dépenses pour cet événement.</small>
+                    </div>
+                </div>
                 <form method="post" th:action="@{/admin/event/{id}/update-cost(id=${event.id})}"
-                    class="d-flex align-items-center">
-                    <input type="number" step="0.01" name="coutCourses" class="form-control me-2"
-                        th:value="${event.coutCourses}" style="width: 150px;" placeholder="Montant (€)">
+                    class="d-flex align-items-center gap-2">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">€</span>
+                        <input type="number" step="0.01" name="coutCourses" class="form-control border-start-0 ps-0"
+                            th:value="${event.coutCourses}" style="width: 120px; font-weight: bold;" placeholder="0.00">
+                    </div>
+                    <button class="btn btn-asso shadow-sm">Enregistrer</button>
                 </form>
             </div>
         </div>
 
-        <input type="text" id="searchBar" class="form-control my-3" placeholder="🔍 Rechercher un nom ou prénom..."
-            onkeyup="filtrerTableau()">
 
-        <div class="card shadow">
-            <div class="card-body p-0">
-                <table class="table table-striped mb-0" id="tableInscrits">
-                    <thead class="table-dark">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Liste des Inscrits</h5>
+                <div class="input-group" style="max-width: 300px;">
+                    <span class="input-group-text bg-light border-end-0">🔍</span>
+                    <input type="text" id="searchBar" class="form-control border-start-0 ps-0"
+                        placeholder="Rechercher..." onkeyup="filtrerTableau()">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table admin-table mb-0 align-middle" id="tableInscrits">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Nom Prénom</th>
+                            <th class="ps-4">Membre</th>
                             <th>Classe</th>
                             <th>Statut Asso</th>
-                            <th>Prix à Payer</th>
-                            <th>A Payé ?</th>
-                            <th>A Mangé ?</th>
+                            <th>À Payer</th>
+                            <th class="text-center">A Payé</th>
+                            <th class="text-center pe-4">A Mangé</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="ins : ${inscriptions}">
-                            <td class="nom-prenom" th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}">
+                            <td class="ps-4">
+                                <div class="fw-bold nom-prenom"
+                                    th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}">Nom</div>
                             </td>
-                            <td th:text="${ins.utilisateur.classe}"></td>
+                            <td class="text-muted" th:text="${ins.utilisateur.classe}">Classe</td>
                             <td>
-                                <span th:if="${ins.utilisateur.estCotisant}" class="badge bg-success">Cotisant</span>
-                                <span th:if="${!ins.utilisateur.estCotisant}" class="badge bg-secondary">Non</span>
+                                <span th:if="${ins.utilisateur.estCotisant}"
+                                    class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Cotisant</span>
+                                <span th:if="${!ins.utilisateur.estCotisant}"
+                                    class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">Non
+                                    Cotisant</span>
                             </td>
-                            <td th:text="${ins.montantAPayer} + ' €'"></td>
+                            <td class="fw-bold text-dark" th:text="${ins.montantAPayer} + ' €'">0 €</td>
 
                             <form method="post" th:action="@{/admin/inscription/{id}/update(id=${ins.id})}">
-                                <td>
-                                    <input type="checkbox" name="aPaye" th:checked="${ins.aPaye}"
-                                        onchange="this.form.submit()">
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" name="aPaye"
+                                            th:checked="${ins.aPaye}" onchange="this.form.submit()"
+                                            style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                                    </div>
                                 </td>
-                                <td>
-                                    <input type="checkbox" name="aMange" th:checked="${ins.aRecupereRepas}"
-                                        onchange="this.form.submit()">
+                                <td class="text-center pe-4">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" name="aMange"
+                                            th:checked="${ins.aRecupereRepas}" onchange="this.form.submit()"
+                                            style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                                    </div>
                                 </td>
                             </form>
                         </tr>

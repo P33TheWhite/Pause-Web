@@ -39,7 +39,6 @@ public class AdminController {
         List<Evenement> events = eventService.getAllActiveEvents();
         events.addAll(eventService.getAllArchivedEvents());
 
-        // Prepare data for Chart.js
         List<String> labels = new java.util.ArrayList<>();
         List<Double> dataRecolte = new java.util.ArrayList<>();
         List<Double> dataTheorique = new java.util.ArrayList<>();
@@ -103,6 +102,12 @@ public class AdminController {
     @PostMapping("/user/{id}/toggle-cotisant")
     public String toggleCotisant(@PathVariable Long id) {
         userService.toggleCotisant(id);
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/user/{id}/toggle-vip")
+    public String toggleVip(@PathVariable Long id) {
+        userService.toggleVip(id);
         return "redirect:/admin";
     }
 

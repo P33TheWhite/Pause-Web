@@ -34,10 +34,10 @@ public class UserService {
         return utilisateurRepository.findById(id).orElse(null);
     }
 
-    public void requestCotisation(Long userId, String classe) {
+    public void requestCotisation(Long userId) {
         Utilisateur user = getUserById(userId);
         if (user != null) {
-            user.setClasse(classe);
+
             user.setDemandeCotisationEnCours(true);
             utilisateurRepository.save(user);
         }
@@ -94,6 +94,14 @@ public class UserService {
         }
     }
 
+    public void toggleVip(Long userId) {
+        Utilisateur user = getUserById(userId);
+        if (user != null) {
+            user.setVip(!user.isVip());
+            utilisateurRepository.save(user);
+        }
+    }
+
     public void saveUser(Utilisateur user) {
         utilisateurRepository.save(user);
     }
@@ -104,9 +112,9 @@ public class UserService {
             user.setPoints(user.getPoints() - cost);
 
             if (itemId.equals("croque")) {
-                // Consommable croque : rien de plus pour l'instant
+
             } else if (itemId.startsWith("reduction_")) {
-                // Gestion des réductions
+
                 double montant = 0.0;
                 if (itemId.equals("reduction_1"))
                     montant = 1.0;
@@ -119,7 +127,7 @@ public class UserService {
                     user.setSoldeReduction(0.0);
                 user.setSoldeReduction(user.getSoldeReduction() + montant);
             } else {
-                // C'est une icône
+
                 if (!user.getUnlockedIcons().contains(itemId)) {
                     user.getUnlockedIcons().add(itemId);
                 }

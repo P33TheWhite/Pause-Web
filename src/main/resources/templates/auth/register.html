@@ -9,7 +9,7 @@
                         <h3 class="mb-0">Rejoindre La Pau'se</h3>
                     </div>
                     <div class="card-body">
-                        
+
                         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
                         <form action="/register" method="post">
@@ -26,10 +26,22 @@
                                 <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Classe</label>
+                                <select name="classe" class="form-select" required>
+                                    <option value="" disabled selected>Choisir votre classe...</option>
+                                    <option value="PREPA1">PREPA1</option>
+                                    <option value="PREPA2">PREPA2</option>
+                                    <option value="ING1">ING1</option>
+                                    <option value="ING2">ING2</option>
+                                    <option value="ING3">ING3</option>
+                                    <option value="ING+">ING+</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Mot de passe</label>
                                 <input type="password" name="motDePasse" class="form-control" required>
                             </div>
-                            
+
                             <button type="submit" class="btn btn-asso w-100 mt-3">S'inscrire</button>
                         </form>
                         <p class="mt-3 text-center">Déjà membre ? <a href="/login">Connectez-vous</a></p>
@@ -39,4 +51,5 @@
         </div>
     </main>
 </th:block>
+
 </html>

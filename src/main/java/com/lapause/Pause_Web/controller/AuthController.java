@@ -74,10 +74,10 @@ public class AuthController {
     }
 
     @PostMapping("/profil/demande-cotisation")
-    public String demanderCotisation(@RequestParam String classe, HttpSession session) {
+    public String demanderCotisation(HttpSession session) {
         Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
         if (sessionUser != null) {
-            userService.requestCotisation(sessionUser.getId(), classe);
+            userService.requestCotisation(sessionUser.getId());
             session.setAttribute("user", userService.getUserById(sessionUser.getId()));
         }
         return "redirect:/profil?success";

@@ -1,69 +1,175 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main})}">
-    <main class="container mt-5">
-        <h2 th:text="${evenement.id == null ? 'Nouvel Événement' : 'Modifier Événement'}">Événement</h2>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-4 text-center">
+                        <h2 class="fw-bold mb-0 text-primary"
+                            th:text="${evenement.id == null ? '✨ Nouvel Événement' : '✏️ Modifier Événement'}">Événement
+                        </h2>
+                        <p class="text-muted mb-0">Remplissez les informations ci-dessous pour créer ou modifier un
+                            événement.</p>
+                    </div>
+                    <div class="card-body p-5">
+                        <form th:action="@{/admin/event/save}" th:object="${evenement}" method="post"
+                            enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <input type="hidden" th:field="*{id}">
 
-        <form th:action="@{/admin/event/save}" th:object="${evenement}" method="post" enctype="multipart/form-data">
-            <input type="hidden" th:field="*{id}">
 
-            <div class="mb-3">
-                <label for="titre" class="form-label">Nom de l'événement</label>
-                <input type="text" class="form-control" id="titre" th:field="*{titre}" required>
-            </div>
+                            <div class="mb-5 text-center">
+                                <div class="position-relative d-inline-block group-image-upload">
+                                    <img id="imagePreview"
+                                        th:src="${evenement.photos != null && !evenement.photos.isEmpty() ? evenement.photos[0].url : 'https://via.placeholder.com/600x300?text=Aperçu+Image'}"
+                                        class="img-fluid rounded-3 shadow-sm border"
+                                        style="max-height: 250px; width: 100%; object-fit: cover;" alt="Aperçu">
+                                    <label for="image"
+                                        class="btn btn-light position-absolute bottom-0 end-0 m-3 shadow-sm border rounded-circle p-2"
+                                        title="Changer l'image">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-camera-fill" viewBox="0 0 16 16">
+                                            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                            <path
+                                                d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z" />
+                                        </svg>
+                                    </label>
+                                    <input type="file" class="d-none" id="image" name="image"
+                                        accept="image/png, image/jpeg" onchange="previewImage(this)">
+                                </div>
+                                <div class="form-text mt-2">Format recommandé : JPG, PNG. Taille max : 5Mo.</div>
+                            </div>
 
-            <div class="mb-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="date" class="form-control" id="date" th:field="*{date}" required>
-            </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="heureDebut" class="form-label">Heure de début (Optionnel)</label>
-                    <input type="time" class="form-control" id="heureDebut" th:field="*{heureDebut}">
+                            <div class="mb-4">
+                                <label for="titre" class="form-label fw-bold">Nom de l'événement</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">🎉</span>
+                                    <input type="text" class="form-control border-start-0 ps-0" id="titre"
+                                        th:field="*{titre}" placeholder="Ex: Soirée d'intégration" required>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-12">
+                                    <label for="date" class="form-label fw-bold">Date</label>
+                                    <input type="date" class="form-control" id="date" th:field="*{date}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="heureDebut" class="form-label fw-bold">Début</label>
+                                    <input type="time" class="form-control" id="heureDebut" th:field="*{heureDebut}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="heureFin" class="form-label fw-bold">Fin</label>
+                                    <input type="time" class="form-control" id="heureFin" th:field="*{heureFin}">
+                                </div>
+                            </div>
+
+
+                            <div class="card bg-light border-0 mb-4 rounded-3">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold mb-3">Tarification</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="prixCotisant" class="form-label">Prix Cotisant</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0">€</span>
+                                                <input type="number" step="0.01"
+                                                    class="form-control border-start-0 ps-0" id="prixCotisant"
+                                                    th:field="*{prixCotisant}" placeholder="0.00" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="prixNonCotisant" class="form-label">Prix Non-Cotisant</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0">€</span>
+                                                <input type="number" step="0.01"
+                                                    class="form-control border-start-0 ps-0" id="prixNonCotisant"
+                                                    th:field="*{prixNonCotisant}" placeholder="0.00" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="lienPaiement" class="form-label">Lien de Paiement
+                                            (Lydia/Wero)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0">🔗</span>
+                                            <input type="url" class="form-control border-start-0 ps-0" id="lienPaiement"
+                                                name="lienPaiement"
+                                                th:value="${evenement.lienPaiement != null && !evenement.lienPaiement.isEmpty() ? evenement.lienPaiement : 'https://tinyurl.com/3d8z9ft9'}"
+                                                placeholder="https://...">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-4">
+                                <label for="nbPlacesMax" class="form-label fw-bold">Capacité</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text bg-light border-end-0">👥</span>
+                                    <input type="number" class="form-control border-start-0 ps-0" id="nbPlacesMax"
+                                        th:field="*{nbPlacesMax}" placeholder="Nombre de places">
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="unlimitedPlaces"
+                                        onchange="toggleCapacity()">
+                                    <label class="form-check-label text-muted" for="unlimitedPlaces">
+                                        Places illimitées
+                                    </label>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-bold">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="4"
+                                    placeholder="Détails de l'événement..."></textarea>
+                            </div>
+
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                                <a href="/admin" class="btn btn-light border btn-lg px-4">Annuler</a>
+                                <button type="submit" class="btn btn-asso btn-lg px-5 shadow-sm">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="heureFin" class="form-label">Heure de fin (Optionnel)</label>
-                    <input type="time" class="form-control" id="heureFin" th:field="*{heureFin}">
-                </div>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="prixCotisant" class="form-label">Prix Cotisant (€)</label>
-                    <input type="number" step="0.01" class="form-control" id="prixCotisant" th:field="*{prixCotisant}"
-                        required>
-                </div>
-                <div class="col-md-6">
-                    <label for="prixNonCotisant" class="form-label">Prix Non-Cotisant (€)</label>
-                    <input type="number" step="0.01" class="form-control" id="prixNonCotisant"
-                        th:field="*{prixNonCotisant}" required>
-                </div>
-            </div>
+        <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('imagePreview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
 
-            <div class="mb-3">
-                <label for="lienPaiement" class="form-label">Lien de Paiement (Lydia/Wero)</label>
-                <input type="url" class="form-control" id="lienPaiement" th:field="*{lienPaiement}">
-            </div>
+            function toggleCapacity() {
+                const checkbox = document.getElementById('unlimitedPlaces');
+                const input = document.getElementById('nbPlacesMax');
+                if (checkbox.checked) {
+                    input.value = '';
+                    input.disabled = true;
+                } else {
+                    input.disabled = false;
+                }
+            }
 
-            <div class="mb-3">
-                <label for="image" class="form-label">Photo de l'événement</label>
-                <input type="file" class="form-control" id="image" name="image" accept="image/png, image/jpeg">
-            </div>
-
-            <div class="mb-3">
-                <label for="nbPlacesMax" class="form-label">Nombre de places max (Laisser vide pour illimité)</label>
-                <input type="number" class="form-control" id="nbPlacesMax" th:field="*{nbPlacesMax}">
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a href="/admin" class="btn btn-secondary">Annuler</a>
-        </form>
+            // Init state
+            document.addEventListener("DOMContentLoaded", function () {
+                const input = document.getElementById('nbPlacesMax');
+                const checkbox = document.getElementById('unlimitedPlaces');
+                if (!input.value) {
+                    checkbox.checked = true;
+                    input.disabled = true;
+                }
+            });
+        </script>
     </main>
 </th:block>
 
