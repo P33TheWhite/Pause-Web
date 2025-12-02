@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/team.css}">
 
     <main>
 
@@ -26,7 +27,7 @@
 
                 <div class="deck-card">
                     <div class="team-img-wrapper mb-3">
-                        <img th:src="@{/img/bg-hero.png}" alt="Président"
+                        <img th:src="@{/images/bureau/yan.png}" alt="Président"
                             class="img-fluid rounded-circle border border-4 border-warning">
                     </div>
                     <h4 class="fw-bold mb-1">Yan Hourdebaigth</h4>
@@ -37,7 +38,8 @@
 
                 <div class="deck-card">
                     <div class="team-img-wrapper mb-3">
-                        <img th:src="@{/img/logo-carre.jpg}" alt="VP" class="img-fluid rounded-circle border border-4"
+                        <img th:src="@{/images/bureau/zak.png}" alt="VP"
+                            class="img-fluid rounded-circle border border-4"
                             style="border-color: var(--couleur-asso-bg) !important;">
                     </div>
                     <h5 class="fw-bold mb-1">Zak Hill</h5>
@@ -48,7 +50,7 @@
 
                 <div class="deck-card">
                     <div class="team-img-wrapper mb-3">
-                        <img th:src="@{/img/bg-hero.png}" alt="Trésorier"
+                        <img th:src="@{/images/bureau/mael.png}" alt="Trésorier"
                             class="img-fluid rounded-circle border border-4"
                             style="border-color: var(--couleur-asso-bg) !important;">
                     </div>
@@ -60,7 +62,8 @@
 
                 <div class="deck-card">
                     <div class="team-img-wrapper mb-3">
-                        <img th:src="@{/img/logo-carre.jpg}" alt="VP" class="img-fluid rounded-circle border border-4"
+                        <img th:src="@{/images/bureau/rayan.png}" alt="VP"
+                            class="img-fluid rounded-circle border border-4"
                             style="border-color: var(--couleur-asso-bg) !important;">
                     </div>
                     <h5 class="fw-bold mb-1">Rayan Ayoub</h5>

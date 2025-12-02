@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/shop.css}">
     <main class="container py-5">
 
 

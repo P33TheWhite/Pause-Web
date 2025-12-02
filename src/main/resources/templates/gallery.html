@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/gallery.css}">
 
     <main>
 
@@ -18,56 +19,138 @@
 
             <div class="row g-4 justify-content-center">
 
-
+                <!-- Event 1: Soirée Halloween -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="event-card shadow-sm">
-                        <img th:src="@{/img/bg-hero.png}" alt="Event 1" class="event-card-img">
-                        <div class="event-card-overlay">
-                            <div class="event-card-content">
-                                <h5 class="fw-bold text-warning">Soirée d'Intégration</h5>
-                                <p class="small text-white mb-0">Une soirée inoubliable pour accueillir les nouveaux !
-                                </p>
+                    <div class="event-card-pro shadow-sm">
+                        <div id="carouselEvent1" class="carousel slide h-100" data-bs-ride="carousel">
+                            <div class="carousel-inner h-100">
+                                <div class="carousel-item active h-100">
+                                    <img th:src="@{/images/events/events1-1.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Halloween 1">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events1-2.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Halloween 2">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events1-3.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Halloween 3">
+                                </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvent1"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselEvent1"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="event-overlay">
+                            <h5 class="event-title">Soirée Halloween</h5>
+                            <p class="event-desc">Une nuit effrayante et mémorable !</p>
                         </div>
                     </div>
                 </div>
 
-
+                <!-- Event 2: Vente de Crêpes - Octobre Rose -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="event-card shadow-sm">
-                        <img th:src="@{/img/logo-carre.jpg}" alt="Event 2" class="event-card-img">
-                        <div class="event-card-overlay">
-                            <div class="event-card-content">
-                                <h5 class="fw-bold text-warning">Repas de Noël</h5>
-                                <p class="small text-white mb-0">Dinde, marrons et bonne humeur au programme.</p>
+                    <div class="event-card-pro shadow-sm">
+                        <div id="carouselEvent2" class="carousel slide h-100" data-bs-ride="carousel">
+                            <div class="carousel-inner h-100">
+                                <div class="carousel-item active h-100">
+                                    <img th:src="@{/images/events/events2-1.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Crêpes 1">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events2-2.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Crêpes 2">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events2-3.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Crêpes 3">
+                                </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvent2"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselEvent2"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="event-overlay">
+                            <h5 class="event-title">Vente de Crêpes</h5>
+                            <p class="event-desc">Soutien pour Octobre Rose.</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Event 3: Jeudwich -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="event-card shadow-sm">
-                        <img th:src="@{/img/bg-hero.png}" alt="Event 3" class="event-card-img"
-                            style="filter: hue-rotate(90deg);">
-                        <div class="event-card-overlay">
-                            <div class="event-card-content">
-                                <h5 class="fw-bold text-warning">Afterwork Jeux</h5>
-                                <p class="small text-white mb-0">Détente autour de jeux de société et de snacks.</p>
+                    <div class="event-card-pro shadow-sm">
+                        <div id="carouselEvent3" class="carousel slide h-100" data-bs-ride="carousel">
+                            <div class="carousel-inner h-100">
+                                <div class="carousel-item active h-100">
+                                    <img th:src="@{/images/events/events3-1.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Jeudwich 1">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events3-2.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Jeudwich 2">
+                                </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvent3"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselEvent3"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="event-overlay">
+                            <h5 class="event-title">Jeudwich</h5>
+                            <p class="event-desc">Pause déjeuner conviviale.</p>
                         </div>
                     </div>
                 </div>
 
-
+                <!-- Event 4: Repas d'Halloween -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="event-card shadow-sm">
-                        <img th:src="@{/img/logo-carre.jpg}" alt="Event 4" class="event-card-img"
-                            style="filter: sepia(0.5);">
-                        <div class="event-card-overlay">
-                            <div class="event-card-content">
-                                <h5 class="fw-bold text-warning">Buffet de Fin d'Année</h5>
-                                <p class="small text-white mb-0">On finit l'année en beauté avec un festin !</p>
+                    <div class="event-card-pro shadow-sm">
+                        <div id="carouselEvent4" class="carousel slide h-100" data-bs-ride="carousel">
+                            <div class="carousel-inner h-100">
+                                <div class="carousel-item active h-100">
+                                    <img th:src="@{/images/events/events4-1.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Repas Halloween 1">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img th:src="@{/images/events/events4-2.png}"
+                                        class="d-block w-100 h-100 object-fit-cover" alt="Repas Halloween 2">
+                                </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvent4"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselEvent4"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="event-overlay">
+                            <h5 class="event-title">Repas d'Halloween</h5>
+                            <p class="event-desc">Un festin terrifiant !</p>
                         </div>
                     </div>
                 </div>

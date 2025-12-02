@@ -62,6 +62,8 @@ public class AdminController {
         }
 
         model.addAttribute("globalStats", globalStats);
+        model.addAttribute("events", events);
+        model.addAttribute("eventStats", eventStats);
         model.addAttribute("chartLabels", labels);
         model.addAttribute("chartRecolte", dataRecolte);
         model.addAttribute("chartTheorique", dataTheorique);

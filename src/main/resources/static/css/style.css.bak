@@ -102,8 +102,16 @@ footer h5 {
 
 .navbar-custom {
     background-color: var(--couleur-asso-bg);
-    box-shadow: var(--shadow-md);
-    padding: 0.8rem 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 0.2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 60px;
+}
+
+.navbar-custom .container {
+    position: relative;
 }
 
 .navbar-custom .navbar-brand {
@@ -113,55 +121,100 @@ footer h5 {
     letter-spacing: -0.02em;
     display: flex;
     align-items: center;
-    gap: 12px;
+    position: relative;
+    height: 100%;
+    padding: 0;
 }
 
 .navbar-custom .navbar-brand img {
-    height: 50px;
+    height: 80px;
     width: auto;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    z-index: 1001;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navbar-custom .navbar-brand img:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.navbar-custom .navbar-brand span {
+    margin-left: 100px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
 .navbar-custom .nav-link {
     color: rgba(255, 255, 255, 0.85) !important;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.95rem;
-    margin: 0 8px;
+    margin: 0 10px;
+    padding: 8px 0 !important;
+    position: relative;
     transition: color 0.2s ease;
 }
 
-.navbar-custom .nav-link:hover {
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
     color: white !important;
 }
 
-.navbar-custom .nav-link.active {
+.btn-bureau-tab {
+    /* Reset to match standard nav links */
+    margin-left: 5px;
+    white-space: nowrap;
+    /* Prevent line break */
+}
+
+.btn-bureau-tab:hover,
+.btn-bureau-tab.show {
+    /* No special background/border, just standard link behavior */
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
     color: white !important;
-    font-weight: 700;
 }
 
 .btn-nav-login {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white !important;
-    border-radius: 6px;
-    padding: 8px 20px !important;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.1);
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: none;
+    padding: 8px 10px !important;
+    /* Reduced padding since no border */
+    font-weight: 600;
+    transition: color 0.2s ease;
+    box-shadow: none;
 }
 
 .navbar-custom .btn-nav-login:hover {
-    background-color: var(--couleur-fromage);
-    color: #2c2c2c !important;
-    border-color: var(--couleur-fromage);
-    transform: translateY(-1px);
+    background-color: transparent;
+    color: white !important;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    /* Subtle glow on hover */
 }
 
 .dropdown-menu {
     border: none;
-    box-shadow: var(--shadow-lg);
     border-radius: 8px;
-    padding: 0.5rem 0;
-    margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    margin-top: 15px;
+    background: white;
+    animation: slideInDropdown 0.2s ease forwards;
 }
 
 .dropdown-item {
@@ -1058,4 +1111,98 @@ footer h5 {
 .cta-section {
     background-color: #f8f9fa;
     padding: 5rem 0;
+}
+
+/* Professional Event Gallery Card */
+.event-card-pro {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 350px;
+    /* Fixed height for consistency */
+    background-color: #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card-pro:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.event-card-pro .carousel,
+.event-card-pro .carousel-inner,
+.event-card-pro .carousel-item {
+    height: 100%;
+}
+
+.event-card-pro img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.event-card-pro:hover img {
+    transform: scale(1.05);
+}
+
+.event-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+    padding: 20px;
+    color: white;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.event-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #ffd700;
+    /* Gold color for title */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateY(10px);
+    transition: transform 0.3s ease;
+}
+
+.event-desc {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.event-card-pro:hover .event-title {
+    transform: translateY(0);
+}
+
+.event-card-pro:hover .event-desc {
+    max-height: 100px;
+    /* Enough space for description */
+    opacity: 1;
+    margin-top: 5px;
+}
+
+/* Carousel Controls - Subtle and Professional */
+.event-card-pro .carousel-control-prev,
+.event-card-pro .carousel-control-next {
+    width: 10%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.event-card-pro:hover .carousel-control-prev,
+.event-card-pro:hover .carousel-control-next {
+    opacity: 0.8;
+}
+
+.event-card-pro .carousel-control-prev-icon,
+.event-card-pro .carousel-control-next-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }

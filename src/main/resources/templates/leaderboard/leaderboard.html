@@ -6,7 +6,8 @@
     <title>Classement - La Pau'se</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/leaderboard.css}">
     <main class="container py-4">
 
         <div class="leaderboard-container p-4">
