@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/gallery.css}">
     <main class="container mt-5">
         <a href="/agenda" class="btn btn-outline-secondary mb-4">← Retour à l'agenda</a>
 

@@ -1,0 +1,256 @@
+/* Profile Page Styles */
+
+/* Layout & Sidebar */
+.profile-sidebar {
+    position: sticky;
+    top: 100px;
+    /* Adjust based on navbar height */
+}
+
+.profile-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar-large {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: var(--shadow-md);
+}
+
+.vip-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: linear-gradient(45deg, #FFD700, #FDB931);
+    color: #333;
+    font-weight: 800;
+    padding: 0.35em 0.8em;
+    border-radius: 50rem;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 2px solid white;
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #2c2c2c;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+.profile-email {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Stats Cards */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    flex-shrink: 0;
+}
+
+.stat-icon.points {
+    background-color: rgba(255, 188, 13, 0.15);
+    color: #d49a00;
+}
+
+.stat-icon.wallet {
+    background-color: rgba(137, 11, 77, 0.1);
+    color: var(--couleur-asso-bg);
+}
+
+.stat-content h3 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+    color: #2c2c2c;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+}
+
+/* Event List */
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 24px;
+    background-color: var(--couleur-asso-bg);
+    border-radius: 2px;
+}
+
+.event-list-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.event-list-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--couleur-asso-bg);
+}
+
+.event-date-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    min-width: 80px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.event-day {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #2c2c2c;
+}
+
+.event-month {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #6c757d;
+}
+
+.event-details {
+    flex-grow: 1;
+    padding: 0 1.5rem;
+}
+
+.event-title {
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.event-meta {
+    font-size: 0.9rem;
+    color: #6c757d;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 0.5em 1em;
+    border-radius: 50rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.status-badge.registered {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.status-badge.waiting {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Forms */
+.form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 0.95rem;
+}
+
+.form-control:focus {
+    border-color: var(--couleur-asso-clair);
+    box-shadow: 0 0 0 0.25rem rgba(137, 11, 77, 0.15);
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 2rem;
+}

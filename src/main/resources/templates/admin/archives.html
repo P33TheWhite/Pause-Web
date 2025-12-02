@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
     <main class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>📂 Archives des Événements</h1>
             <a href="/admin" class="btn btn-outline-secondary">← Retour Dashboard</a>
         </div>
 
-        <div class="card shadow">
-            <div class="card-body">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Date</th>
-                            <th>Nom</th>
-                            <th>Etat</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="event : ${archives}">
-                            <td th:text="${#temporals.format(event.date, 'dd/MM/yyyy')}">Date</td>
-                            <td th:text="${event.titre}">Nom</td>
-                            <td>
-                                <span class="badge bg-secondary">Clôturé</span>
-                            </td>
-                            <td>
-                                <a th:href="@{/admin/event/{id}(id=${event.id})}"
-                                    class="btn btn-sm btn-info">Détails</a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(archives)}">
-                            <td colspan="4" class="text-center text-muted">Aucun événement archivé.</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table admin-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Date</th>
+                                <th>Nom</th>
+                                <th>Etat</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="event : ${archives}">
+                                <td class="ps-4 text-muted" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">
+                                    Date</td>
+                                <td class="fw-bold text-dark" th:text="${event.titre}">Nom</td>
+                                <td>
+                                    <span class="status-badge secondary">Clôturé</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a th:href="@{/admin/event/{id}(id=${event.id})}"
+                                        class="btn btn-sm btn-outline-primary fw-bold px-3">Gérer</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(archives)}">
+                                <td colspan="4" class="text-center text-muted py-5">Aucun événement archivé.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

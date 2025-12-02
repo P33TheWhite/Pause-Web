@@ -1,0 +1,206 @@
+:root {
+    --couleur-asso-bg: #890b4d;
+    --couleur-asso-clair: #a82e68;
+    --couleur-fromage: #ffbc0d;
+    --couleur-texte: #333333;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--couleur-texte);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Common Components */
+.btn-asso {
+    background-color: var(--couleur-fromage);
+    color: #2c2c2c;
+    font-weight: 600;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-asso:hover {
+    background-color: #ffd65c;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-asso {
+    color: var(--couleur-asso-bg);
+    border: 2px solid var(--couleur-asso-bg);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-asso:hover {
+    background-color: var(--couleur-asso-bg);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-asso-danger {
+    background-color: white;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Footer */
+footer {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 60px 0 30px;
+    margin-top: auto;
+    border-top: 4px solid var(--couleur-fromage);
+}
+
+footer h5 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--couleur-asso-bg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 0.2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 60px;
+}
+
+.navbar-custom .container {
+    position: relative;
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.5rem;
+    color: white !important;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    padding: 0;
+}
+
+.navbar-custom .navbar-brand img {
+    height: 80px;
+    width: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    z-index: 1001;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navbar-custom .navbar-brand img:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.navbar-custom .navbar-brand span {
+    margin-left: 100px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 10px;
+    padding: 8px 0 !important;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
+    color: white !important;
+}
+
+.btn-bureau-tab {
+    margin-left: 5px;
+    white-space: nowrap;
+}
+
+.btn-bureau-tab:hover,
+.btn-bureau-tab.show {
+    background-color: transparent;
+    box-shadow: none;
+    transform: none;
+    color: white !important;
+}
+
+.btn-nav-login {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: none;
+    padding: 8px 10px !important;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    box-shadow: none;
+}
+
+.navbar-custom .btn-nav-login:hover {
+    background-color: transparent;
+    color: white !important;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    margin-top: 15px;
+    background: white;
+    animation: slideInDropdown 0.2s ease forwards;
+}
+
+.dropdown-item {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dropdown-item:active {
+    background-color: var(--couleur-asso-bg);
+}

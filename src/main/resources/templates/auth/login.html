@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
     <main class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-5">
                 <div class="card shadow border-0">
                     <div class="card-body p-5 text-center">
-                        
+
                         <img th:src="@{/img/logo-nav.png}" width="80" class="mb-4">
                         <h2 class="mb-4" style="color: var(--couleur-asso-bg);">Connexion</h2>
 
@@ -22,12 +23,13 @@
                                 <label class="form-label">Mot de passe</label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
-                            
+
                             <button type="submit" class="btn btn-asso w-100 btn-lg">Se connecter</button>
                         </form>
-                        
+
                         <div class="mt-4">
-                            <p>Pas encore de compte ? <a href="/register" style="color: var(--couleur-asso-clair);">Créer un compte</a></p>
+                            <p>Pas encore de compte ? <a href="/register"
+                                    style="color: var(--couleur-asso-clair);">Créer un compte</a></p>
                         </div>
                     </div>
                 </div>
@@ -35,4 +37,5 @@
         </div>
     </main>
 </th:block>
+
 </html>

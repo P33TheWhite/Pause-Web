@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{layout :: layout(~{::main})}">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <main class="container-fluid px-4 py-5">
 
@@ -157,8 +158,8 @@
 
                                 <td class="pe-4 text-end">
                                     <a th:href="@{/admin/event/{id}(id=${event.id})}"
-                                        class="btn btn-sm btn-light text-dark border">
-                                        Gérer <i class="bi bi-chevron-right ms-1 small"></i>
+                                        class="btn btn-sm btn-outline-primary fw-bold px-3">
+                                        Gérer
                                     </a>
                                 </td>
                             </tr>
