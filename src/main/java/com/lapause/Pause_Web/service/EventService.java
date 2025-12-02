@@ -55,10 +55,24 @@ public class EventService {
             saveEvent(evt);
 
             List<Inscription> inscriptions = inscriptionRepo.findByEvenementId(id);
-            for (Inscription ins : inscriptions) {
+            // Sort by dateInscription to determine rank
+            inscriptions.sort((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()));
+
+            for (int i = 0; i < inscriptions.size(); i++) {
+                Inscription ins = inscriptions.get(i);
+                int pointsToAward = 10; // Default
+                if (i < 3) {
+                    pointsToAward = 50; // Top 3
+                } else if (i < 10) {
+                    pointsToAward = 30; // Next 7 (4-10)
+                }
+
+                ins.setPointsGagnes(pointsToAward);
+                inscriptionRepo.save(ins);
+
                 if (ins.isaRecupereRepas()) {
                     Utilisateur u = ins.getUtilisateur();
-                    userService.addPoints(u.getId(), 1);
+                    userService.addPoints(u.getId(), pointsToAward);
 
                     Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
                     if (sessionUser != null && sessionUser.getId().equals(u.getId())) {
@@ -83,12 +97,24 @@ public class EventService {
         return inscriptionRepo.findByEvenementId(eventId);
     }
 
-    public long[] getDetailedStats(Long eventId) {
+    public Map<String, Object> getDetailedStats(Long eventId) {
         List<Inscription> inscriptions = getInscriptionsForEvent(eventId);
         long nbInscrits = inscriptions.size();
         long nbPaye = inscriptions.stream().filter(Inscription::isaPaye).count();
         long nbRepas = inscriptions.stream().filter(Inscription::isaRecupereRepas).count();
-        return new long[] { nbInscrits, nbPaye, nbRepas };
+
+        double recettes = inscriptions.stream()
+                .filter(Inscription::isaPaye)
+                .mapToDouble(i -> i.getMontantAPayer() != null ? i.getMontantAPayer() : 0.0)
+                .sum();
+
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("nbInscrits", nbInscrits);
+        stats.put("nbPaye", nbPaye);
+        stats.put("nbRepas", nbRepas);
+        stats.put("recettes", recettes);
+
+        return stats;
     }
 
     public Long updateInscription(Long id, boolean aPaye, boolean aMange) {
@@ -101,10 +127,11 @@ public class EventService {
             if (ins.getEvenement().isEstArchive()) {
                 if (aMange != oldMange) {
                     Utilisateur u = ins.getUtilisateur();
+                    int points = ins.getPointsGagnes() != null ? ins.getPointsGagnes() : 10;
                     if (aMange) {
-                        userService.addPoints(u.getId(), 1);
+                        userService.addPoints(u.getId(), points);
                     } else {
-                        userService.addPoints(u.getId(), -1);
+                        userService.addPoints(u.getId(), -points);
                     }
                 }
             }
@@ -115,6 +142,7 @@ public class EventService {
         return null;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void updateEventCost(Long id, Double cost) {
         Evenement evt = eventRepo.findById(id).orElse(null);
         if (evt != null) {

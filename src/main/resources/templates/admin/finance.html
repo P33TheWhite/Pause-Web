@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <main class="container-fluid px-4 py-5">
 
         <!-- Header -->
@@ -12,7 +12,7 @@
                 <p class="text-muted lead">Suivi de la trésorerie et des événements</p>
             </div>
             <div>
-                <a href="/admin" class="btn btn-outline-secondary">
+                <a href="/admin/finance" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-2"></i>Retour
                 </a>
             </div>
@@ -89,18 +89,10 @@
         <div class="card border-0 shadow-sm mb-5">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Détail par Événement</h5>
-                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#chartCollapse" aria-expanded="false" aria-controls="chartCollapse">
-                    <i class="bi bi-bar-chart-line me-1"></i>Voir le Graphique
-                </button>
+
             </div>
 
-            <!-- Collapsible Chart -->
-            <div class="collapse" id="chartCollapse">
-                <div class="card-body border-bottom">
-                    <canvas id="financeChart" width="100%" height="30"></canvas>
-                </div>
-            </div>
+
 
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -119,9 +111,12 @@
                             <tr th:each="event : ${events}">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                                        <div class="avatar-sm bg-light rounded me-3 d-flex align-items-center justify-content-center overflow-hidden"
                                             style="width: 40px; height: 40px;">
-                                            <i class="bi bi-calendar-event text-secondary"></i>
+                                            <img th:if="${!event.photos.isEmpty()}" th:src="${event.photos[0].url}"
+                                                alt="Event" class="w-100 h-100" style="object-fit: cover;">
+                                            <i th:if="${event.photos.isEmpty()}"
+                                                class="bi bi-calendar-event text-secondary"></i>
                                         </div>
                                         <div>
                                             <h6 class="mb-0 fw-bold text-dark" th:text="${event.titre}">Nom de
@@ -157,7 +152,7 @@
                                 </td>
 
                                 <td class="pe-4 text-end">
-                                    <a th:href="@{/admin/event/{id}(id=${event.id})}"
+                                    <a th:href="@{/admin/event/{id}(id=${event.id}, source='finance')}"
                                         class="btn btn-sm btn-outline-primary fw-bold px-3">
                                         Gérer
                                     </a>
@@ -169,63 +164,7 @@
             </div>
         </div>
 
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            var labels = /*[[${chartLabels}]]*/[];
-            var dataRecolte = /*[[${chartRecolte}]]*/[];
-            var dataDepenses = /*[[${chartDepenses}]]*/[];
-            var dataBenefice = /*[[${chartBenefice}]]*/[];
 
-            var ctx = document.getElementById('financeChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Recettes (€)',
-                            data: dataRecolte,
-                            backgroundColor: 'rgba(25, 135, 84, 0.7)',
-                            borderColor: 'rgba(25, 135, 84, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Dépenses (€)',
-                            data: dataDepenses,
-                            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                            borderColor: 'rgba(220, 53, 69, 1)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                borderDash: [2, 4],
-                                color: '#e9ecef'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            /*]]>*/
-        </script>
     </main>
 </th:block>
 
