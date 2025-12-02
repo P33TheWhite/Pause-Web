@@ -43,7 +43,14 @@ public class DataInitEvent {
                 eHalloween.setPrixCotisant(10.0);
                 eHalloween.setPrixNonCotisant(15.0);
                 eHalloween.setLienPaiement("https://tinyurl.com/3d8z9ft9");
+                eHalloween.setCoutCourses(150.50);
                 eHalloween.setTypes(List.of(tSoiree));
+
+                Photo pHalloween = new Photo();
+                pHalloween.setUrl("/images/events/halloween.png");
+                pHalloween.setTitre("Affiche Halloween");
+                pHalloween.setEvenement(eHalloween);
+                eHalloween.setPhotos(List.of(pHalloween));
 
                 Evenement eCrepes = new Evenement();
                 eCrepes.setTitre("Vente de Crêpes");
@@ -54,7 +61,14 @@ public class DataInitEvent {
                 eCrepes.setPrixCotisant(1.0);
                 eCrepes.setPrixNonCotisant(2.0);
                 eCrepes.setLienPaiement("https://tinyurl.com/3d8z9ft9");
+                eCrepes.setCoutCourses(30.0);
                 eCrepes.setTypes(List.of(tGastro));
+
+                Photo pCrepes = new Photo();
+                pCrepes.setUrl("/images/events/crepes.png");
+                pCrepes.setTitre("Affiche Crêpes");
+                pCrepes.setEvenement(eCrepes);
+                eCrepes.setPhotos(List.of(pCrepes));
 
                 Evenement eGala = new Evenement();
                 eGala.setTitre("Gala d'Hiver");
@@ -65,32 +79,16 @@ public class DataInitEvent {
                 eGala.setPrixCotisant(25.0);
                 eGala.setPrixNonCotisant(35.0);
                 eGala.setLienPaiement("https://tinyurl.com/3d8z9ft9");
+                eGala.setCoutCourses(500.0);
                 eGala.setTypes(List.of(tSoiree));
 
-                Evenement eBeerPong = new Evenement();
-                eBeerPong.setTitre("Tournoi de Beer Pong");
-                eBeerPong.setDescription("Montrez votre adresse ! Places très limitées.");
-                eBeerPong.setDate(LocalDate.now().plusWeeks(2));
-                eBeerPong.setHeureDebut(LocalTime.of(18, 0));
-                eBeerPong.setHeureFin(LocalTime.of(23, 0));
-                eBeerPong.setPrixCotisant(5.0);
-                eBeerPong.setPrixNonCotisant(7.0);
-                eBeerPong.setNbPlacesMax(16);
-                eBeerPong.setLienPaiement("https://tinyurl.com/3d8z9ft9");
-                eBeerPong.setTypes(List.of(tSoiree, tSport));
+                Photo pGala = new Photo();
+                pGala.setUrl("/images/events/gala.png");
+                pGala.setTitre("Affiche Gala");
+                pGala.setEvenement(eGala);
+                eGala.setPhotos(List.of(pGala));
 
-                Evenement eMusee = new Evenement();
-                eMusee.setTitre("Sortie au Louvre");
-                eMusee.setDescription("Culture et histoire au programme.");
-                eMusee.setDate(LocalDate.now().plusWeeks(3));
-                eMusee.setHeureDebut(LocalTime.of(10, 0));
-                eMusee.setHeureFin(LocalTime.of(16, 0));
-                eMusee.setPrixCotisant(0.0);
-                eMusee.setPrixNonCotisant(5.0);
-                eMusee.setLienPaiement("https://tinyurl.com/3d8z9ft9");
-                eMusee.setTypes(List.of(tCulture));
-
-                eventRepo.saveAll(List.of(eHalloween, eCrepes, eGala, eBeerPong, eMusee));
+                eventRepo.saveAll(List.of(eHalloween, eCrepes, eGala));
 
                 Utilisateur admin = new Utilisateur();
                 admin.setEmail("admin@lapause.com");
@@ -197,23 +195,23 @@ public class DataInitEvent {
 
                 userRepo.saveAll(List.of(admin, tresorier, alice, bob, charlie, david, eva, frank, grace, harry));
 
+                // Halloween: 150.50€ cost.
                 inscriptionRepo.save(createInscription(alice, eHalloween, true, true));
                 inscriptionRepo.save(createInscription(bob, eHalloween, true, true));
                 inscriptionRepo.save(createInscription(charlie, eHalloween, false, false));
                 inscriptionRepo.save(createInscription(eva, eHalloween, true, true));
 
+                // Crepes: 30€ cost.
                 inscriptionRepo.save(createInscription(admin, eCrepes, true, false));
                 inscriptionRepo.save(createInscription(alice, eCrepes, true, false));
                 inscriptionRepo.save(createInscription(david, eCrepes, false, false));
+                inscriptionRepo.save(createInscription(frank, eCrepes, true, true));
 
+                // Gala: 500€ cost.
                 inscriptionRepo.save(createInscription(frank, eGala, true, false));
                 inscriptionRepo.save(createInscription(eva, eGala, true, false));
                 inscriptionRepo.save(createInscription(tresorier, eGala, true, false));
-
-                inscriptionRepo.save(createInscription(bob, eBeerPong, true, false));
-                inscriptionRepo.save(createInscription(charlie, eBeerPong, false, false));
-
-                inscriptionRepo.save(createInscription(grace, eMusee, false, false));
+                inscriptionRepo.save(createInscription(harry, eGala, false, false));
 
             }
         };
@@ -223,6 +221,12 @@ public class DataInitEvent {
         Inscription i = new Inscription(u, e);
         i.setaPaye(aPaye);
         i.setaRecupereRepas(aRecupere);
+
+        double price = u.isEstCotisant()
+                ? (e.getPrixCotisant() != null ? e.getPrixCotisant() : 0.0)
+                : (e.getPrixNonCotisant() != null ? e.getPrixNonCotisant() : 0.0);
+        i.setMontantAPayer(price);
+
         return i;
     }
 }
