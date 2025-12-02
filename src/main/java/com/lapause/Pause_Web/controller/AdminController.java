@@ -114,7 +114,7 @@ public class AdminController {
     }
 
     @GetMapping("/event/{id}")
-    public String gererEvent(@PathVariable Long id, Model model) {
+    public String gererEvent(@PathVariable Long id, @RequestParam(required = false) String source, Model model) {
         Evenement event = eventService.getEventById(id);
         if (event == null)
             throw new RuntimeException("Event introuvable");
@@ -122,24 +122,38 @@ public class AdminController {
         model.addAttribute("event", event);
         model.addAttribute("inscriptions", eventService.getInscriptionsForEvent(id));
         model.addAttribute("stats", eventService.getDetailedStats(id));
+
+        String backLink = "finance".equals(source) ? "/admin/finance" : "/admin";
+        model.addAttribute("backLink", backLink);
+
         return "admin/event-detail";
     }
 
     @PostMapping("/inscription/{id}/update")
     public String updateInscription(@PathVariable Long id,
             @RequestParam(required = false) boolean aPaye,
-            @RequestParam(required = false) boolean aMange) {
+            @RequestParam(required = false) boolean aMange,
+            @RequestParam(required = false) String source) {
         Long eventId = eventService.updateInscription(id, aPaye, aMange);
         if (eventId != null) {
-            return "redirect:/admin/event/" + eventId;
+            String redirect = "redirect:/admin/event/" + eventId;
+            if (source != null && !source.isEmpty()) {
+                redirect += "?source=" + source;
+            }
+            return redirect;
         }
         return "redirect:/admin";
     }
 
     @PostMapping("/event/{id}/update-cost")
-    public String updateCost(@PathVariable Long id, @RequestParam Double coutCourses) {
+    public String updateCost(@PathVariable Long id, @RequestParam Double coutCourses,
+            @RequestParam(required = false) String source) {
         eventService.updateEventCost(id, coutCourses);
-        return "redirect:/admin/event/" + id;
+        String redirect = "redirect:/admin/event/" + id;
+        if (source != null && !source.isEmpty()) {
+            redirect += "?source=" + source;
+        }
+        return redirect;
     }
 
     @GetMapping("/event/new")

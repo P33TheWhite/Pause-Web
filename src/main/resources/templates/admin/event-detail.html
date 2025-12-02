@@ -6,7 +6,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center gap-3">
-                <a href="/admin" class="btn btn-light border shadow-sm rounded-circle p-2" title="Retour">
+                <a th:href="@{${backLink}}" class="btn btn-light border shadow-sm rounded-circle p-2" title="Retour">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                         class="bi bi-arrow-left" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
@@ -56,29 +56,40 @@
 
 
         <div class="row g-4 mb-5">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="admin-metric-card">
                     <div>
-                        <div class="metric-value" th:text="${stats[0]}">0</div>
+                        <div class="metric-value" th:text="${stats['nbInscrits']}">0</div>
                         <div class="metric-label">Inscrits</div>
                     </div>
                     <div class="metric-icon users">👥</div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="admin-metric-card">
                     <div>
-                        <div class="metric-value text-success" th:text="${stats[1]}">0</div>
+                        <div class="metric-value text-success" th:text="${stats['nbPaye']}">0</div>
                         <div class="metric-label">Ont Payé</div>
                     </div>
                     <div class="metric-icon pending" style="background-color: rgba(25, 135, 84, 0.1); color: #198754;">
                         💰</div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="admin-metric-card">
                     <div>
-                        <div class="metric-value text-warning" th:text="${stats[2]}">0</div>
+                        <div class="metric-value text-primary"
+                            th:text="${#numbers.formatDecimal(stats['recettes'], 1, 2) + ' €'}">0 €</div>
+                        <div class="metric-label">Recettes</div>
+                    </div>
+                    <div class="metric-icon" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd;">
+                        📈</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-metric-card">
+                    <div>
+                        <div class="metric-value text-warning" th:text="${stats['nbRepas']}">0</div>
                         <div class="metric-label">Repas Servis</div>
                     </div>
                     <div class="metric-icon events" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
@@ -112,6 +123,7 @@
                         <input type="number" step="0.01" name="coutCourses" class="form-control border-start-0 ps-0"
                             th:value="${event.coutCourses}" style="width: 120px; font-weight: bold;" placeholder="0.00">
                     </div>
+                    <input type="hidden" name="source" th:value="${param.source}">
                     <button class="btn btn-asso shadow-sm">Enregistrer</button>
                 </form>
             </div>
@@ -156,6 +168,7 @@
                             <td class="fw-bold text-dark" th:text="${ins.montantAPayer} + ' €'">0 €</td>
 
                             <form method="post" th:action="@{/admin/inscription/{id}/update(id=${ins.id})}">
+                                <input type="hidden" name="source" th:value="${param.source}">
                                 <td class="text-center">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" name="aPaye"

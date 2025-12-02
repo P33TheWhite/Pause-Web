@@ -18,6 +18,7 @@ public class Inscription {
 
     private Integer pointsUtilises = 0;
     private Double montantReductionVoucher = 0.0;
+    private Integer pointsGagnes = 0;
 
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
@@ -91,6 +92,11 @@ public class Inscription {
     }
 
     public Double getMontantAPayer() {
+        if (montantAPayer == null && evenement != null && utilisateur != null) {
+            return utilisateur.isEstCotisant()
+                    ? (evenement.getPrixCotisant() != null ? evenement.getPrixCotisant() : 0.0)
+                    : (evenement.getPrixNonCotisant() != null ? evenement.getPrixNonCotisant() : 0.0);
+        }
         return montantAPayer;
     }
 
@@ -112,5 +118,13 @@ public class Inscription {
 
     public void setMontantReductionVoucher(Double montantReductionVoucher) {
         this.montantReductionVoucher = montantReductionVoucher;
+    }
+
+    public Integer getPointsGagnes() {
+        return pointsGagnes;
+    }
+
+    public void setPointsGagnes(Integer pointsGagnes) {
+        this.pointsGagnes = pointsGagnes;
     }
 }
