@@ -18,10 +18,7 @@ public class LeaderboardController {
 
     @GetMapping("/leaderboard")
     public String leaderboard(HttpSession session, Model model) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
-        if (sessionUser == null) {
-            return "redirect:/login";
-        }
+
         List<Utilisateur> leaderboard = userService.getLeaderboard();
         model.addAttribute("leaderboard", leaderboard);
         return "leaderboard/leaderboard";

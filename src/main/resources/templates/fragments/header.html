@@ -36,8 +36,7 @@
                         <ul class="dropdown-menu animate slideIn">
                             <li><a class="dropdown-item" href="/agenda">Agenda</a></li>
                             <li th:if="${session.user != null}"><a class="dropdown-item" href="/shop">Boutique</a></li>
-                            <li th:if="${session.user != null}"><a class="dropdown-item"
-                                    href="/leaderboard">Classement</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard">Classement</a></li>
                             <li th:if="${session.user == null}"><a class="dropdown-item text-muted"
                                     href="/login">Connectez-vous pour plus !</a></li>
                         </ul>
