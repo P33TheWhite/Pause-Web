@@ -42,6 +42,7 @@
                 </a>
                 <form th:unless="${event.estArchive}" th:action="@{/admin/event/{id}/archive(id=${event.id})}"
                     method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir clôturer cet événement ?');">
+                    <input type="hidden" name="_method" value="delete" />
                     <button type="submit" class="btn btn-danger d-flex align-items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-archive-fill" viewBox="0 0 16 16">
@@ -118,6 +119,7 @@
                 </div>
                 <form method="post" th:action="@{/admin/event/{id}/update-cost(id=${event.id})}"
                     class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="_method" value="put" />
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0">€</span>
                         <input type="number" step="0.01" name="coutCourses" class="form-control border-start-0 ps-0"

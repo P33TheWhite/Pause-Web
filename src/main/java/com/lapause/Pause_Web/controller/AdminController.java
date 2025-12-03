@@ -127,7 +127,7 @@ public class AdminController {
         return "admin/archives";
     }
 
-    @PostMapping("/event/{id}/archive")
+    @DeleteMapping("/event/{id}/archive")
     public String archiveEvent(@PathVariable Long id, jakarta.servlet.http.HttpSession session) {
         eventService.archiveEvent(id, session);
         return "redirect:/admin";
@@ -192,7 +192,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PostMapping("/event/{id}/update-cost")
+    @PutMapping("/event/{id}/update-cost")
     public String updateCost(@PathVariable Long id, @RequestParam Double coutCourses,
             @RequestParam(required = false) String source) {
         eventService.updateEventCost(id, coutCourses);
@@ -215,9 +215,13 @@ public class AdminController {
         return "redirect:/admin/event/" + id;
     }
 
+    @Autowired
+    private com.lapause.Pause_Web.repository.TypeEvenementRepository typeRepo;
+
     @GetMapping("/event/new")
     public String formEvent(Model model) {
         model.addAttribute("evenement", new Evenement());
+        model.addAttribute("allTypes", typeRepo.findAll());
         return "admin/event-form";
     }
 
@@ -227,6 +231,7 @@ public class AdminController {
         if (evt == null)
             throw new RuntimeException("Event not found");
         model.addAttribute("evenement", evt);
+        model.addAttribute("allTypes", typeRepo.findAll());
         return "admin/event-form";
     }
 
