@@ -1,4 +1,4 @@
-# 📘 Documentation Technique - Pause-Web
+# Documentation Technique - Pause-Web
 
 Bienvenue sur le Wiki du projet **Pause-Web**. Ce document référence l'architecture des données, les règles de gestion et les spécificités techniques de l'application de gestion du BDE.
 
