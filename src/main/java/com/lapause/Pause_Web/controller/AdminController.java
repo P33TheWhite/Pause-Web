@@ -43,9 +43,10 @@ public class AdminController {
         allEvents.addAll(eventService.getAllArchivedEvents());
 
         // Filter the list of events to display AND calculate stats
+        // Filter the list of events to display AND calculate stats
         List<Evenement> displayedEvents = allEvents.stream()
                 .filter(e -> {
-                    boolean matchYear = (year == null || e.getDate().getYear() == year);
+                    boolean matchYear = (year == null || (e.getDate() != null && e.getDate().getYear() == year));
                     boolean matchEvent = (eventId == null || e.getId().equals(eventId));
                     boolean matchStatus = true;
 
@@ -87,6 +88,7 @@ public class AdminController {
 
         // Get unique years for the filter dropdown
         List<Integer> years = allEvents.stream()
+                .filter(e -> e.getDate() != null)
                 .map(e -> e.getDate().getYear())
                 .distinct()
                 .sorted(java.util.Comparator.reverseOrder())
