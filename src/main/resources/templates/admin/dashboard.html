@@ -115,23 +115,30 @@
                             <tbody>
                                 <tr th:each="evt : ${evenements}">
                                     <td class="ps-4 fw-bold text-dark" th:text="${evt.titre}">Titre</td>
-                                    <td class="text-muted" th:text="${#temporals.format(evt.date, 'dd MMM yyyy')}">Date
+                                    <td class="text-muted"
+                                        th:text="${evt.date != null ? #temporals.format(evt.date, 'dd MMM yyyy') : 'Date inconnue'}">
+                                        Date
                                     </td>
                                     <td>
-                                        <span th:if="${evt.date.isAfter(#temporals.createToday())}"
-                                            class="status-badge success">
-                                            <i class="bi bi-clock"></i>À venir
-                                        </span>
-                                        <span th:if="${evt.date.isEqual(#temporals.createToday())}"
-                                            class="status-badge primary">
-                                            <i class="bi bi-star-fill"></i>Aujourd'hui
-                                        </span>
-                                        <span th:if="${evt.date.isBefore(#temporals.createToday())}"
-                                            class="status-badge secondary">
-                                            <i class="bi bi-check-all"></i>Terminé
+                                        <th:block th:if="${evt.date != null}">
+                                            <span th:if="${evt.date.isAfter(#temporals.createToday())}"
+                                                class="status-badge success">
+                                                <i class="bi bi-clock"></i>À venir
+                                            </span>
+                                            <span th:if="${evt.date.isEqual(#temporals.createToday())}"
+                                                class="status-badge primary">
+                                                <i class="bi bi-star-fill"></i>Aujourd'hui
+                                            </span>
+                                            <span th:if="${evt.date.isBefore(#temporals.createToday())}"
+                                                class="status-badge secondary">
+                                                <i class="bi bi-check-all"></i>Terminé
+                                            </span>
+                                        </th:block>
+                                        <span th:if="${evt.date == null}" class="status-badge secondary">
+                                            <i class="bi bi-question-circle"></i>Inconnu
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="fw-bold" th:text="${eventStats.get(evt.id)}">0</span>
                                             <span class="text-muted small">participants</span>

@@ -236,17 +236,49 @@ public class AdminController {
     }
 
     @PostMapping("/event/save")
-    public String saveEvent(Evenement evenement,
-            @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        String imageUrl = fileStorageService.saveFile(multipartFile);
-        if (imageUrl != null) {
-            Photo p = new Photo();
-            p.setUrl(imageUrl);
-            p.setTitre("Affiche");
-            p.setEvenement(evenement);
-            evenement.setPhotos(List.of(p));
+    public String saveEvent(@ModelAttribute Evenement evenement,
+            @RequestParam(value = "image", required = false) MultipartFile multipartFile) throws IOException {
+
+        Evenement eventToSave;
+
+        if (evenement.getId() != null) {
+            // Update existing event
+            Evenement existingEvent = eventService.getEventById(evenement.getId());
+            if (existingEvent != null) {
+                existingEvent.setTitre(evenement.getTitre());
+                existingEvent.setDescription(evenement.getDescription());
+                existingEvent.setDate(evenement.getDate());
+                existingEvent.setHeureDebut(evenement.getHeureDebut());
+                existingEvent.setHeureFin(evenement.getHeureFin());
+                existingEvent.setPrixCotisant(evenement.getPrixCotisant());
+                existingEvent.setPrixNonCotisant(evenement.getPrixNonCotisant());
+                existingEvent.setLienPaiement(evenement.getLienPaiement());
+                existingEvent.setNbPlacesMax(evenement.getNbPlacesMax());
+                existingEvent.setTypes(evenement.getTypes());
+                // Preserve estArchive, coutCourses, etc.
+                eventToSave = existingEvent;
+            } else {
+                // Should not happen if ID is valid
+                eventToSave = evenement;
+            }
+        } else {
+            // New event
+            eventToSave = evenement;
         }
-        eventService.saveEvent(evenement);
+
+        if (multipartFile != null && !multipartFile.isEmpty()) {
+            String imageUrl = fileStorageService.saveFile(multipartFile);
+            if (imageUrl != null) {
+                Photo p = new Photo();
+                p.setUrl(imageUrl);
+                p.setTitre("Affiche");
+                p.setEvenement(eventToSave);
+                // Replace existing photos or add? Assuming one main photo for now based on form
+                eventToSave.setPhotos(List.of(p));
+            }
+        }
+
+        eventService.saveEvent(eventToSave);
         return "redirect:/admin";
     }
 }
