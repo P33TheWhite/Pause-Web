@@ -45,7 +45,6 @@ public class EventController {
         Utilisateur user = (Utilisateur) session.getAttribute("user");
         model.addAttribute("event", event);
 
-        // Stats for the page
         Map<String, Object> stats = eventService.getDetailedStats(id);
         model.addAttribute("nbInscrits", stats.get("nbInscrits"));
 
@@ -131,7 +130,6 @@ public class EventController {
             return "redirect:/login";
 
         String result = eventService.removeStaff(user, id);
-        // User wants removal message in red (error style)
         redirectAttributes.addFlashAttribute("error", result);
 
         return "redirect:/agenda";

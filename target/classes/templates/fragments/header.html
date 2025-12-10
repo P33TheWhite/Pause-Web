@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <nav th:fragment="monHeader" class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+
+            <a class="navbar-brand" href="/">
+                <img th:src="@{/img/logo-nav.png}" alt="Logo La Pau'se">
+                <span>La Pau'se</span>
+            </a>
+
+            <button class="navbar-toggler custom-toggler border-0 collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Accueil</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Vie Étudiante
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li><a class="dropdown-item" href="/agenda">Agenda</a></li>
+                            <li th:if="${session.user != null}"><a class="dropdown-item" href="/shop">Boutique</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard">Classement</a></li>
+                            <li th:if="${session.user == null}"><a class="dropdown-item text-muted"
+                                    href="/login">Connectez-vous pour plus !</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            L'Association
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li><a class="dropdown-item" href="/equipe">Notre Équipe</a></li>
+                            <li><a class="dropdown-item" href="/photos">Galerie Photos</a></li>
+                        </ul>
+                    </li>
+
+
+
+                    <li class="nav-item d-none d-lg-block mx-2 text-white-50">|</li>
+
+                    <li class="nav-item dropdown" th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                        <a class="nav-link dropdown-toggle btn-bureau-tab" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Bureau
+                        </a>
+                        <ul class="dropdown-menu animate slideIn">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Administration</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="/admin">Tableau de Bord</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Gestion</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/finance">Finance</a></li>
+                            <li><a class="dropdown-item" href="/admin/archives">Archives</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link btn-nav-login ms-2" href="/login">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                class="bi bi-person-fill me-1 mb-1" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                            </svg>
+                            Connexion
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown" th:if="${session.user != null}">
+                        <a class="nav-link dropdown-toggle ms-2 d-flex align-items-center gap-2" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:if="${session.user.icon != null}" th:src="@{'/images/' + ${session.user.icon}}"
+                                alt="Icon" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                            <div th:if="${session.user.icon == null}"
+                                style="background-color: var(--couleur-fromage); color: #333; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                <span th:text="${#strings.substring(session.user.prenom,0,1)}">U</span>
+                            </div>
+                            <div>
+                                <span th:text="${session.user.prenom}"
+                                    style="color: var(--couleur-fromage); font-weight: bold;">User</span>
+                            </div>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end animate slideIn">
+                            <li>
+                                <a class="dropdown-item" href="/profil">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-person-badge me-2" viewBox="0 0 16 16">
+                                        <path
+                                            d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                                        <path
+                                            d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-2.855l-.27-.477a.644.644 0 0 0-.063-.082 2.998 2.998 0 0 0-2.313-1.077H6.422a2.998 2.998 0 0 0-2.313 1.078l-.071.125a.642.642 0 0 0-.063.082l-.269.477A4.2 4.2 0 0 0 3 13.295V2.5z" />
+                                    </svg>
+                                    Mon Profil
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="/logout">Se déconnecter</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</body>
+
+</html>

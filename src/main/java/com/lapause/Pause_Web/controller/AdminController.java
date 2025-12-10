@@ -38,12 +38,9 @@ public class AdminController {
             @RequestParam(required = false) Long eventId,
             @RequestParam(required = false, defaultValue = "all") String status) {
 
-        // Get all events first
         List<Evenement> allEvents = eventService.getAllActiveEvents();
         allEvents.addAll(eventService.getAllArchivedEvents());
 
-        // Filter the list of events to display AND calculate stats
-        // Filter the list of events to display AND calculate stats
         List<Evenement> displayedEvents = allEvents.stream()
                 .filter(e -> {
                     boolean matchYear = (year == null || (e.getDate() != null && e.getDate().getYear() == year));
@@ -55,7 +52,6 @@ public class AdminController {
                     } else if ("active".equals(status)) {
                         matchStatus = !e.isEstArchive();
                     }
-                    // if "all", matchStatus remains true
 
                     return matchYear && matchEvent && matchStatus;
                 })
@@ -86,7 +82,6 @@ public class AdminController {
             }
         }
 
-        // Get unique years for the filter dropdown
         List<Integer> years = allEvents.stream()
                 .filter(e -> e.getDate() != null)
                 .map(e -> e.getDate().getYear())
@@ -103,7 +98,6 @@ public class AdminController {
         model.addAttribute("chartDepenses", dataDepenses);
         model.addAttribute("chartBenefice", dataBenefice);
 
-        // Filter attributes
         model.addAttribute("allEvents", allEvents);
         model.addAttribute("years", years);
         model.addAttribute("selectedYear", year);
@@ -244,7 +238,7 @@ public class AdminController {
         Evenement eventToSave;
 
         if (evenement.getId() != null) {
-            // Update existing event
+
             Evenement existingEvent = eventService.getEventById(evenement.getId());
             if (existingEvent != null) {
                 existingEvent.setTitre(evenement.getTitre());
@@ -257,14 +251,14 @@ public class AdminController {
                 existingEvent.setLienPaiement(evenement.getLienPaiement());
                 existingEvent.setNbPlacesMax(evenement.getNbPlacesMax());
                 existingEvent.setTypes(evenement.getTypes());
-                // Preserve estArchive, coutCourses, etc.
+
                 eventToSave = existingEvent;
             } else {
-                // Should not happen if ID is valid
+
                 eventToSave = evenement;
             }
         } else {
-            // New event
+
             eventToSave = evenement;
         }
 
@@ -275,7 +269,7 @@ public class AdminController {
                 p.setUrl(imageUrl);
                 p.setTitre("Affiche");
                 p.setEvenement(eventToSave);
-                // Replace existing photos or add? Assuming one main photo for now based on form
+
                 eventToSave.setPhotos(List.of(p));
             }
         }

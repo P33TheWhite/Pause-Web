@@ -44,6 +44,7 @@ public class DataInitEvent {
                 eHalloween.setPrixNonCotisant(15.0);
                 eHalloween.setLienPaiement("https://tinyurl.com/3d8z9ft9");
                 eHalloween.setCoutCourses(150.50);
+                eHalloween.setEstArchive(true);
                 eHalloween.setTypes(List.of(tSoiree));
 
                 Photo pHalloween = new Photo();
@@ -195,19 +196,16 @@ public class DataInitEvent {
 
                 userRepo.saveAll(List.of(admin, tresorier, alice, bob, charlie, david, eva, frank, grace, harry));
 
-                // Halloween: 150.50€ cost.
                 inscriptionRepo.save(createInscription(alice, eHalloween, true, true));
                 inscriptionRepo.save(createInscription(bob, eHalloween, true, true));
                 inscriptionRepo.save(createInscription(charlie, eHalloween, false, false));
                 inscriptionRepo.save(createInscription(eva, eHalloween, true, true));
 
-                // Crepes: 30€ cost.
                 inscriptionRepo.save(createInscription(admin, eCrepes, true, false));
                 inscriptionRepo.save(createInscription(alice, eCrepes, true, false));
                 inscriptionRepo.save(createInscription(david, eCrepes, false, false));
                 inscriptionRepo.save(createInscription(frank, eCrepes, true, true));
 
-                // Gala: 500€ cost.
                 inscriptionRepo.save(createInscription(frank, eGala, true, false));
                 inscriptionRepo.save(createInscription(eva, eGala, true, false));
                 inscriptionRepo.save(createInscription(tresorier, eGala, true, false));

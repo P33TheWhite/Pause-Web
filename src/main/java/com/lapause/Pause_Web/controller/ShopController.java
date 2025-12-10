@@ -27,7 +27,6 @@ public class ShopController {
         Utilisateur user = userService.getUserById(sessionUser.getId());
         if (user == null) {
             System.out.println("DEBUG: User found in session but not in DB (ID: " + sessionUser.getId() + ")");
-            // Optional: invalidate session if user not found in DB
             session.invalidate();
             return "redirect:/login";
         }
@@ -45,7 +44,6 @@ public class ShopController {
         boolean success = userService.buyItem(userId, itemId, cost);
         if (success) {
             model.addAttribute("message", "Achat effectué avec succès !");
-            // Update session user to reflect points change
             Utilisateur updatedUser = userService.getUserById(userId);
             session.setAttribute("user", updatedUser);
         } else {
@@ -66,8 +64,6 @@ public class ShopController {
         boolean success = userService.equipIcon(userId, iconName);
         if (success) {
             model.addAttribute("message", "Icône équipée !");
-            // Update session user to reflect icon change immediately in header if header
-            // uses session user
             sessionUser.setIcon(iconName);
             session.setAttribute("user", sessionUser);
         } else {

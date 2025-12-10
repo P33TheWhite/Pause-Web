@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Classement - La Pau'se</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/leaderboard.css}">
+    <main class="container py-4">
+
+        <div class="leaderboard-container p-4">
+            <div class="leaderboard-header rounded-3 mb-5">
+                <h1>Classement Général</h1>
+                <p class="mb-0 opacity-75">Nos plus fidèles membres</p>
+            </div>
+
+
+            <div class="podium-container" th:if="${leaderboard.size() > 0}">
+
+
+                <div class="podium-item silver" th:if="${leaderboard.size() > 1}">
+                    <div class="podium-avatar-wrapper">
+                        <img th:src="@{'/images/' + ${leaderboard[1].icon}}" alt="Silver" class="podium-avatar">
+                        <span class="podium-medal">🥈</span>
+                    </div>
+                    <div class="podium-name" th:text="${leaderboard[1].prenom}"
+                        th:classappend="${leaderboard[1].vip} ? 'text-warning' : ''">Nom</div>
+                    <div class="podium-points" th:text="${leaderboard[1].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-base"></div>
+                </div>
+
+
+                <div class="podium-item gold" th:if="${leaderboard.size() > 0}">
+                    <div class="podium-avatar-wrapper">
+                        <img th:src="@{'/images/' + ${leaderboard[0].icon}}" alt="Gold" class="podium-avatar">
+                        <span class="podium-medal">🥇</span>
+                    </div>
+                    <div class="podium-name" th:text="${leaderboard[0].prenom}"
+                        th:classappend="${leaderboard[0].vip} ? 'text-warning' : ''">Nom</div>
+                    <div class="podium-points" th:text="${leaderboard[0].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-base"></div>
+                </div>
+
+
+                <div class="podium-item bronze" th:if="${leaderboard.size() > 2}">
+                    <div class="podium-avatar-wrapper">
+                        <img th:src="@{'/images/' + ${leaderboard[2].icon}}" alt="Bronze" class="podium-avatar">
+                        <span class="podium-medal">🥉</span>
+                    </div>
+                    <div class="podium-name" th:text="${leaderboard[2].prenom}"
+                        th:classappend="${leaderboard[2].vip} ? 'text-warning' : ''">Nom</div>
+                    <div class="podium-points" th:text="${leaderboard[2].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-base"></div>
+                </div>
+
+            </div>
+
+
+            <table class="leaderboard-table" th:if="${leaderboard.size() > 3}">
+                <thead>
+                    <tr>
+                        <th class="text-center">Rang</th>
+                        <th>Utilisateur</th>
+                        <th class="text-end">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user, iterStat : ${leaderboard}" th:if="${iterStat.index > 2}">
+
+                        <td class="rank-cell">
+                            <span th:text="${iterStat.count}">4</span>
+                        </td>
+
+                        <td>
+                            <div class="user-cell">
+                                <img th:src="@{'/images/' + ${user.icon}}" alt="Icon" class="rank-icon">
+                                <div>
+                                    <span th:text="${user.prenom} + ' ' + ${user.nom}" class="fw-bold d-block"
+                                        th:classappend="${user.vip} ? 'text-warning' : ''">Jean Dupont</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="points-cell" th:text="${user.pointsAllTime}">1500</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${leaderboard.size() <= 3}" class="text-center text-muted py-4">
+                <p>Pas assez de participants pour afficher le reste du classement.</p>
+            </div>
+
+        </div>
+
+    </main>
+</th:block>
+
+</html>

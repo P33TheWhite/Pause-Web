@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+
+    <main class="container py-5">
+
+        <!-- Alerts -->
+        <div th:if="${success}" class="alert alert-success border-0 shadow-sm mb-4 rounded-3 d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger border-0 shadow-sm mb-4 rounded-3 d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="row g-5">
+
+            <!-- Left Column: User Profile (Sticky) -->
+            <div class="col-lg-4">
+                <div class="profile-sidebar">
+                    <div class="profile-card">
+                        <!-- Avatar -->
+                        <div class="profile-avatar-wrapper">
+                            <img th:if="${user.icon != null}" th:src="@{'/images/' + ${user.icon}}" alt="Avatar"
+                                class="profile-avatar-large">
+                            <div th:if="${user.icon == null}"
+                                class="profile-avatar-large d-flex align-items-center justify-content-center bg-light text-secondary fs-1 fw-bold">
+                                <span th:text="${#strings.substring(user.prenom,0,1)}">U</span>
+                            </div>
+                            <span th:if="${user.vip}" class="vip-badge">
+                                <i class="bi bi-star-fill me-1"></i>VIP
+                            </span>
+                        </div>
+
+                        <!-- User Info -->
+                        <h1 class="profile-name" th:text="${user.prenom} + ' ' + ${user.nom}">Prénom Nom</h1>
+                        <p class="profile-email" th:text="${user.email}">email@example.com</p>
+
+                        <!-- Badges -->
+                        <div class="d-flex justify-content-center gap-2 mb-4">
+                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill"
+                                th:text="${user.classe}">Classe</span>
+                            <span th:if="${user.estCotisant}"
+                                class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                <i class="bi bi-check-circle me-1"></i>Cotisant
+                            </span>
+                            <span th:if="${!user.estCotisant}"
+                                class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 rounded-pill">
+                                Non Cotisant
+                            </span>
+                        </div>
+
+                        <!-- CTA: Devenir Cotisant -->
+                        <div th:if="${!user.estCotisant}" class="mb-4">
+                            <div th:if="${user.demandeCotisationEnCours}"
+                                class="alert alert-warning border-0 small py-2 mb-0">
+                                <i class="bi bi-hourglass-split me-1"></i>Demande en cours...
+                            </div>
+                            <form th:if="${!user.demandeCotisationEnCours}" action="/profil/demande-cotisation"
+                                method="post">
+                                <button type="submit" class="btn btn-asso w-100 shadow-sm">
+                                    <i class="bi bi-star me-2"></i>Devenir Cotisant
+                                </button>
+                            </form>
+                        </div>
+
+                        <hr class="my-4 opacity-10">
+
+                        <!-- Actions -->
+                        <button class="btn btn-outline-secondary btn-sm w-100 mb-2" data-bs-toggle="modal"
+                            data-bs-target="#passwordModal">
+                            <i class="bi bi-shield-lock me-2"></i>Modifier mot de passe
+                        </button>
+                        <a href="/shop" class="btn btn-outline-asso btn-sm w-100">
+                            <i class="bi bi-shop me-2"></i>Boutique
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Stats & Events -->
+            <div class="col-lg-8">
+
+                <!-- Stats Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon points">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${user.points != null ? user.points : 0}">0</h3>
+                                <p>Points Fidélité</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon wallet">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${user.soldeReduction != null ? user.soldeReduction : 0} + ' €'">0 €</h3>
+                                <p>Solde Réduction</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Section -->
+                <h4 class="section-title">Mes Événements</h4>
+
+                <div th:if="${inscriptions.isEmpty()}"
+                    class="text-center py-5 bg-white rounded-4 shadow-sm border border-light">
+                    <div class="mb-3 text-muted opacity-50">
+                        <i class="bi bi-calendar-x" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-secondary">Aucun événement</h5>
+                    <p class="text-muted mb-4">Vous n'êtes inscrit à aucun événement pour le moment.</p>
+                    <a href="/agenda" class="btn btn-asso px-4 rounded-pill">
+                        Découvrir l'agenda <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+
+                <div th:if="${!inscriptions.isEmpty()}">
+                    <div th:each="ins : ${inscriptions}" class="event-list-item">
+                        <div class="event-date-box">
+                            <span class="event-day" th:text="${#temporals.format(ins.evenement.date, 'dd')}">01</span>
+                            <span class="event-month"
+                                th:text="${#temporals.format(ins.evenement.date, 'MMM')}">JAN</span>
+                        </div>
+
+                        <div class="event-details">
+                            <h5 class="event-title" th:text="${ins.evenement.titre}">Titre de l'événement</h5>
+                            <div class="event-meta">
+                                <span><i class="bi bi-clock me-1"></i><span
+                                        th:text="${ins.evenement.heureDebut}">18:00</span></span>
+                                <span>
+                                    <i class="bi bi-tag me-1"></i>
+                                    <span th:if="${ins.montantAPayer != null}" th:text="${ins.montantAPayer} + ' €'">10
+                                        €</span>
+                                    <span th:if="${ins.montantAPayer == null}">Gratuit</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="event-status">
+                            <span th:if="${!ins.enAttente}" class="status-badge registered">
+                                <i class="bi bi-check-circle-fill"></i>Inscrit
+                            </span>
+                            <span th:if="${ins.enAttente}" class="status-badge waiting">
+                                <i class="bi bi-hourglass-split"></i>En attente
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Password Modal -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Modifier le mot de passe</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/profil/change-password" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Ancien mot de passe</label>
+                                <input type="password" name="oldPassword" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nouveau mot de passe</label>
+                                <input type="password" name="newPassword" class="form-control" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Confirmer le nouveau mot de passe</label>
+                                <input type="password" name="confirmPassword" class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</th:block>
+
+</html>

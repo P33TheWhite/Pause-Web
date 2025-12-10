@@ -1,0 +1,225 @@
+/* Leaderboard Page Styles */
+.leaderboard-container {
+    max-width: 900px;
+    margin: 3rem auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.leaderboard-header {
+    background-color: var(--couleur-asso-bg);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.leaderboard-header h1 {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th {
+    background-color: #f8f9fa;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 2px solid #eee;
+    text-align: left;
+}
+
+.leaderboard-table td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #333;
+    font-weight: 500;
+}
+
+.leaderboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+.leaderboard-table tr:hover {
+    background-color: #fcfcfc;
+}
+
+.rank-cell {
+    width: 80px;
+    text-align: center;
+    font-weight: 800;
+    color: #aaa;
+    font-size: 1.2rem;
+}
+
+.rank-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid white;
+    box-shadow: var(--shadow-sm);
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+}
+
+.points-cell {
+    font-weight: 700;
+    color: var(--couleur-asso-bg);
+    font-size: 1.1rem;
+    text-align: right;
+}
+
+.row-gold {
+    background: linear-gradient(to right, rgba(255, 215, 0, 0.05), transparent);
+}
+
+.row-gold .rank-cell {
+    color: #FFD700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.row-silver {
+    background: linear-gradient(to right, rgba(192, 192, 192, 0.05), transparent);
+}
+
+.row-silver .rank-cell {
+    color: #C0C0C0;
+}
+
+.row-bronze {
+    background: linear-gradient(to right, rgba(205, 127, 50, 0.05), transparent);
+}
+
+.row-bronze .rank-cell {
+    color: #CD7F32;
+}
+
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+}
+
+.podium-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 140px;
+}
+
+.podium-item.gold {
+    order: 2;
+    z-index: 3;
+    transform: scale(1.1);
+}
+
+.podium-item.silver {
+    order: 1;
+    z-index: 2;
+}
+
+.podium-item.bronze {
+    order: 3;
+    z-index: 2;
+}
+
+.podium-avatar-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.podium-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: var(--shadow-lg);
+}
+
+.podium-item.gold .podium-avatar {
+    border-color: #FFD700;
+    width: 120px;
+    height: 120px;
+}
+
+.podium-item.silver .podium-avatar {
+    border-color: #C0C0C0;
+}
+
+.podium-item.bronze .podium-avatar {
+    border-color: #CD7F32;
+}
+
+.podium-medal {
+    position: absolute;
+    bottom: -10px;
+    right: 0;
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.podium-name {
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.podium-points {
+    font-weight: 700;
+    color: var(--couleur-asso-bg);
+    font-size: 1rem;
+    background: white;
+    padding: 4px 12px;
+    border-radius: 50px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.podium-base {
+    width: 100%;
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    border-radius: 8px 8px 0 0;
+    margin-top: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.podium-item.gold .podium-base {
+    height: 120px;
+    background: linear-gradient(to bottom, #FFD700, #FDB931);
+    opacity: 0.2;
+}
+
+.podium-item.silver .podium-base {
+    height: 80px;
+    background: linear-gradient(to bottom, #C0C0C0, #E0E0E0);
+    opacity: 0.2;
+}
+
+.podium-item.bronze .podium-base {
+    height: 60px;
+    background: linear-gradient(to bottom, #CD7F32, #B87333);
+    opacity: 0.2;
+}

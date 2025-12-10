@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+
+    <main class="container-fluid px-4 py-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="display-5 fw-bold text-dark mb-0">Finance</h1>
+                <p class="text-muted lead">Suivi de la trésorerie et des événements</p>
+            </div>
+            <div>
+                <a href="/admin/finance" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body">
+                <form method="get" action="/admin/finance" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Statut</label>
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="all" th:selected="${selectedStatus == 'all'}">Tous les événements</option>
+                            <option value="active" th:selected="${selectedStatus == 'active'}">Actifs uniquement
+                            </option>
+                            <option value="archived" th:selected="${selectedStatus == 'archived'}">Archivés uniquement
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Année</label>
+                        <select name="year" class="form-select" onchange="this.form.submit()">
+                            <option value="">Toutes les années</option>
+                            <option th:each="y : ${years}" th:value="${y}" th:text="${y}"
+                                th:selected="${y == selectedYear}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Événement</label>
+                        <select name="eventId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tous les événements</option>
+                            <option th:each="e : ${allEvents}" th:value="${e.id}" th:text="${e.titre}"
+                                th:selected="${e.id == selectedEventId}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a href="/admin/finance" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i>Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold text-success mb-1 small">Total Recettes</p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(globalStats.totalRecolte, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €</h2>
+                            </div>
+                            <div class="icon-shape bg-success bg-opacity-10 text-success rounded-3 p-3">
+                                <i class="bi bi-graph-up-arrow fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold text-danger mb-1 small">Total Dépenses</p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(globalStats.totalDepenses, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €</h2>
+                            </div>
+                            <div class="icon-shape bg-danger bg-opacity-10 text-danger rounded-3 p-3">
+                                <i class="bi bi-cart-x fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-body p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-start z-1 position-relative">
+                            <div>
+                                <p class="text-uppercase fw-bold mb-1 small"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'text-primary' : 'text-warning'">
+                                    Résultat Net
+                                </p>
+                                <h2 class="display-6 fw-bold mb-0"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'text-primary' : 'text-warning'"
+                                    th:text="${(globalStats.benefice >= 0 ? '+' : '') + #numbers.formatDecimal(globalStats.benefice, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    +0,00 €
+                                </h2>
+                            </div>
+                            <div class="icon-shape rounded-3 p-3"
+                                th:classappend="${globalStats.benefice >= 0} ? 'bg-primary bg-opacity-10 text-primary' : 'bg-warning bg-opacity-10 text-warning'">
+                                <i class="bi"
+                                    th:classappend="${globalStats.benefice >= 0} ? 'bi-wallet2' : 'bi-exclamation-triangle'"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Détail par Événement</h5>
+
+            </div>
+
+
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase small text-muted">
+                            <tr>
+                                <th class="ps-4 py-3">Événement</th>
+                                <th class="py-3">Date</th>
+                                <th class="py-3 text-end">Coût (Courses)</th>
+                                <th class="py-3 text-end">Recettes</th>
+                                <th class="py-3 text-center">Résultat</th>
+                                <th class="pe-4 py-3 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="event : ${events}">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-light rounded me-3 d-flex align-items-center justify-content-center overflow-hidden"
+                                            style="width: 40px; height: 40px;">
+                                            <img th:if="${!event.photos.isEmpty()}" th:src="${event.photos[0].url}"
+                                                alt="Event" class="w-100 h-100" style="object-fit: cover;">
+                                            <i th:if="${event.photos.isEmpty()}"
+                                                class="bi bi-calendar-event text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark" th:text="${event.titre}">Nom de
+                                                l'événement</h6>
+                                            <small class="text-muted" th:if="${event.estArchive}">Archivé</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">01 Jan
+                                    2024</td>
+
+                                <td class="text-end fw-medium text-danger"
+                                    th:text="${#numbers.formatDecimal(eventStats.get(event.id).get('depenses'), 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €
+                                </td>
+                                <td class="text-end fw-medium text-success"
+                                    th:text="${#numbers.formatDecimal(eventStats.get(event.id).get('recolte'), 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                    0,00 €
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="badge rounded-pill px-3 py-2"
+                                        th:with="benefice=${eventStats.get(event.id).get('benefice')}"
+                                        th:classappend="${benefice >= 0} ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                        <i class="bi me-1"
+                                            th:classappend="${benefice >= 0} ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                                        <span
+                                            th:text="${(benefice >= 0 ? '+' : '') + #numbers.formatDecimal(benefice, 1, 'COMMA', 2, 'POINT')} + ' €'">+0,00
+                                            €</span>
+                                    </span>
+                                </td>
+
+                                <td class="pe-4 text-end">
+                                    <a th:href="@{/admin/event/{id}(id=${event.id}, source='finance')}"
+                                        class="btn btn-sm btn-outline-primary fw-bold px-3">
+                                        Gérer
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+</th:block>
+
+</html>

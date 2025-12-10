@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/team.css}">
+
+    <main>
+
+        <div class="team-hero d-flex align-items-center justify-content-center">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bold mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">L'Équipe 2025</h1>
+                <p class="lead" style="font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">
+                    Ceux qui font vivre <span style="color: var(--couleur-fromage); font-weight: bold;">La Pau'se</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="container my-5">
+
+
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-secondary">Le Bureau</h2>
+                <p class="text-muted">Passez votre souris pour découvrir l'équipe !</p>
+            </div>
+
+            <div class="deck-container">
+
+
+                <div class="deck-card">
+                    <div class="team-img-wrapper mb-3">
+                        <img th:src="@{/images/bureau/yan.png}" alt="Président"
+                            class="img-fluid rounded-circle border border-4 border-warning">
+                    </div>
+                    <h4 class="fw-bold mb-1">Yan Hourdebaigth</h4>
+                    <span class="badge bg-warning text-dark mb-3">Président</span>
+                    <p class="text-muted fst-italic">"Plus ca pue, plus c'est bon !"</p>
+                </div>
+
+
+                <div class="deck-card">
+                    <div class="team-img-wrapper mb-3">
+                        <img th:src="@{/images/bureau/zak.png}" alt="VP"
+                            class="img-fluid rounded-circle border border-4"
+                            style="border-color: var(--couleur-asso-bg) !important;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Zak Hill</h5>
+                    <span class="badge mb-3" style="background-color: var(--couleur-asso-bg);">Vice-Président</span>
+                    <p class="text-muted fst-italic">"Tant que le trésor est d'accord ..."</p>
+                </div>
+
+
+                <div class="deck-card">
+                    <div class="team-img-wrapper mb-3">
+                        <img th:src="@{/images/bureau/mael.png}" alt="Trésorier"
+                            class="img-fluid rounded-circle border border-4"
+                            style="border-color: var(--couleur-asso-bg) !important;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Mael Lescoulié</h5>
+                    <span class="badge mb-3" style="background-color: var(--couleur-asso-bg);">Trésorier</span>
+                    <p class="text-muted fst-italic">"Tant que c'est pas les croisés ..."</p>
+                </div>
+
+
+                <div class="deck-card">
+                    <div class="team-img-wrapper mb-3">
+                        <img th:src="@{/images/bureau/rayan.png}" alt="VP"
+                            class="img-fluid rounded-circle border border-4"
+                            style="border-color: var(--couleur-asso-bg) !important;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Rayan Ayoub</h5>
+                    <span class="badge mb-3" style="background-color: var(--couleur-asso-bg);">Vice-Président</span>
+                    <p class="text-muted fst-italic">Toujours là</p>
+                </div>
+
+            </div>
+
+
+            <div class="mt-5 pt-4">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bold text-secondary">Pôle Communication</h3>
+                    <div
+                        style="width: 60px; height: 4px; background-color: var(--couleur-fromage); margin: 15px auto; border-radius: 2px;">
+                    </div>
+                </div>
+
+                <div class="row justify-content-center g-4">
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="team-card p-4 text-center h-100">
+                            <div class="team-img-wrapper mb-4 mx-auto shadow-sm">
+                                <img th:src="@{/img/bg-hero.png}" alt="Com" class="img-fluid rounded-circle">
+                            </div>
+                            <h5 class="fw-bold mb-2">Laura Balty</h5>
+                            <p class="text-muted small mb-0">Designeuse officielle</p>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="team-card p-4 text-center h-100">
+                            <div class="team-img-wrapper mb-4 mx-auto shadow-sm">
+                                <img th:src="@{/img/logo-carre.jpg}" alt="Com" class="img-fluid rounded-circle">
+                            </div>
+                            <h5 class="fw-bold mb-2">Chloe Bega</h5>
+                            <p class="text-muted small mb-0">Communication & Community Manager</p>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 col-sm-6">
+                        <div class="team-card p-4 text-center h-100">
+                            <div class="team-img-wrapper mb-4 mx-auto shadow-sm">
+                                <img th:src="@{/img/bg-hero.png}" alt="Com" class="img-fluid rounded-circle">
+                            </div>
+                            <h5 class="fw-bold mb-2">Lucas</h5>
+                            <p class="text-muted small mb-0">Pole VSS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</th:block>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/shop.css}">
+    <main class="container py-5">
+
+
+        <div class="shop-header">
+            <h1>Boutique</h1>
+            <div class="user-points-display">
+                <span th:text="${user.points}">0</span> Points
+            </div>
+            <div class="mt-3 text-muted">
+                Réduction cumulée : <strong th:text="${user.soldeReduction != null ? user.soldeReduction : 0} + ' €'">0
+                    €</strong>
+            </div>
+        </div>
+
+
+        <div th:if="${message}" class="alert alert-success shadow-sm border-0" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${message}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger shadow-sm border-0" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        </div>
+
+
+        <h2 class="mb-4 fw-bold text-secondary border-bottom pb-2">Consommables</h2>
+        <div class="shop-grid mb-5">
+
+
+            <div class="shop-card">
+                <img src="/images/croque.png" alt="Croque Monsieur">
+                <h3>Croque Monsieur</h3>
+                <p>Un délicieux croque-monsieur pour votre pause.</p>
+                <span class="price-tag">100 Points</span>
+                <form action="/shop/buy" method="post" class="mt-auto">
+                    <input type="hidden" name="itemId" value="croque">
+                    <input type="hidden" name="cost" value="100">
+                    <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 100}"
+                        th:classappend="${user.points < 100} ? ' opacity-50'">
+                        Acheter
+                    </button>
+                </form>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/voucher_1.png" alt="Réduction 1€">
+                <h3>Réduction 1€</h3>
+                <p>1€ de réduction sur le prochain événement.</p>
+                <span class="price-tag">100 Points</span>
+                <form action="/shop/buy" method="post" class="mt-auto">
+                    <input type="hidden" name="itemId" value="reduction_1">
+                    <input type="hidden" name="cost" value="100">
+                    <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 100}"
+                        th:classappend="${user.points < 100} ? ' opacity-50'">
+                        Acheter
+                    </button>
+                </form>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/voucher_2.png" alt="Réduction 2€">
+                <h3>Réduction 2€</h3>
+                <p>2€ de réduction sur le prochain événement.</p>
+                <span class="price-tag">200 Points</span>
+                <form action="/shop/buy" method="post" class="mt-auto">
+                    <input type="hidden" name="itemId" value="reduction_2">
+                    <input type="hidden" name="cost" value="200">
+                    <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 200}"
+                        th:classappend="${user.points < 200} ? ' opacity-50'">
+                        Acheter
+                    </button>
+                </form>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/voucher_5.png" alt="Réduction 5€">
+                <h3>Réduction 5€</h3>
+                <p>5€ de réduction sur le prochain événement.</p>
+                <span class="price-tag">500 Points</span>
+                <form action="/shop/buy" method="post" class="mt-auto">
+                    <input type="hidden" name="itemId" value="reduction_5">
+                    <input type="hidden" name="cost" value="500">
+                    <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 500}"
+                        th:classappend="${user.points < 500} ? ' opacity-50'">
+                        Acheter
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+        <h2 class="mb-4 fw-bold text-secondary border-bottom pb-2">Icônes de Profil</h2>
+        <div class="shop-grid">
+
+
+            <div class="shop-card">
+                <img src="/images/icon1.png" alt="Icone 1">
+                <h3>Icone Cool</h3>
+                <span class="price-tag">200 Points</span>
+
+                <div class="mt-auto w-100">
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon1.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon1.png'}">
+                            <input type="hidden" name="iconName" value="icon1.png">
+                            <button type="submit" class="btn-outline-asso w-100">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon1.png'}" class="badge-equipped">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon1.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon1.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' opacity-50'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/icon2.png" alt="Icone 2">
+                <h3>Icone Super</h3>
+                <span class="price-tag">200 Points</span>
+
+                <div class="mt-auto w-100">
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon2.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon2.png'}">
+                            <input type="hidden" name="iconName" value="icon2.png">
+                            <button type="submit" class="btn-outline-asso w-100">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon2.png'}" class="badge-equipped">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon2.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon2.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' opacity-50'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/icon3.png" alt="Icone 3">
+                <h3>Icone 3</h3>
+                <span class="price-tag">200 Points</span>
+
+                <div class="mt-auto w-100">
+                    <div th:if="${#lists.contains(user.unlockedIcons, 'icon3.png')}">
+                        <form action="/shop/equip" method="post" th:if="${user.icon != 'icon3.png'}">
+                            <input type="hidden" name="iconName" value="icon3.png">
+                            <button type="submit" class="btn-outline-asso w-100">Équiper</button>
+                        </form>
+                        <span th:if="${user.icon == 'icon3.png'}" class="badge-equipped">Équipé</span>
+                    </div>
+                    <div th:unless="${#lists.contains(user.unlockedIcons, 'icon3.png')}">
+                        <form action="/shop/buy" method="post">
+                            <input type="hidden" name="itemId" value="icon3.png">
+                            <input type="hidden" name="cost" value="200">
+                            <button type="submit" class="btn-asso w-100" th:disabled="${user.points < 200}"
+                                th:classappend="${user.points < 200} ? ' opacity-50'">Acheter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="shop-card">
+                <img src="/images/default.png" alt="Défaut">
+                <h3>Classique</h3>
+                <span class="price-tag text-success">Gratuit</span>
+
+                <div class="mt-auto w-100">
+                    <div th:if="${user.icon != 'default.png'}">
+                        <form action="/shop/equip" method="post">
+                            <input type="hidden" name="iconName" value="default.png">
+                            <button type="submit" class="btn-outline-asso w-100">Équiper</button>
+                        </form>
+                    </div>
+                    <span th:if="${user.icon == 'default.png'}" class="badge-equipped">Équipé</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</th:block>
+
+</html>

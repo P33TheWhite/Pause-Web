@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout :: layout(~{::main}, ~{::link})}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+
+    <main class="container py-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="fw-bold mb-1 text-dark">Tableau de Bord</h1>
+                <p class="text-muted mb-0">Vue d'ensemble et gestion de l'association.</p>
+            </div>
+            <a href="/admin/event/new" class="btn btn-asso shadow-sm d-flex align-items-center gap-2">
+                <i class="bi bi-plus-lg"></i>
+                <span>Nouvel Événement</span>
+            </a>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div class="metric-content">
+                        <h3 th:text="${tousLesUsers.size()}">0</h3>
+                        <p>Membres Inscrits</p>
+                    </div>
+                    <div class="metric-icon users">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div class="metric-content">
+                        <h3 th:text="${demandes.size()}">0</h3>
+                        <p>Demandes en Attente</p>
+                    </div>
+                    <div class="metric-icon pending">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-metric-card">
+                    <div class="metric-content">
+                        <h3 th:text="${evenements.size()}">0</h3>
+                        <p>Événements Actifs</p>
+                    </div>
+                    <div class="metric-icon events">
+                        <i class="bi bi-calendar-event-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+
+            <div class="col-lg-4">
+                <div class="admin-card h-100">
+                    <div class="admin-card-header">
+                        <h5 class="text-warning"><i class="bi bi-bell-fill me-2"></i>Demandes de Cotisation</h5>
+                        <span class="badge bg-warning-subtle text-warning rounded-pill"
+                            th:text="${demandes.size()}">0</span>
+                    </div>
+
+                    <div th:if="${demandes.isEmpty()}" class="p-5 text-center text-muted">
+                        <i class="bi bi-check-circle fs-1 opacity-25 mb-2 d-block"></i>
+                        <p class="mb-0 small">Aucune demande en attente.</p>
+                    </div>
+
+                    <div th:if="${!demandes.isEmpty()}">
+                        <div th:each="user : ${demandes}" class="request-list-item">
+                            <div>
+                                <span class="request-user-name" th:text="${user.prenom} + ' ' + ${user.nom}">Prénom
+                                    Nom</span>
+                                <span class="request-user-class" th:text="${user.classe}">Classe</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form method="post" th:action="@{/admin/cotisation/{id}/accepter(id=${user.id})}">
+                                    <button class="btn-action accept" title="Accepter">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+                                <form method="post" th:action="@{/admin/cotisation/{id}/refuser(id=${user.id})}">
+                                    <button class="btn-action reject" title="Refuser">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="admin-card h-100">
+                    <div class="admin-card-header">
+                        <h5 class="text-primary"><i class="bi bi-calendar-check-fill me-2"></i>Événements Récents</h5>
+                        <a href="/admin/archives" class="btn btn-sm btn-outline-secondary">Voir Archives</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Événement</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                    <th>Inscrits</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="evt : ${evenements}">
+                                    <td class="ps-4 fw-bold text-dark" th:text="${evt.titre}">Titre</td>
+                                    <td class="text-muted"
+                                        th:text="${evt.date != null ? #temporals.format(evt.date, 'dd MMM yyyy') : 'Date inconnue'}">
+                                        Date
+                                    </td>
+                                    <td>
+                                        <th:block th:if="${evt.date != null}">
+                                            <span th:if="${evt.date.isAfter(#temporals.createToday())}"
+                                                class="status-badge success">
+                                                <i class="bi bi-clock"></i>À venir
+                                            </span>
+                                            <span th:if="${evt.date.isEqual(#temporals.createToday())}"
+                                                class="status-badge primary">
+                                                <i class="bi bi-star-fill"></i>Aujourd'hui
+                                            </span>
+                                            <span th:if="${evt.date.isBefore(#temporals.createToday())}"
+                                                class="status-badge secondary">
+                                                <i class="bi bi-check-all"></i>Terminé
+                                            </span>
+                                        </th:block>
+                                        <span th:if="${evt.date == null}" class="status-badge secondary">
+                                            <i class="bi bi-question-circle"></i>Inconnu
+                                        </span>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold" th:text="${eventStats.get(evt.id)}">0</span>
+                                            <span class="text-muted small">participants</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a th:href="@{/admin/event/{id}(id=${evt.id})}"
+                                                class="btn btn-sm btn-outline-primary fw-bold px-3">
+                                                Gérer
+                                            </a>
+                                            <a th:href="@{/admin/event/{id}/edit(id=${evt.id})}"
+                                                class="btn btn-sm btn-outline-secondary fw-bold px-3">
+                                                Modifier
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="text-dark"><i class="bi bi-person-lines-fill me-2"></i>Annuaire des Membres</h5>
+                <div class="search-input-group">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" id="searchUser" class="form-control search-input"
+                        placeholder="Rechercher un membre..." onkeyup="filtrerMembres()">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table admin-table" id="tableMembres">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Membre</th>
+                            <th>Email</th>
+                            <th>Classe</th>
+                            <th>Statut</th>
+                            <th>Staffeur</th>
+                            <th>VIP</th>
+                            <th class="text-end pe-4">Gestion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${tousLesUsers}">
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark user-info" th:text="${u.nom} + ' ' + ${u.prenom}">Nom
+                                    Prénom</div>
+                            </td>
+                            <td class="text-muted small" th:text="${u.email}">Email</td>
+                            <td class="user-classe" th:text="${u.classe}">Classe</td>
+                            <td>
+                                <span th:if="${u.estCotisant}" class="status-badge success">Cotisant</span>
+                                <span th:if="${!u.estCotisant}" class="status-badge secondary">Non Cotisant</span>
+                                <span th:if="${u.demandeCotisationEnCours}" class="status-badge warning">En
+                                    attente</span>
+                            </td>
+                            <td>
+                                <span th:if="${u.estStaffeur}" class="badge bg-dark text-white">OUI</span>
+                                <span th:if="${!u.estStaffeur}" class="text-muted small">-</span>
+                            </td>
+                            <td>
+                                <form method="post" th:action="@{/admin/user/{id}/toggle-vip(id=${u.id})}">
+                                    <button th:if="${u.vip}"
+                                        class="btn btn-sm btn-warning text-dark fw-bold py-0 px-2 rounded-pill shadow-sm"
+                                        style="font-size: 0.75rem;">
+                                        <i class="bi bi-star-fill me-1"></i>VIP
+                                    </button>
+                                    <button th:if="${!u.vip}"
+                                        class="btn btn-sm btn-light text-muted border py-0 px-2 rounded-pill"
+                                        style="font-size: 0.75rem;">
+                                        Non VIP
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end pe-4">
+                                <form th:if="${u.id != session.user.id}" method="post"
+                                    th:action="@{/admin/user/{id}/toggle-cotisant(id=${u.id})}" style="display:inline;">
+                                    <button th:if="${u.estCotisant}"
+                                        class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill"
+                                        style="font-size: 0.75rem;">Retirer</button>
+                                    <button th:if="${!u.estCotisant}"
+                                        class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill"
+                                        style="font-size: 0.75rem;">Ajouter</button>
+                                </form>
+                                <span th:if="${u.id == session.user.id}"
+                                    class="badge bg-light text-muted border rounded-pill">Vous</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            function filtrerMembres() {
+                let input = document.getElementById("searchUser").value.toLowerCase();
+                let rows = document.querySelectorAll("#tableMembres tbody tr");
+
+                rows.forEach(row => {
+                    let info = row.querySelector(".user-info").innerText.toLowerCase();
+                    let classe = row.querySelector(".user-classe").innerText.toLowerCase();
+
+                    if (info.includes(input) || classe.includes(input)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        </script>
+    </main>
+</th:block>
+
+</html>
