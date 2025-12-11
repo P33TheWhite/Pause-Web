@@ -220,11 +220,11 @@ Le système distingue deux niveaux de "Staff" :
 | L'application est jolie / utilise un framework CSS | | **Oui** : Le site est propre et responsive grâce à **Bootstrap 5** avec des couleurs coherentes avec l'association |
 | **Technique** | **5/5** | |
 | L'application utilise le design pattern MVC pour chaque fonctionnalité | | **Oui** : Les Vues (HTML) affichent ce que les Contrôleurs préparent, en utilisant les Services pour la logique |
-| Les controlleurs utilisent les méthodes HTTP: GET,POST,PUT,DELETE | | **Oui** : Récupération des pages (GET), envoi des formulaires (POST), et mise à jour des données (PUT, DELETE) |
+| Les controlleurs utilisent les méthodes HTTP: GET,POST,PUT,DELETE | | **Oui** : Récupération des pages (GET), envoi des formulaires (POST), et mise à jour des données (PUT, DELETE) -> @GetMapping, @PostMapping, @PutMapping, @DeleteMapping |
 | Chaque vue manipule des données transmises par son controlleur | | **Oui** : Tout vient du serveur via Thymeleaf (le nom de l'utilisateur, la liste des soirées...) |
 | **Soutenance et Evaluation individuelle** | **5/5** | |
-| La soutenance est bien préparée | | |
+| La soutenance est bien préparée | | **Oui** : Entraînement en amont + Présentation des fonctionnalités puis revue du code|
 | Chacun parle suffisamment | | |
 | Le timing est respecté | | |
 | Les réponses aux questions sont correctes | | |
-| Le repo comporte des commits réguliers de chaque membre du groupe | | |
+| Le repo comporte des commits réguliers de chaque membre du groupe | | **Oui** : Historique des commits git |
