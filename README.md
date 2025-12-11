@@ -24,7 +24,7 @@ classDiagram
         +boolean estStaffeur
         +Integer points
         +Integer pointsAllTime
-        +BigDecimal soldeReduction
+        +Double soldeReduction
         +String icon
         +List~String~ unlockedIcons
     }
@@ -36,11 +36,11 @@ classDiagram
         +LocalDate date
         +LocalTime heureDebut
         +LocalTime heureFin
-        +BigDecimal prixCotisant
-        +BigDecimal prixNonCotisant
+        +Double prixCotisant
+        +Double prixNonCotisant
         +String lienPaiement
         +Integer nbPlacesMax
-        +BigDecimal coutCourses
+        +Double coutCourses
         +boolean estArchive
     }
 
@@ -52,9 +52,9 @@ classDiagram
         +boolean estStaff
         +boolean staffValide
         +LocalDateTime dateInscription
-        +BigDecimal montantAPayer
+        +Double montantAPayer
         +Integer pointsUtilises
-        +BigDecimal montantReductionVoucher
+        +Double montantReductionVoucher
         +Integer pointsGagnes
     }
 
@@ -95,17 +95,17 @@ L'acteur central de l'application. Il peut être un étudiant standard ou un mem
 | :--- | :--- | :--- |
 | **id** | `Long` | Identifiant technique (Clé primaire). |
 | `email` | `String` | Identifiant de connexion (Unique). |
-| `motDePasse` | `String` | Hash du mot de passe (Bcrypt/Argon2). |
+| `motDePasse` | `String` | Mot de passe. |
 | `nom` | `String` | Nom de famille. |
 | `prenom` | `String` | Prénom. |
 | `classe` | `String` | Promotion de l'étudiant (ex: "Ing1", "Prepa2"). |
-| `estCotisant` | `Boolean` | **Vrai** si la cotisation BDE est active pour l'année. |
-| `demandeCotisationEnCours` | `Boolean` | **Vrai** si une preuve de paiement est en attente de validation admin. |
-| `vip` | `Boolean` | Statut donnant accès aux avantages VIP (coupe-file, etc.). |
-| `estStaffeur` | `Boolean` | Statut global indiquant que l'élève fait partie de l'équipe staff (bénévoles). |
+| `estCotisant` | `boolean` | **Vrai** si la cotisation BDE est active pour l'année. |
+| `demandeCotisationEnCours` | `boolean` | **Vrai** si une preuve de paiement est en attente de validation admin. |
+| `vip` | `boolean` | Statut donnant accès aux avantages VIP (coupe-file, etc.). |
+| `estStaffeur` | `boolean` | Statut global indiquant que l'élève fait partie de l'équipe staff (bénévoles). |
 | `points` | `Integer` | Solde actuel de points utilisables (Gamification). |
 | `pointsAllTime` | `Integer` | Somme totale des points gagnés (pour le classement général). |
-| `soldeReduction` | `BigDecimal` | Porte-monnaie virtuel (en €) acquis via les points. |
+| `soldeReduction` | `Double` | Porte-monnaie virtuel (en €) acquis via les points. |
 | `icon` | `String` | Identifiant de l'icône de profil actuelle. |
 | `unlockedIcons` | `List<String>` | Liste des IDs d'icônes que l'utilisateur a débloquées. |
 
@@ -120,12 +120,12 @@ Représente une soirée, un afterwork ou une activité.
 | `date` | `LocalDate` | Date de l'événement. |
 | `heureDebut` | `LocalTime` | Heure de commencement. |
 | `heureFin` | `LocalTime` | Heure de fin estimée. |
-| `prixCotisant` | `BigDecimal` | Tarif préférentiel. |
-| `prixNonCotisant` | `BigDecimal` | Tarif plein. |
+| `prixCotisant` | `Double` | Tarif préférentiel. |
+| `prixNonCotisant` | `Double` | Tarif plein. |
 | `lienPaiement` | `String` | URL vers la billetterie externe (Lydia/Wero). |
 | `nbPlacesMax` | `Integer` | Capacité maximale (`null` si illimité). |
-| `coutCourses` | `BigDecimal` | Coût organisationnel (pour stats BDE). |
-| `estArchive` | `Boolean` | **Vrai** une fois l'événement passé (ne s'affiche plus en accueil). |
+| `coutCourses` | `Double` | Coût organisationnel (pour stats BDE). |
+| `estArchive` | `boolean` | **Vrai** une fois l'événement passé (ne s'affiche plus en accueil). |
 
 ### 📝 Inscription
 Table de jointure complexe gérant l'état d'un utilisateur pour un événement donné.
@@ -133,15 +133,15 @@ Table de jointure complexe gérant l'état d'un utilisateur pour un événement 
 | Attribut | Type (Java) | Description |
 | :--- | :--- | :--- |
 | **id** | `Long` | Identifiant technique. |
-| `aPaye` | `Boolean` | Confirme que le paiement a été reçu. |
-| `aRecupereRepas` | `Boolean` | Validé lors du scan QR Code à l'entrée/au repas. |
-| `enAttente` | `Boolean` | **Vrai** si l'événement était plein au moment de l'inscription. |
-| `estStaff` | `Boolean` | **Vrai** si l'utilisateur travaille spécifiquement sur cet événement. |
-| `staffValide` | `Boolean` | Validation finale par le bureau (débloque les points/récompenses). |
+| `aPaye` | `boolean` | Confirme que le paiement a été reçu. |
+| `aRecupereRepas` | `boolean` | Validé lors du scan QR Code à l'entrée/au repas. |
+| `enAttente` | `boolean` | **Vrai** si l'événement était plein au moment de l'inscription. |
+| `estStaff` | `boolean` | **Vrai** si l'utilisateur travaille spécifiquement sur cet événement. |
+| `staffValide` | `boolean` | Validation finale par le bureau (débloque les points/récompenses). |
 | `dateInscription` | `LocalDateTime`| Horodatage de la demande d'inscription. |
-| `montantAPayer` | `BigDecimal` | Prix final gelé au moment de l'inscription. |
+| `montantAPayer` | `Double` | Prix final gelé au moment de l'inscription. |
 | `pointsUtilises` | `Integer` | Nombre de points brûlés pour réduire le prix. |
-| `montantReductionVoucher` | `BigDecimal` | Valeur en euros de la réduction points. |
+| `montantReductionVoucher` | `Double` | Valeur en euros de la réduction points. |
 | `pointsGagnes` | `Integer` | Points crédités une fois l'événement terminé/validé. |
 
 ### 🏷️ TypeEvenement
@@ -201,7 +201,30 @@ Le système distingue deux niveaux de "Staff" :
 
 ## 4. Notes Techniques pour les Développeurs
 
-* **Gestion de l'Argent :** Ne jamais utiliser `Double` ou `Float` pour les montants financiers (`prix`, `solde`). Toujours utiliser `java.math.BigDecimal` pour éviter les erreurs d'arrondi flottant.
-* **Dates :** Utiliser l'API `java.time` (`LocalDate`, `LocalDateTime`, `LocalTime`) et jamais `java.util.Date`.
-* **Stockage des icônes :** La liste `unlockedIcons` doit être gérée via une `@ElementCollection` en JPA ou stockée sous forme de JSON stringifié si la base de données ne supporte pas les tableaux natifs.
-* **Sécurité :** L'accès à l'entité `InfoBureau` et aux fonctionnalités d'administration (validation staff, création événement) doit être protégé par un rôle Spring Security (`ROLE_ADMIN`).
+* **Gestion de l'Argent :** Utilisation de `Double` pour simplifier le développement initial (bien que `BigDecimal` soit recommandé pour la prod).
+* **Dates :** Utilisation de l'API `java.time` (`LocalDate`, `LocalDateTime`, `LocalTime`).
+* **Stockage des icônes :** La liste `unlockedIcons` est gérée via une `@ElementCollection` (JPA).
+* **Sécurité & Authentification :** L'authentification est gérée manuellement via `jakarta.servlet.http.HttpSession` (stockage de l'objet User en session) plutôt que Spring Security.
+
+---
+
+# Auto-évaluation
+
+| Critère | Points | Justification |
+| :--- | :---: | :--- |
+| **Fonctionnalités** | **10/10** | |
+| L'application contient bien les fonctionnalités demandées | | |
+| L'application permet d'insérer, mettre à jour, supprimer, chercher une entité en BDD | | |
+| L'application permet de lier deux entités en BDD | | |
+| L'application permet, pour une entité donnée, de créer un lien à une autre entité en BDD | | |
+| L'application est jolie / utilise un framework CSS | | |
+| **Technique** | **5/5** | |
+| L'application utilise le design pattern MVC pour chaque fonctionnalité | | |
+| Les controlleurs utilisent les méthodes HTTP: GET,POST,PUT,DELETE | | |
+| Chaque vue manipule des données transmises par son controlleur | | |
+| **Soutenance et Evaluation individuelle** | **5/5** | |
+| La soutenance est bien préparée | | |
+| Chacun parle suffisamment | | |
+| Le timing est respecté | | |
+| Les réponses aux questions sont correctes | | |
+| Le repo comporte des commits réguliers de chaque membre du groupe | | |
