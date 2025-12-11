@@ -1,6 +1,6 @@
 # Documentation Technique - Pause-Web
 
-Bienvenue sur le Wiki du projet **Pause-Web**. Ce document référence l'architecture des données, les règles de gestion et les spécificités techniques de l'application de gestion du BDE.
+Bienvenue sur le Wiki du projet **Pause-Web**. Ce document référence l'architecture des données, les règles de gestion et les spécificités techniques de l'application de gestion de "La Pau'se".
 
 ---
 
@@ -173,7 +173,7 @@ Extension du profil pour les membres du BDE.
 
 ---
 
-## 3. Règles de Gestion (Business Logic)
+## 3. Règles de Gestion
 
 ### 💰 Gestion des Tarifs & Paiements
 1.  **Calcul du prix :** Lors de l'inscription, le système vérifie le booléen `Utilisateur.estCotisant`.
@@ -201,10 +201,10 @@ Le système distingue deux niveaux de "Staff" :
 
 ## 4. Notes Techniques pour les Développeurs
 
-* **Gestion de l'Argent :** Utilisation de `Double` pour simplifier le développement initial (bien que `BigDecimal` soit recommandé pour la prod).
-* **Dates :** Utilisation de l'API `java.time` (`LocalDate`, `LocalDateTime`, `LocalTime`).
-* **Stockage des icônes :** La liste `unlockedIcons` est gérée via une `@ElementCollection` (JPA).
-* **Sécurité & Authentification :** L'authentification est gérée manuellement via `jakarta.servlet.http.HttpSession` (stockage de l'objet User en session) plutôt que Spring Security.
+* **Gestion de l'Argent :** Utilisation de `Double` pour simplifier le développement initial
+* **Dates :** Utilisation de l'API `java.time` (`LocalDate`, `LocalDateTime`, `LocalTime`)
+* **Stockage des icônes :** La liste `unlockedIcons` est gérée via une `@ElementCollection` (JPA)
+* **Sécurité & Authentification :** L'authentification est gérée manuellement via `jakarta.servlet.http.HttpSession` (stockage de l'objet User en session)
 
 ---
 
@@ -213,15 +213,15 @@ Le système distingue deux niveaux de "Staff" :
 | Critère | Points | Justification |
 | :--- | :---: | :--- |
 | **Fonctionnalités** | **10/10** | |
-| L'application contient bien les fonctionnalités demandées | | |
-| L'application permet d'insérer, mettre à jour, supprimer, chercher une entité en BDD | | |
-| L'application permet de lier deux entités en BDD | | |
-| L'application permet, pour une entité donnée, de créer un lien à une autre entité en BDD | | |
-| L'application est jolie / utilise un framework CSS | | |
+| L'application contient bien les fonctionnalités demandées | | **Oui** : L'application permet de gérer toute l'association de "La Pau'se": les étudiants peuvent s'inscrire aux événements, payer en ligne (avec tarif cotisant/non-cotisant), et gagner des points de fidélité |
+| L'application permet d'insérer, mettre à jour, supprimer, chercher une entité en BDD | | **Oui** : Ajouter un événement, modifier le profil d'un utilisateur, ou annuler une inscription |
+| L'application permet de lier deux entités en BDD | | **Oui** : un événement contient plusieurs photos, et un événement possède plusieurs types (Soirée, caritatif,...) |
+| L'application permet, pour une entité donnée, de créer un lien à une autre entité en BDD | | **Oui** : Quand un étudiant s'inscrit à un event ou débloque des icones |
+| L'application est jolie / utilise un framework CSS | | **Oui** : Le site est propre et responsive grâce à **Bootstrap 5** avec des couleurs coherentes avec l'association |
 | **Technique** | **5/5** | |
-| L'application utilise le design pattern MVC pour chaque fonctionnalité | | |
-| Les controlleurs utilisent les méthodes HTTP: GET,POST,PUT,DELETE | | |
-| Chaque vue manipule des données transmises par son controlleur | | |
+| L'application utilise le design pattern MVC pour chaque fonctionnalité | | **Oui** : Les Vues (HTML) affichent ce que les Contrôleurs préparent, en utilisant les Services pour la logique |
+| Les controlleurs utilisent les méthodes HTTP: GET,POST,PUT,DELETE | | **Oui** : Récupération des pages (GET), envoi des formulaires (POST), et mise à jour des données (PUT, DELETE) |
+| Chaque vue manipule des données transmises par son controlleur | | **Oui** : Tout vient du serveur via Thymeleaf (le nom de l'utilisateur, la liste des soirées...) |
 | **Soutenance et Evaluation individuelle** | **5/5** | |
 | La soutenance est bien préparée | | |
 | Chacun parle suffisamment | | |
