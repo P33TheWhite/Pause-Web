@@ -25,9 +25,9 @@
                         <img th:src="@{'/images/' + ${leaderboard[1].icon}}" alt="Silver" class="podium-avatar">
                         <span class="podium-medal">🥈</span>
                     </div>
-                    <div class="podium-name" th:text="${leaderboard[1].prenom}"
+                    <div class="podium-name" th:text="${leaderboard[1].firstName}"
                         th:classappend="${leaderboard[1].vip} ? 'text-warning' : ''">Nom</div>
-                    <div class="podium-points" th:text="${leaderboard[1].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-points" th:text="${leaderboard[1].allTimePoints} + ' pts'">0 pts</div>
                     <div class="podium-base"></div>
                 </div>
 
@@ -37,9 +37,9 @@
                         <img th:src="@{'/images/' + ${leaderboard[0].icon}}" alt="Gold" class="podium-avatar">
                         <span class="podium-medal">🥇</span>
                     </div>
-                    <div class="podium-name" th:text="${leaderboard[0].prenom}"
+                    <div class="podium-name" th:text="${leaderboard[0].firstName}"
                         th:classappend="${leaderboard[0].vip} ? 'text-warning' : ''">Nom</div>
-                    <div class="podium-points" th:text="${leaderboard[0].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-points" th:text="${leaderboard[0].allTimePoints} + ' pts'">0 pts</div>
                     <div class="podium-base"></div>
                 </div>
 
@@ -49,9 +49,9 @@
                         <img th:src="@{'/images/' + ${leaderboard[2].icon}}" alt="Bronze" class="podium-avatar">
                         <span class="podium-medal">🥉</span>
                     </div>
-                    <div class="podium-name" th:text="${leaderboard[2].prenom}"
+                    <div class="podium-name" th:text="${leaderboard[2].firstName}"
                         th:classappend="${leaderboard[2].vip} ? 'text-warning' : ''">Nom</div>
-                    <div class="podium-points" th:text="${leaderboard[2].pointsAllTime} + ' pts'">0 pts</div>
+                    <div class="podium-points" th:text="${leaderboard[2].allTimePoints} + ' pts'">0 pts</div>
                     <div class="podium-base"></div>
                 </div>
 
@@ -77,13 +77,13 @@
                             <div class="user-cell">
                                 <img th:src="@{'/images/' + ${user.icon}}" alt="Icon" class="rank-icon">
                                 <div>
-                                    <span th:text="${user.prenom} + ' ' + ${user.nom}" class="fw-bold d-block"
+                                    <span th:text="${user.firstName} + ' ' + ${user.lastName}" class="fw-bold d-block"
                                         th:classappend="${user.vip} ? 'text-warning' : ''">Jean Dupont</span>
                                 </div>
                             </div>
                         </td>
 
-                        <td class="points-cell" th:text="${user.pointsAllTime}">1500</td>
+                        <td class="points-cell" th:text="${user.allTimePoints}">1500</td>
                     </tr>
                 </tbody>
             </table>

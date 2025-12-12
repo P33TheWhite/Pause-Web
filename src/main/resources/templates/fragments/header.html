@@ -57,7 +57,8 @@
 
                     <li class="nav-item d-none d-lg-block mx-2 text-white-50">|</li>
 
-                    <li class="nav-item dropdown" th:if="${session.user != null && session.user.classe == 'Bureau'}">
+                    <li class="nav-item dropdown"
+                        th:if="${session.user != null && session.user.studentClass == 'Bureau'}">
                         <a class="nav-link dropdown-toggle btn-bureau-tab" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Bureau
@@ -95,10 +96,10 @@
                                 alt="Icon" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
                             <div th:if="${session.user.icon == null}"
                                 style="background-color: var(--couleur-fromage); color: #333; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                                <span th:text="${#strings.substring(session.user.prenom,0,1)}">U</span>
+                                <span th:text="${#strings.substring(session.user.firstName,0,1)}">U</span>
                             </div>
                             <div>
-                                <span th:text="${session.user.prenom}"
+                                <span th:text="${session.user.firstName}"
                                     style="color: var(--couleur-fromage); font-weight: bold;">User</span>
                             </div>
                         </a>

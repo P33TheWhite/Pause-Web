@@ -24,7 +24,7 @@
                             <tr th:each="event : ${archives}">
                                 <td class="ps-4 text-muted" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">
                                     Date</td>
-                                <td class="fw-bold text-dark" th:text="${event.titre}">Nom</td>
+                                <td class="fw-bold text-dark" th:text="${event.title}">Nom</td>
                                 <td>
                                     <span class="status-badge secondary">Clôturé</span>
                                 </td>

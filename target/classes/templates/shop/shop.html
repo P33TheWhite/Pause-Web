@@ -11,7 +11,8 @@
                 <span th:text="${user.points}">0</span> Points
             </div>
             <div class="mt-3 text-muted">
-                Réduction cumulée : <strong th:text="${user.soldeReduction != null ? user.soldeReduction : 0} + ' €'">0
+                Réduction cumulée : <strong
+                    th:text="${user.reductionBalance != null ? user.reductionBalance : 0} + ' €'">0
                     €</strong>
             </div>
         </div>

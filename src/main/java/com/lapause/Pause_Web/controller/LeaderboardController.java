@@ -1,6 +1,6 @@
 package com.lapause.Pause_Web.controller;
 
-import com.lapause.Pause_Web.entity.Utilisateur;
+import com.lapause.Pause_Web.entity.User;
 import com.lapause.Pause_Web.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class LeaderboardController {
     @GetMapping("/leaderboard")
     public String leaderboard(HttpSession session, Model model) {
 
-        List<Utilisateur> leaderboard = userService.getLeaderboard();
+        List<User> leaderboard = userService.getLeaderboard();
         model.addAttribute("leaderboard", leaderboard);
         return "leaderboard/leaderboard";
     }

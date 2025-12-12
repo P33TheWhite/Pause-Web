@@ -1,9 +1,8 @@
 package com.lapause.Pause_Web.service;
 
-import com.lapause.Pause_Web.entity.Evenement;
-import com.lapause.Pause_Web.entity.Inscription;
-
-import com.lapause.Pause_Web.repository.InscriptionRepository;
+import com.lapause.Pause_Web.entity.Event;
+import com.lapause.Pause_Web.entity.Registration;
+import com.lapause.Pause_Web.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,58 +14,58 @@ import java.util.Map;
 public class FinanceService {
 
     @Autowired
-    private InscriptionRepository inscriptionRepo;
+    private RegistrationRepository registrationRepo;
 
-    public Map<String, Object> getGlobalStats(List<Evenement> events) {
-        double totalRecolte = 0;
-        double totalTheorique = 0;
-        double totalDepenses = 0;
+    public Map<String, Object> getGlobalStats(List<Event> events) {
+        double totalCollected = 0;
+        double totalTheoretical = 0;
+        double totalExpenses = 0;
 
-        for (Evenement evt : events) {
-            if (evt.getCoutCourses() != null) {
-                totalDepenses += evt.getCoutCourses();
+        for (Event evt : events) {
+            if (evt.getShoppingCost() != null) {
+                totalExpenses += evt.getShoppingCost();
             }
-            List<Inscription> inscriptions = inscriptionRepo.findByEvenementId(evt.getId());
-            for (Inscription ins : inscriptions) {
-                double price = ins.getMontantAPayer() != null ? ins.getMontantAPayer() : 0.0;
-                totalTheorique += price;
-                if (ins.isaPaye()) {
-                    totalRecolte += price;
+            List<Registration> registrations = registrationRepo.findByEventId(evt.getId());
+            for (Registration reg : registrations) {
+                double price = reg.getAmountToPay() != null ? reg.getAmountToPay() : 0.0;
+                totalTheoretical += price;
+                if (reg.isHasPaid()) {
+                    totalCollected += price;
                 }
             }
         }
 
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalRecolte", totalRecolte);
-        stats.put("totalTheorique", totalTheorique);
-        stats.put("totalManquant", totalTheorique - totalRecolte);
-        stats.put("totalDepenses", totalDepenses);
-        stats.put("benefice", totalRecolte - totalDepenses);
+        stats.put("totalRecolte", totalCollected);
+        stats.put("totalTheorique", totalTheoretical);
+        stats.put("totalManquant", totalTheoretical - totalCollected);
+        stats.put("totalDepenses", totalExpenses);
+        stats.put("benefice", totalCollected - totalExpenses);
         return stats;
     }
 
-    public Map<Long, Map<String, Double>> getEventStats(List<Evenement> events) {
+    public Map<Long, Map<String, Double>> getEventStats(List<Event> events) {
         Map<Long, Map<String, Double>> eventStats = new HashMap<>();
 
-        for (Evenement evt : events) {
-            List<Inscription> inscriptions = inscriptionRepo.findByEvenementId(evt.getId());
-            double recolte = 0;
-            double theorique = 0;
-            double depenses = evt.getCoutCourses() != null ? evt.getCoutCourses() : 0.0;
+        for (Event evt : events) {
+            List<Registration> registrations = registrationRepo.findByEventId(evt.getId());
+            double collected = 0;
+            double theoretical = 0;
+            double expenses = evt.getShoppingCost() != null ? evt.getShoppingCost() : 0.0;
 
-            for (Inscription ins : inscriptions) {
-                double price = ins.getMontantAPayer() != null ? ins.getMontantAPayer() : 0.0;
-                theorique += price;
-                if (ins.isaPaye()) {
-                    recolte += price;
+            for (Registration reg : registrations) {
+                double price = reg.getAmountToPay() != null ? reg.getAmountToPay() : 0.0;
+                theoretical += price;
+                if (reg.isHasPaid()) {
+                    collected += price;
                 }
             }
 
             Map<String, Double> stats = new HashMap<>();
-            stats.put("recolte", recolte);
-            stats.put("theorique", theorique);
-            stats.put("depenses", depenses);
-            stats.put("benefice", recolte - depenses);
+            stats.put("recolte", collected);
+            stats.put("theorique", theoretical);
+            stats.put("depenses", expenses);
+            stats.put("benefice", collected - expenses);
             eventStats.put(evt.getId(), stats);
         }
         return eventStats;

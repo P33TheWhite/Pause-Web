@@ -1,11 +1,13 @@
 package com.lapause.Pause_Web.controller;
 
-import com.lapause.Pause_Web.entity.Evenement;
+import com.lapause.Pause_Web.entity.Event;
 import com.lapause.Pause_Web.entity.Photo;
+import com.lapause.Pause_Web.entity.Registration;
 import com.lapause.Pause_Web.service.EventService;
 import com.lapause.Pause_Web.service.FileStorageService;
 import com.lapause.Pause_Web.service.FinanceService;
 import com.lapause.Pause_Web.service.UserService;
+import com.lapause.Pause_Web.repository.EventTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,25 +34,28 @@ public class AdminController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private EventTypeRepository eventTypeRepo;
+
     @GetMapping("/finance")
     public String showFinance(Model model,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Long eventId,
             @RequestParam(required = false, defaultValue = "all") String status) {
 
-        List<Evenement> allEvents = eventService.getAllActiveEvents();
+        List<Event> allEvents = eventService.getAllActiveEvents();
         allEvents.addAll(eventService.getAllArchivedEvents());
 
-        List<Evenement> displayedEvents = allEvents.stream()
+        List<Event> displayedEvents = allEvents.stream()
                 .filter(e -> {
                     boolean matchYear = (year == null || (e.getDate() != null && e.getDate().getYear() == year));
                     boolean matchEvent = (eventId == null || e.getId().equals(eventId));
                     boolean matchStatus = true;
 
                     if ("archived".equals(status)) {
-                        matchStatus = e.isEstArchive();
+                        matchStatus = e.isArchived();
                     } else if ("active".equals(status)) {
-                        matchStatus = !e.isEstArchive();
+                        matchStatus = !e.isArchived();
                     }
 
                     return matchYear && matchEvent && matchStatus;
@@ -61,24 +66,24 @@ public class AdminController {
         Map<Long, Map<String, Double>> eventStats = financeService.getEventStats(displayedEvents);
 
         List<String> labels = new java.util.ArrayList<>();
-        List<Double> dataRecolte = new java.util.ArrayList<>();
-        List<Double> dataTheorique = new java.util.ArrayList<>();
-        List<Double> dataDepenses = new java.util.ArrayList<>();
-        List<Double> dataBenefice = new java.util.ArrayList<>();
+        List<Double> dataCollected = new java.util.ArrayList<>();
+        List<Double> dataTheoretical = new java.util.ArrayList<>();
+        List<Double> dataExpenses = new java.util.ArrayList<>();
+        List<Double> dataProfit = new java.util.ArrayList<>();
 
-        for (Evenement evt : displayedEvents) {
-            labels.add(evt.getTitre());
+        for (Event evt : displayedEvents) {
+            labels.add(evt.getTitle());
             Map<String, Double> stats = eventStats.get(evt.getId());
             if (stats != null) {
-                dataRecolte.add(stats.get("recolte"));
-                dataTheorique.add(stats.get("theorique"));
-                dataDepenses.add(stats.get("depenses"));
-                dataBenefice.add(stats.get("benefice"));
+                dataCollected.add(stats.get("recolte"));
+                dataTheoretical.add(stats.get("theorique"));
+                dataExpenses.add(stats.get("depenses"));
+                dataProfit.add(stats.get("benefice"));
             } else {
-                dataRecolte.add(0.0);
-                dataTheorique.add(0.0);
-                dataDepenses.add(0.0);
-                dataBenefice.add(0.0);
+                dataCollected.add(0.0);
+                dataTheoretical.add(0.0);
+                dataExpenses.add(0.0);
+                dataProfit.add(0.0);
             }
         }
 
@@ -93,10 +98,10 @@ public class AdminController {
         model.addAttribute("events", displayedEvents);
         model.addAttribute("eventStats", eventStats);
         model.addAttribute("chartLabels", labels);
-        model.addAttribute("chartRecolte", dataRecolte);
-        model.addAttribute("chartTheorique", dataTheorique);
-        model.addAttribute("chartDepenses", dataDepenses);
-        model.addAttribute("chartBenefice", dataBenefice);
+        model.addAttribute("chartRecolte", dataCollected);
+        model.addAttribute("chartTheorique", dataTheoretical);
+        model.addAttribute("chartDepenses", dataExpenses);
+        model.addAttribute("chartBenefice", dataProfit);
 
         model.addAttribute("allEvents", allEvents);
         model.addAttribute("years", years);
@@ -110,8 +115,10 @@ public class AdminController {
     @GetMapping
     public String adminDashboard(Model model) {
         model.addAttribute("demandes", userService.getPendingCotisationRequests());
-        List<Evenement> events = eventService.getAllActiveEvents();
-        model.addAttribute("evenements", events);
+        List<Event> events = eventService.getAllActiveEvents();
+        model.addAttribute("evenements", events); // Keeping "evenements" for view compatibility for now, or change to
+                                                  // "events"? View likely uses "evenements".
+        model.addAttribute("events", events); // Adding "events" too just in case.
         model.addAttribute("eventStats", eventService.getEventStats(events));
         model.addAttribute("tousLesUsers", userService.getAllUsers());
         return "admin/dashboard";
@@ -130,7 +137,7 @@ public class AdminController {
     }
 
     @PostMapping("/cotisation/{id}/{decision}")
-    public String gererCotisation(@PathVariable Long id, @PathVariable String decision) {
+    public String manageCotisation(@PathVariable Long id, @PathVariable String decision) {
         userService.manageCotisation(id, decision);
         return "redirect:/admin";
     }
@@ -148,22 +155,21 @@ public class AdminController {
     }
 
     @GetMapping("/event/{id}")
-    public String gererEvent(@PathVariable Long id, @RequestParam(required = false) String source, Model model) {
-        Evenement event = eventService.getEventById(id);
+    public String manageEvent(@PathVariable Long id, @RequestParam(required = false) String source, Model model) {
+        Event event = eventService.getEventById(id);
         if (event == null)
             throw new RuntimeException("Event introuvable");
 
         model.addAttribute("event", event);
-        model.addAttribute("event", event);
-        List<com.lapause.Pause_Web.entity.Inscription> allInscriptions = eventService.getInscriptionsForEvent(id);
+        List<Registration> allRegistrations = eventService.getInscriptionsForEvent(id);
 
-        List<com.lapause.Pause_Web.entity.Inscription> staffInscriptions = allInscriptions.stream()
-                .filter(com.lapause.Pause_Web.entity.Inscription::isEstStaff)
-                .sorted((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()))
+        List<Registration> staffRegistrations = allRegistrations.stream()
+                .filter(Registration::isStaff)
+                .sorted((r1, r2) -> r1.getRegistrationDate().compareTo(r2.getRegistrationDate()))
                 .toList();
 
-        model.addAttribute("inscriptions", allInscriptions);
-        model.addAttribute("staffInscriptions", staffInscriptions);
+        model.addAttribute("inscriptions", allRegistrations);
+        model.addAttribute("staffInscriptions", staffRegistrations);
         model.addAttribute("stats", eventService.getDetailedStats(id));
 
         String backLink = "finance".equals(source) ? "/admin/finance" : "/admin";
@@ -189,9 +195,9 @@ public class AdminController {
     }
 
     @PutMapping("/event/{id}/update-cost")
-    public String updateCost(@PathVariable Long id, @RequestParam Double coutCourses,
+    public String updateCost(@PathVariable Long id, @RequestParam Double shoppingCost,
             @RequestParam(required = false) String source) {
-        eventService.updateEventCost(id, coutCourses);
+        eventService.updateEventCost(id, shoppingCost);
         String redirect = "redirect:/admin/event/" + id;
         if (source != null && !source.isEmpty()) {
             redirect += "?source=" + source;
@@ -211,55 +217,49 @@ public class AdminController {
         return "redirect:/admin/event/" + id;
     }
 
-    @Autowired
-    private com.lapause.Pause_Web.repository.TypeEvenementRepository typeRepo;
-
     @GetMapping("/event/new")
     public String formEvent(Model model) {
-        model.addAttribute("evenement", new Evenement());
-        model.addAttribute("allTypes", typeRepo.findAll());
+        model.addAttribute("evenement", new Event());
+        model.addAttribute("allTypes", eventTypeRepo.findAll());
         return "admin/event-form";
     }
 
     @GetMapping("/event/{id}/edit")
     public String editEvent(@PathVariable Long id, Model model) {
-        Evenement evt = eventService.getEventById(id);
+        Event evt = eventService.getEventById(id);
         if (evt == null)
             throw new RuntimeException("Event not found");
-        model.addAttribute("evenement", evt);
-        model.addAttribute("allTypes", typeRepo.findAll());
+        model.addAttribute("event", evt);
+        model.addAttribute("allTypes", eventTypeRepo.findAll());
         return "admin/event-form";
     }
 
     @PostMapping("/event/save")
-    public String saveEvent(@ModelAttribute Evenement evenement,
+    public String saveEvent(@ModelAttribute("event") Event event,
             @RequestParam(value = "image", required = false) MultipartFile multipartFile) throws IOException {
 
-        Evenement eventToSave;
+        Event eventToSave;
 
-        if (evenement.getId() != null) {
-
-            Evenement existingEvent = eventService.getEventById(evenement.getId());
+        if (event.getId() != null) {
+            Event existingEvent = eventService.getEventById(event.getId());
             if (existingEvent != null) {
-                existingEvent.setTitre(evenement.getTitre());
-                existingEvent.setDescription(evenement.getDescription());
-                existingEvent.setDate(evenement.getDate());
-                existingEvent.setHeureDebut(evenement.getHeureDebut());
-                existingEvent.setHeureFin(evenement.getHeureFin());
-                existingEvent.setPrixCotisant(evenement.getPrixCotisant());
-                existingEvent.setPrixNonCotisant(evenement.getPrixNonCotisant());
-                existingEvent.setLienPaiement(evenement.getLienPaiement());
-                existingEvent.setNbPlacesMax(evenement.getNbPlacesMax());
-                existingEvent.setTypes(evenement.getTypes());
+                existingEvent.setTitle(event.getTitle());
+                existingEvent.setDescription(event.getDescription());
+                existingEvent.setDate(event.getDate());
+                existingEvent.setStartTime(event.getStartTime());
+                existingEvent.setEndTime(event.getEndTime());
+                existingEvent.setMemberPrice(event.getMemberPrice());
+                existingEvent.setNonMemberPrice(event.getNonMemberPrice());
+                existingEvent.setPaymentLink(event.getPaymentLink());
+                existingEvent.setMaxSpots(event.getMaxSpots());
+                existingEvent.setTypes(event.getTypes());
 
                 eventToSave = existingEvent;
             } else {
-
-                eventToSave = evenement;
+                eventToSave = event;
             }
         } else {
-
-            eventToSave = evenement;
+            eventToSave = event;
         }
 
         if (multipartFile != null && !multipartFile.isEmpty()) {
@@ -267,8 +267,8 @@ public class AdminController {
             if (imageUrl != null) {
                 Photo p = new Photo();
                 p.setUrl(imageUrl);
-                p.setTitre("Affiche");
-                p.setEvenement(eventToSave);
+                p.setTitle("Affiche");
+                p.setEvent(eventToSave);
 
                 eventToSave.setPhotos(List.of(p));
             }

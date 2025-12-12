@@ -1,54 +1,54 @@
 package com.lapause.Pause_Web.service;
 
-import com.lapause.Pause_Web.entity.Utilisateur;
-import com.lapause.Pause_Web.repository.UtilisateurRepository;
+import com.lapause.Pause_Web.entity.User;
+import com.lapause.Pause_Web.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class UserService {
 
     @Autowired
-    private UtilisateurRepository utilisateurRepository;
+    private UserRepository userRepository;
 
-    public Utilisateur registerUser(Utilisateur utilisateur) {
-        if (utilisateurRepository.findByEmail(utilisateur.getEmail()) != null) {
+    public User registerUser(User user) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             return null;
         }
-        utilisateur.setEstCotisant(false);
-        utilisateur.getUnlockedIcons().add("default.png");
-        return utilisateurRepository.save(utilisateur);
+        user.setContributor(false);
+        user.getUnlockedIcons().add("default.png");
+        return userRepository.save(user);
     }
 
-    public Utilisateur authenticate(String email, String password) {
-        Utilisateur user = utilisateurRepository.findByEmail(email);
-        if (user != null && user.getMotDePasse().equals(password)) {
+    public User authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
             return user;
         }
         return null;
     }
 
-    public Utilisateur getUserById(Long id) {
-        return utilisateurRepository.findById(id).orElse(null);
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public void requestCotisation(Long userId) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
-
-            user.setDemandeCotisationEnCours(true);
-            utilisateurRepository.save(user);
+            user.setCotisationPending(true);
+            userRepository.save(user);
         }
     }
 
     public String changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user == null)
             return "User not found";
 
-        if (!user.getMotDePasse().equals(oldPassword)) {
+        if (!user.getPassword().equals(oldPassword)) {
             return "L'ancien mot de passe est incorrect.";
         }
         if (!newPassword.equals(confirmPassword)) {
@@ -58,115 +58,113 @@ public class UserService {
             return "Le nouveau mot de passe doit être différent de l'ancien.";
         }
 
-        user.setMotDePasse(newPassword);
-        utilisateurRepository.save(user);
+        user.setPassword(newPassword);
+        userRepository.save(user);
         return "success";
     }
 
-    public List<Utilisateur> getPendingCotisationRequests() {
-        return utilisateurRepository.findByDemandeCotisationEnCoursTrue();
+    public List<User> getPendingCotisationRequests() {
+        return userRepository.findByIsCotisationPendingTrue();
     }
 
-    public List<Utilisateur> getAllUsers() {
-        return utilisateurRepository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public void manageCotisation(Long userId, String decision) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
             if ("accepter".equals(decision)) {
-                user.setEstCotisant(true);
+                user.setContributor(true);
             }
-            user.setDemandeCotisationEnCours(false);
-            utilisateurRepository.save(user);
+            user.setCotisationPending(false);
+            userRepository.save(user);
         }
     }
 
     public void toggleCotisant(Long userId) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
-            boolean newStatus = !user.isEstCotisant();
-            user.setEstCotisant(newStatus);
+            boolean newStatus = !user.isContributor();
+            user.setContributor(newStatus);
             if (newStatus) {
-                user.setDemandeCotisationEnCours(false);
+                user.setCotisationPending(false);
             }
-            utilisateurRepository.save(user);
+            userRepository.save(user);
         }
     }
 
     public void toggleVip(Long userId) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
             user.setVip(!user.isVip());
-            utilisateurRepository.save(user);
+            userRepository.save(user);
         }
     }
 
-    public void saveUser(Utilisateur user) {
-        utilisateurRepository.save(user);
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 
     public boolean buyItem(Long userId, String itemId, int cost) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null && user.getPoints() >= cost) {
             user.setPoints(user.getPoints() - cost);
 
             if (itemId.equals("croque")) {
-
+                // Logic for croque
             } else if (itemId.startsWith("reduction_")) {
-
-                double montant = 0.0;
+                double amount = 0.0;
                 if (itemId.equals("reduction_1"))
-                    montant = 1.0;
+                    amount = 1.0;
                 else if (itemId.equals("reduction_2"))
-                    montant = 2.0;
+                    amount = 2.0;
                 else if (itemId.equals("reduction_5"))
-                    montant = 5.0;
+                    amount = 5.0;
 
-                if (user.getSoldeReduction() == null)
-                    user.setSoldeReduction(0.0);
-                user.setSoldeReduction(user.getSoldeReduction() + montant);
+                if (user.getReductionBalance() == null)
+                    user.setReductionBalance(0.0);
+                user.setReductionBalance(user.getReductionBalance() + amount);
             } else {
-
                 if (!user.getUnlockedIcons().contains(itemId)) {
                     user.getUnlockedIcons().add(itemId);
                 }
             }
 
-            utilisateurRepository.save(user);
+            userRepository.save(user);
             return true;
         }
         return false;
     }
 
     public boolean equipIcon(Long userId, String iconName) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null && (user.getUnlockedIcons().contains(iconName) || iconName.equals("default.png"))) {
             user.setIcon(iconName);
-            utilisateurRepository.save(user);
+            userRepository.save(user);
             return true;
         }
         return false;
     }
 
-    public List<Utilisateur> getLeaderboard() {
-        return utilisateurRepository.findAllByOrderByPointsAllTimeDesc();
+    public List<User> getLeaderboard() {
+        return userRepository.findAllByOrderByAllTimePointsDesc();
     }
 
     public void addPoints(Long userId, int pointsToAdd) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
             user.setPoints(user.getPoints() + pointsToAdd);
-            user.setPointsAllTime(user.getPointsAllTime() + pointsToAdd);
-            utilisateurRepository.save(user);
+            user.setAllTimePoints(user.getAllTimePoints() + pointsToAdd);
+            userRepository.save(user);
         }
     }
 
     public void becomeStaff(Long userId) {
-        Utilisateur user = getUserById(userId);
+        User user = getUserById(userId);
         if (user != null) {
-            user.setEstStaffeur(true);
-            utilisateurRepository.save(user);
+            user.setStaff(true);
+            userRepository.save(user);
         }
     }
 }

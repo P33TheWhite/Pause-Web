@@ -22,28 +22,28 @@
 
             <!-- Colonne Détails -->
             <div class="col-md-6">
-                <h1 class="fw-bold mb-3" th:text="${event.titre}">Titre de l'événement</h1>
+                <h1 class="fw-bold mb-3" th:text="${event.title}">Titre de l'événement</h1>
 
                 <div class="mb-3">
                     <span th:each="type : ${event.types}" class="badge bg-warning text-dark me-2 fs-6"
-                        th:text="${type.libelle}">Type</span>
+                        th:text="${type.label}">Type</span>
                 </div>
 
                 <h4 class="text-muted mb-4">
-                    🗓 <span th:text="${event.dateEvenement}">Date</span>
-                    <span th:if="${event.heureDebut != null}" th:text="' | 🕒 ' + ${event.heureDebut}"></span>
-                    <span th:if="${event.heureFin != null}" th:text="' - ' + ${event.heureFin}"></span>
+                    🗓 <span th:text="${event.date}">Date</span>
+                    <span th:if="${event.startTime != null}" th:text="' | 🕒 ' + ${event.startTime}"></span>
+                    <span th:if="${event.endTime != null}" th:text="' - ' + ${event.endTime}"></span>
                 </h4>
 
                 <div class="card bg-light border-0 p-3 mb-4">
                     <h5 class="fw-bold">Tarifs</h5>
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span>Cotisant :</span>
-                        <span class="fw-bold text-success fs-5" th:text="${event.prixCotisant} + ' €'"></span>
+                        <span class="fw-bold text-success fs-5" th:text="${event.memberPrice} + ' €'"></span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Non-Cotisant :</span>
-                        <span class="fw-bold text-danger fs-5" th:text="${event.prixNonCotisant} + ' €'"></span>
+                        <span class="fw-bold text-danger fs-5" th:text="${event.nonMemberPrice} + ' €'"></span>
                     </div>
                 </div>
 
@@ -51,20 +51,20 @@
                     <h5 class="fw-bold">Places</h5>
                     <div class="progress mb-2" style="height: 25px;">
                         <div class="progress-bar bg-info" role="progressbar"
-                            th:style="'width: ' + (${event.nbPlacesMax != null && event.nbPlacesMax > 0 ? (nbInscrits * 100 / event.nbPlacesMax) : 100}) + '%'"
+                            th:style="'width: ' + (${event.maxSpots != null && event.maxSpots > 0 ? (nbInscrits * 100 / event.maxSpots) : 100}) + '%'"
                             th:text="${nbInscrits} + ' inscrits'">
                         </div>
                     </div>
-                    <p class="text-muted" th:if="${event.nbPlacesMax != null}">
-                        Sur <span th:text="${event.nbPlacesMax}"></span> places disponibles.
+                    <p class="text-muted" th:if="${event.maxSpots != null}">
+                        Sur <span th:text="${event.maxSpots}"></span> places disponibles.
                     </p>
                 </div>
 
                 <p class="lead" th:text="${event.description}">Description détaillée...</p>
 
                 <div class="d-grid gap-2 mt-4">
-                    <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
-                        th:href="${event.lienPaiement}" target="_blank" class="btn btn-primary btn-lg">
+                    <a th:if="${event.paymentLink != null && !event.paymentLink.isEmpty()}"
+                        th:href="${event.paymentLink}" target="_blank" class="btn btn-primary btn-lg">
                         💳 Payer ma place (Lien Externe)
                     </a>
 
@@ -81,7 +81,7 @@
                                     En liste d'attente</button>
 
                                 <!-- Staff Toggle Buttons -->
-                                <div th:if="${session.user.estStaffeur}">
+                                <div th:if="${session.user.staff}">
                                     <!-- If registered but NOT staff yet -->
                                     <form th:if="${!estStaff}" method="post"
                                         th:action="@{/event/{id}/staff(id=${event.id})}">
@@ -107,7 +107,7 @@
 
                         <form th:if="${!estInscrit}" method="post" th:action="@{/event/{id}/register(id=${event.id})}">
 
-                            <div th:if="${session.user.estStaffeur}" class="mb-3">
+                            <div th:if="${session.user.staff}" class="mb-3">
                                 <button type="submit" formaction="/event/{id}/staff"
                                     class="btn btn-outline-dark btn-lg w-100">
                                     <i class="bi bi-person-badge me-2"></i>Staffer cet événement
@@ -117,7 +117,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-asso btn-lg"
-                                th:text="${event.nbPlacesMax != null && nbInscrits >= event.nbPlacesMax ? 'S''inscrire (Liste d''attente)' : 'S''inscrire sur le site'}">
+                                th:text="${event.maxSpots != null && nbInscrits >= event.maxSpots ? 'S''inscrire (Liste d''attente)' : 'S''inscrire sur le site'}">
                                 S'inscrire sur le site
                             </button>
                         </form>

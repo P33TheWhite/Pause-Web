@@ -1,10 +1,10 @@
 package com.lapause.Pause_Web.service;
 
-import com.lapause.Pause_Web.entity.Evenement;
-import com.lapause.Pause_Web.entity.Inscription;
-import com.lapause.Pause_Web.entity.Utilisateur;
-import com.lapause.Pause_Web.repository.EvenementRepository;
-import com.lapause.Pause_Web.repository.InscriptionRepository;
+import com.lapause.Pause_Web.entity.Event;
+import com.lapause.Pause_Web.entity.Registration;
+import com.lapause.Pause_Web.entity.User;
+import com.lapause.Pause_Web.repository.EventRepository;
+import com.lapause.Pause_Web.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,67 +14,67 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("null")
 public class EventService {
 
     @Autowired
-    private EvenementRepository eventRepo;
+    private EventRepository eventRepo;
 
     @Autowired
-    private InscriptionRepository inscriptionRepo;
+    private RegistrationRepository registrationRepo;
 
     @Autowired
     private UserService userService;
 
-    public List<Evenement> getAllActiveEvents() {
+    public List<Event> getAllActiveEvents() {
         return eventRepo.findAll().stream()
-                .filter(e -> !e.isEstArchive())
+                .filter(e -> !e.isArchived())
                 .collect(Collectors.toList());
     }
 
-    public List<Evenement> getAllArchivedEvents() {
+    public List<Event> getAllArchivedEvents() {
         return eventRepo.findAll().stream()
-                .filter(Evenement::isEstArchive)
+                .filter(Event::isArchived)
                 .collect(Collectors.toList());
     }
 
-    public Evenement getEventById(Long id) {
+    public Event getEventById(Long id) {
         return eventRepo.findById(id).orElse(null);
     }
 
-    public void saveEvent(Evenement event) {
+    public void saveEvent(Event event) {
         eventRepo.save(event);
     }
 
     public void archiveEvent(Long id, jakarta.servlet.http.HttpSession session) {
-        Evenement evt = getEventById(id);
+        Event evt = getEventById(id);
         if (evt != null) {
-            if (evt.isEstArchive()) {
+            if (evt.isArchived()) {
                 return;
             }
-            evt.setEstArchive(true);
+            evt.setArchived(true);
             saveEvent(evt);
 
-            List<Inscription> inscriptions = inscriptionRepo.findByEvenementId(id);
-            // Sort by dateInscription to determine rank
-            inscriptions.sort((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()));
+            List<Registration> registrations = registrationRepo.findByEventId(id);
+            registrations.sort((r1, r2) -> r1.getRegistrationDate().compareTo(r2.getRegistrationDate()));
 
-            for (int i = 0; i < inscriptions.size(); i++) {
-                Inscription ins = inscriptions.get(i);
-                int pointsToAward = 10; // Default
+            for (int i = 0; i < registrations.size(); i++) {
+                Registration reg = registrations.get(i);
+                int pointsToAward = 10;
                 if (i < 3) {
-                    pointsToAward = 50; // Top 3
+                    pointsToAward = 50;
                 } else if (i < 10) {
-                    pointsToAward = 30; // Next 7 (4-10)
+                    pointsToAward = 30;
                 }
 
-                ins.setPointsGagnes(pointsToAward);
-                inscriptionRepo.save(ins);
+                reg.setEarnedPoints(pointsToAward);
+                registrationRepo.save(reg);
 
-                if (ins.isaRecupereRepas()) {
-                    Utilisateur u = ins.getUtilisateur();
+                if (reg.isHasMeal()) {
+                    User u = reg.getUser();
                     userService.addPoints(u.getId(), pointsToAward);
 
-                    Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+                    User sessionUser = (User) session.getAttribute("user");
                     if (sessionUser != null && sessionUser.getId().equals(u.getId())) {
                         session.setAttribute("user", userService.getUserById(u.getId()));
                     }
@@ -83,29 +83,29 @@ public class EventService {
         }
     }
 
-    public Map<Long, String> getEventStats(List<Evenement> events) {
+    public Map<Long, String> getEventStats(List<Event> events) {
         Map<Long, String> stats = new HashMap<>();
-        for (Evenement e : events) {
-            int count = inscriptionRepo.findByEvenementId(e.getId()).size();
-            String max = (e.getNbPlacesMax() != null) ? String.valueOf(e.getNbPlacesMax()) : "∞";
+        for (Event e : events) {
+            int count = registrationRepo.findByEventId(e.getId()).size();
+            String max = (e.getMaxSpots() != null) ? String.valueOf(e.getMaxSpots()) : "∞";
             stats.put(e.getId(), count + " / " + max);
         }
         return stats;
     }
 
-    public List<Inscription> getInscriptionsForEvent(Long eventId) {
-        return inscriptionRepo.findByEvenementId(eventId);
+    public List<Registration> getInscriptionsForEvent(Long eventId) {
+        return registrationRepo.findByEventId(eventId);
     }
 
     public Map<String, Object> getDetailedStats(Long eventId) {
-        List<Inscription> inscriptions = getInscriptionsForEvent(eventId);
-        long nbInscrits = inscriptions.size();
-        long nbPaye = inscriptions.stream().filter(Inscription::isaPaye).count();
-        long nbRepas = inscriptions.stream().filter(Inscription::isaRecupereRepas).count();
+        List<Registration> registrations = getInscriptionsForEvent(eventId);
+        long nbInscrits = registrations.size();
+        long nbPaye = registrations.stream().filter(Registration::isHasPaid).count();
+        long nbRepas = registrations.stream().filter(Registration::isHasMeal).count();
 
-        double recettes = inscriptions.stream()
-                .filter(Inscription::isaPaye)
-                .mapToDouble(i -> i.getMontantAPayer() != null ? i.getMontantAPayer() : 0.0)
+        double recettes = registrations.stream()
+                .filter(Registration::isHasPaid)
+                .mapToDouble(i -> i.getAmountToPay() != null ? i.getAmountToPay() : 0.0)
                 .sum();
 
         Map<String, Object> stats = new HashMap<>();
@@ -117,18 +117,18 @@ public class EventService {
         return stats;
     }
 
-    public Long updateInscription(Long id, boolean aPaye, boolean aMange) {
-        Inscription ins = inscriptionRepo.findById(id).orElse(null);
-        if (ins != null) {
-            boolean oldMange = ins.isaRecupereRepas();
-            ins.setaPaye(aPaye);
-            ins.setaRecupereRepas(aMange);
+    public Long updateInscription(Long id, boolean hasPaid, boolean hasMeal) {
+        Registration reg = registrationRepo.findById(id).orElse(null);
+        if (reg != null) {
+            boolean oldMeal = reg.isHasMeal();
+            reg.setHasPaid(hasPaid);
+            reg.setHasMeal(hasMeal);
 
-            if (ins.getEvenement().isEstArchive()) {
-                if (aMange != oldMange) {
-                    Utilisateur u = ins.getUtilisateur();
-                    int points = ins.getPointsGagnes() != null ? ins.getPointsGagnes() : 10;
-                    if (aMange) {
+            if (reg.getEvent().isArchived()) {
+                if (hasMeal != oldMeal) {
+                    User u = reg.getUser();
+                    int points = reg.getEarnedPoints() != null ? reg.getEarnedPoints() : 10;
+                    if (hasMeal) {
                         userService.addPoints(u.getId(), points);
                     } else {
                         userService.addPoints(u.getId(), -points);
@@ -136,27 +136,27 @@ public class EventService {
                 }
             }
 
-            inscriptionRepo.save(ins);
-            return ins.getEvenement().getId();
+            registrationRepo.save(reg);
+            return reg.getEvent().getId();
         }
         return null;
     }
 
     @org.springframework.transaction.annotation.Transactional
     public void updateEventCost(Long id, Double cost) {
-        Evenement evt = eventRepo.findById(id).orElse(null);
+        Event evt = eventRepo.findById(id).orElse(null);
         if (evt != null) {
-            evt.setCoutCourses(cost);
+            evt.setShoppingCost(cost);
             eventRepo.save(evt);
         }
     }
 
-    public Map<Long, Integer> getPlacesRestantes(List<Evenement> events) {
+    public Map<Long, Integer> getPlacesRestantes(List<Event> events) {
         Map<Long, Integer> places = new HashMap<>();
-        for (Evenement e : events) {
-            long inscrits = inscriptionRepo.countByEvenementIdAndEnAttenteFalse(e.getId());
-            if (e.getNbPlacesMax() != null) {
-                places.put(e.getId(), (int) Math.max(0, e.getNbPlacesMax() - inscrits));
+        for (Event e : events) {
+            long inscrits = registrationRepo.countByEventIdAndIsWaitingFalse(e.getId());
+            if (e.getMaxSpots() != null) {
+                places.put(e.getId(), (int) Math.max(0, e.getMaxSpots() - inscrits));
             } else {
                 places.put(e.getId(), Integer.MAX_VALUE);
             }
@@ -164,251 +164,235 @@ public class EventService {
         return places;
     }
 
-    public Map<Long, String> getUserStatus(Utilisateur user, List<Evenement> events) {
+    public Map<Long, String> getUserStatus(User user, List<Event> events) {
         Map<Long, String> status = new HashMap<>();
         if (user != null) {
-            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
-            for (Inscription ins : inscriptions) {
-                status.put(ins.getEvenement().getId(), ins.isEnAttente() ? "WAITING" : "REGISTERED");
+            List<Registration> registrations = registrationRepo.findByUserId(user.getId());
+            for (Registration reg : registrations) {
+                status.put(reg.getEvent().getId(), reg.isWaiting() ? "WAITING" : "REGISTERED");
             }
         }
-        for (Evenement evt : events) {
+        for (Event evt : events) {
             status.putIfAbsent(evt.getId(), "NONE");
         }
         return status;
     }
 
-    public Map<Long, Boolean> getUserStaffStatus(Utilisateur user, List<Evenement> events) {
+    public Map<Long, Boolean> getUserStaffStatus(User user, List<Event> events) {
         Map<Long, Boolean> staffStatus = new HashMap<>();
         if (user != null) {
-            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
-            for (Inscription ins : inscriptions) {
-                staffStatus.put(ins.getEvenement().getId(), ins.isEstStaff());
+            List<Registration> registrations = registrationRepo.findByUserId(user.getId());
+            for (Registration reg : registrations) {
+                staffStatus.put(reg.getEvent().getId(), reg.isStaff());
             }
         }
-        for (Evenement evt : events) {
+        for (Event evt : events) {
             staffStatus.putIfAbsent(evt.getId(), false);
         }
         return staffStatus;
     }
 
-    public Map<Long, Boolean> getUserStaffValidatedStatus(Utilisateur user, List<Evenement> events) {
+    public Map<Long, Boolean> getUserStaffValidatedStatus(User user, List<Event> events) {
         Map<Long, Boolean> staffValidated = new HashMap<>();
         if (user != null) {
-            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
-            for (Inscription ins : inscriptions) {
-                staffValidated.put(ins.getEvenement().getId(), ins.isStaffValide());
+            List<Registration> registrations = registrationRepo.findByUserId(user.getId());
+            for (Registration reg : registrations) {
+                staffValidated.put(reg.getEvent().getId(), reg.isStaffValidated());
             }
         }
-        for (Evenement evt : events) {
+        for (Event evt : events) {
             staffValidated.putIfAbsent(evt.getId(), false);
         }
         return staffValidated;
     }
 
-    public Map<Long, Double> getUserPrices(Utilisateur user) {
+    public Map<Long, Double> getUserPrices(User user) {
         Map<Long, Double> prices = new HashMap<>();
         if (user != null) {
-            List<Inscription> inscriptions = inscriptionRepo.findByUtilisateurId(user.getId());
-            for (Inscription ins : inscriptions) {
-                if (ins.getMontantAPayer() != null) {
-                    prices.put(ins.getEvenement().getId(), ins.getMontantAPayer());
+            List<Registration> registrations = registrationRepo.findByUserId(user.getId());
+            for (Registration reg : registrations) {
+                if (reg.getAmountToPay() != null) {
+                    prices.put(reg.getEvent().getId(), reg.getAmountToPay());
                 } else {
-                    double price = user.isEstCotisant()
-                            ? (ins.getEvenement().getPrixCotisant() != null ? ins.getEvenement().getPrixCotisant() : 0)
-                            : (ins.getEvenement().getPrixNonCotisant() != null ? ins.getEvenement().getPrixNonCotisant()
-                                    : 0);
-                    prices.put(ins.getEvenement().getId(), price);
+                    double price = user.isContributor()
+                            ? (reg.getEvent().getMemberPrice() != null ? reg.getEvent().getMemberPrice() : 0)
+                            : (reg.getEvent().getNonMemberPrice() != null ? reg.getEvent().getNonMemberPrice() : 0);
+                    prices.put(reg.getEvent().getId(), price);
                 }
             }
         }
         return prices;
     }
 
-    public String registerUserToEvent(Utilisateur user, Long eventId) {
-        Evenement event = getEventById(eventId);
+    public void registerUserToEvent(User user, Event event) {
         if (event == null)
-            return "Event not found";
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable");
 
-        boolean already = inscriptionRepo.findByEvenementId(eventId).stream()
-                .anyMatch(i -> i.getUtilisateur().getId().equals(user.getId()));
+        boolean already = registrationRepo.findByEventId(event.getId()).stream()
+                .anyMatch(i -> i.getUser().getId().equals(user.getId()));
         if (already)
-            return "Vous êtes déjà inscrit à cet événement.";
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Vous êtes déjà inscrit à cet événement.");
 
-        long currentInscrits = inscriptionRepo.countByEvenementIdAndEnAttenteFalse(eventId);
-        boolean waitingList = event.getNbPlacesMax() != null && currentInscrits >= event.getNbPlacesMax();
+        long currentInscrits = registrationRepo.countByEventIdAndIsWaitingFalse(event.getId());
+        boolean waitingList = event.getMaxSpots() != null && currentInscrits >= event.getMaxSpots();
 
-        Inscription inscription = new Inscription(user, event);
+        Registration registration = new Registration(user, event);
 
-        double prixBase = user.isEstCotisant()
-                ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
-                : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
+        double basePrice = user.isContributor()
+                ? (event.getMemberPrice() != null ? event.getMemberPrice() : 0)
+                : (event.getNonMemberPrice() != null ? event.getNonMemberPrice() : 0);
 
-        String initialMessage = "Inscription validée !";
-        if (user.getPoints() != null && user.getPoints() >= 5) {
-            // Logic moved to else block for actual registration
-        }
-        inscription.setMontantAPayer(prixBase);
+        registration.setAmountToPay(basePrice);
 
         if (waitingList) {
-            inscription.setEnAttente(true);
-            inscriptionRepo.save(inscription);
-            return "Complet ! Vous êtes sur liste d'attente. " + initialMessage;
+            registration.setWaiting(true);
+            registrationRepo.save(registration);
+            throw new com.lapause.Pause_Web.exception.PauseWebException(
+                    "Complet ! Vous êtes sur liste d'attente. Inscription validée !");
         } else {
 
-            double finalPrice = user.isEstCotisant()
-                    ? (event.getPrixCotisant() != null ? event.getPrixCotisant() : 0)
-                    : (event.getPrixNonCotisant() != null ? event.getPrixNonCotisant() : 0);
+            double finalPrice = basePrice;
 
-            StringBuilder message = new StringBuilder("Inscription validée !");
-
-            if (user.getSoldeReduction() != null && user.getSoldeReduction() > 0) {
-                double reduction = user.getSoldeReduction();
-                inscription.setPointsUtilises(5);
+            if (user.getReductionBalance() != null && user.getReductionBalance() > 0) {
+                double reduction = user.getReductionBalance();
+                registration.setUsedPoints(5);
                 double priceBeforeVoucher = finalPrice;
                 finalPrice = Math.max(0, finalPrice - reduction);
                 double usedReduction = priceBeforeVoucher - finalPrice;
 
-                user.setSoldeReduction(Math.max(0, user.getSoldeReduction() - usedReduction));
-                inscription.setMontantReductionVoucher(usedReduction);
-                message.append(" Réduction Boutique appliquée (-").append(String.format("%.2f", usedReduction))
-                        .append("€).");
+                user.setReductionBalance(Math.max(0, user.getReductionBalance() - usedReduction));
+                registration.setVoucherDiscount(usedReduction);
             }
 
             userService.saveUser(user);
-            inscription.setMontantAPayer(finalPrice);
-            inscriptionRepo.save(inscription);
-
-            message.append(" Nouveau prix : ").append(String.format("%.2f", finalPrice)).append(" €");
-            return message.toString();
+            registration.setAmountToPay(finalPrice);
+            registrationRepo.save(registration);
         }
     }
 
-    public String unregisterUserFromEvent(Utilisateur user, Long eventId) {
-        Inscription ins = inscriptionRepo.findByUtilisateurIdAndEvenementId(user.getId(), eventId);
-        if (ins != null) {
-            boolean wasActive = !ins.isEnAttente();
+    public void unregisterUserFromEvent(User user, Event event) {
+        if (event == null)
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable");
 
-            if (ins.getPointsUtilises() != null && ins.getPointsUtilises() > 0) {
-                user.setPoints(user.getPoints() + ins.getPointsUtilises());
+        Registration reg = registrationRepo.findByUserIdAndEventId(user.getId(), event.getId());
+        if (reg != null) {
+            boolean wasActive = !reg.isWaiting();
+
+            if (reg.getUsedPoints() != null && reg.getUsedPoints() > 0) {
+                user.setPoints(user.getPoints() + reg.getUsedPoints());
             }
 
-            if (ins.getMontantReductionVoucher() != null && ins.getMontantReductionVoucher() > 0) {
-                if (user.getSoldeReduction() == null)
-                    user.setSoldeReduction(0.0);
-                user.setSoldeReduction(user.getSoldeReduction() + ins.getMontantReductionVoucher());
+            if (reg.getVoucherDiscount() != null && reg.getVoucherDiscount() > 0) {
+                if (user.getReductionBalance() == null)
+                    user.setReductionBalance(0.0);
+                user.setReductionBalance(user.getReductionBalance() + reg.getVoucherDiscount());
             }
 
-            if (ins.isStaffValide() && ins.getPointsGagnes() != null) {
-                userService.addPoints(user.getId(), -ins.getPointsGagnes());
+            if (reg.isStaffValidated() && reg.getEarnedPoints() != null) {
+                userService.addPoints(user.getId(), -reg.getEarnedPoints());
             }
 
             userService.saveUser(user);
-
-            inscriptionRepo.delete(ins);
+            registrationRepo.delete(reg);
 
             if (wasActive) {
-                List<Inscription> waitingList = inscriptionRepo
-                        .findByEvenementIdAndEnAttenteTrueOrderByDateInscriptionAsc(eventId);
+                List<Registration> waitingList = registrationRepo
+                        .findByEventIdAndIsWaitingTrueOrderByRegistrationDateAsc(event.getId());
                 if (!waitingList.isEmpty()) {
-                    Inscription luckyWinner = waitingList.get(0);
-                    luckyWinner.setEnAttente(false);
-                    inscriptionRepo.save(luckyWinner);
+                    Registration luckyWinner = waitingList.get(0);
+                    luckyWinner.setWaiting(false);
+                    registrationRepo.save(luckyWinner);
                 }
             }
-            return "Désinscription prise en compte. Points et réductions remboursés.";
+        } else {
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Inscription introuvable.");
         }
-        return "Inscription introuvable.";
     }
 
-    public String registerStaff(Utilisateur user, Long eventId) {
-        Evenement event = getEventById(eventId);
+    public void registerStaff(User user, Event event) {
         if (event == null)
-            return "Event not found";
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable");
 
-        if (!user.isEstStaffeur())
-            return "Vous n'êtes pas staffeur.";
+        if (!user.isStaff())
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Vous n'êtes pas staffeur.");
 
-        Inscription existing = inscriptionRepo.findByEvenementId(eventId).stream()
-                .filter(i -> i.getUtilisateur().getId().equals(user.getId()))
+        Registration existing = registrationRepo.findByEventId(event.getId()).stream()
+                .filter(i -> i.getUser().getId().equals(user.getId()))
                 .findFirst().orElse(null);
 
         if (existing != null) {
-            if (existing.isEstStaff())
-                return "Vous êtes déjà staff sur cet événement.";
-            existing.setEstStaff(true);
-            existing.setMontantAPayer(0.0);
-            inscriptionRepo.save(existing);
-            return "Inscription mise à jour : Vous êtes maintenant Staff !";
+            if (existing.isStaff())
+                throw new com.lapause.Pause_Web.exception.PauseWebException("Vous êtes déjà staff sur cet événement.");
+            existing.setStaff(true);
+            existing.setAmountToPay(0.0);
+            registrationRepo.save(existing);
+        } else {
+            Registration registration = new Registration(user, event);
+            registration.setStaff(true);
+            registration.setAmountToPay(0.0);
+            registrationRepo.save(registration);
         }
-
-        Inscription inscription = new Inscription(user, event);
-        inscription.setEstStaff(true);
-        inscription.setMontantAPayer(0.0);
-
-        inscriptionRepo.save(inscription);
-        return "Inscription Staff validée !";
     }
 
-    public String removeStaff(Utilisateur user, Long eventId) {
-        Inscription existing = inscriptionRepo.findByEvenementId(eventId).stream()
-                .filter(i -> i.getUtilisateur().getId().equals(user.getId()))
+    public void removeStaff(User user, Event event) {
+        if (event == null)
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable");
+
+        Registration existing = registrationRepo.findByEventId(event.getId()).stream()
+                .filter(i -> i.getUser().getId().equals(user.getId()))
                 .findFirst().orElse(null);
 
         if (existing == null)
-            return "Inscription introuvable.";
-        if (!existing.isEstStaff())
-            return "Vous n'êtes pas staff sur cet événement.";
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Inscription introuvable.");
+        if (!existing.isStaff())
+            throw new com.lapause.Pause_Web.exception.PauseWebException("Vous n'êtes pas staff sur cet événement.");
 
-        if (existing.isStaffValide()) {
-            if (existing.getPointsGagnes() != null) {
-                userService.addPoints(user.getId(), -existing.getPointsGagnes());
+        if (existing.isStaffValidated()) {
+            if (existing.getEarnedPoints() != null) {
+                userService.addPoints(user.getId(), -existing.getEarnedPoints());
             }
-            existing.setStaffValide(false);
-            existing.setPointsGagnes(null);
+            existing.setStaffValidated(false);
+            existing.setEarnedPoints(null);
         }
 
-        existing.setEstStaff(false);
+        existing.setStaff(false);
 
-        // Recalculate price
-        double price = user.isEstCotisant()
-                ? (existing.getEvenement().getPrixCotisant() != null ? existing.getEvenement().getPrixCotisant() : 0.0)
-                : (existing.getEvenement().getPrixNonCotisant() != null ? existing.getEvenement().getPrixNonCotisant()
-                        : 0.0);
+        double price = user.isContributor()
+                ? (existing.getEvent().getMemberPrice() != null ? existing.getEvent().getMemberPrice() : 0.0)
+                : (existing.getEvent().getNonMemberPrice() != null ? existing.getEvent().getNonMemberPrice() : 0.0);
 
-        existing.setMontantAPayer(price);
-        inscriptionRepo.save(existing);
-        return "Vous n'êtes plus staff sur cet événement.";
+        existing.setAmountToPay(price);
+        registrationRepo.save(existing);
     }
 
     public void validateStaffPoints(Long eventId) {
-        List<Inscription> staffInscriptions = inscriptionRepo.findByEvenementId(eventId).stream()
-                .filter(Inscription::isEstStaff)
-                .sorted((i1, i2) -> i1.getDateInscription().compareTo(i2.getDateInscription()))
+        List<Registration> staffRegistrations = registrationRepo.findByEventId(eventId).stream()
+                .filter(Registration::isStaff)
+                .sorted((i1, i2) -> i1.getRegistrationDate().compareTo(i2.getRegistrationDate()))
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < staffInscriptions.size(); i++) {
-            Inscription ins = staffInscriptions.get(i);
-            if (!ins.isStaffValide()) {
+        for (int i = 0; i < staffRegistrations.size(); i++) {
+            Registration reg = staffRegistrations.get(i);
+            if (!reg.isStaffValidated()) {
                 int points = 10;
                 if (i < 3)
                     points = 50;
                 else if (i < 7)
-                    points = 30; // 4th, 5th, 6th, 7th (4 people)
+                    points = 30;
 
-                ins.setStaffValide(true);
-                ins.setPointsGagnes(points);
-                inscriptionRepo.save(ins);
+                reg.setStaffValidated(true);
+                reg.setEarnedPoints(points);
+                registrationRepo.save(reg);
 
-                userService.addPoints(ins.getUtilisateur().getId(), points);
+                userService.addPoints(reg.getUser().getId(), points);
             }
         }
     }
 
     public void removeStaffByAdmin(Long eventId, Long userId) {
-        Inscription ins = inscriptionRepo.findByUtilisateurIdAndEvenementId(userId, eventId);
-        if (ins != null) {
-            inscriptionRepo.delete(ins);
+        Registration reg = registrationRepo.findByUserIdAndEventId(userId, eventId);
+        if (reg != null) {
+            registrationRepo.delete(reg);
         }
     }
 }

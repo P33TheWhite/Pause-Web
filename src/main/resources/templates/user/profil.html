@@ -27,7 +27,7 @@
                                 class="profile-avatar-large">
                             <div th:if="${user.icon == null}"
                                 class="profile-avatar-large d-flex align-items-center justify-content-center bg-light text-secondary fs-1 fw-bold">
-                                <span th:text="${#strings.substring(user.prenom,0,1)}">U</span>
+                                <span th:text="${#strings.substring(user.firstName,0,1)}">U</span>
                             </div>
                             <span th:if="${user.vip}" class="vip-badge">
                                 <i class="bi bi-star-fill me-1"></i>VIP
@@ -35,31 +35,29 @@
                         </div>
 
                         <!-- User Info -->
-                        <h1 class="profile-name" th:text="${user.prenom} + ' ' + ${user.nom}">Prénom Nom</h1>
+                        <h1 class="profile-name" th:text="${user.firstName} + ' ' + ${user.lastName}">Prénom Nom</h1>
                         <p class="profile-email" th:text="${user.email}">email@example.com</p>
 
                         <!-- Badges -->
                         <div class="d-flex justify-content-center gap-2 mb-4">
                             <span class="badge bg-light text-dark border px-3 py-2 rounded-pill"
-                                th:text="${user.classe}">Classe</span>
-                            <span th:if="${user.estCotisant}"
+                                th:text="${user.studentClass}">Classe</span>
+                            <span th:if="${user.contributor}"
                                 class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
                                 <i class="bi bi-check-circle me-1"></i>Cotisant
                             </span>
-                            <span th:if="${!user.estCotisant}"
+                            <span th:if="${!user.contributor}"
                                 class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 rounded-pill">
                                 Non Cotisant
                             </span>
                         </div>
 
                         <!-- CTA: Devenir Cotisant -->
-                        <div th:if="${!user.estCotisant}" class="mb-4">
-                            <div th:if="${user.demandeCotisationEnCours}"
-                                class="alert alert-warning border-0 small py-2 mb-0">
+                        <div th:if="${!user.contributor}" class="mb-4">
+                            <div th:if="${user.cotisationPending}" class="alert alert-warning border-0 small py-2 mb-0">
                                 <i class="bi bi-hourglass-split me-1"></i>Demande en cours...
                             </div>
-                            <form th:if="${!user.demandeCotisationEnCours}" action="/profil/demande-cotisation"
-                                method="post">
+                            <form th:if="${!user.cotisationPending}" action="/profil/demande-cotisation" method="post">
                                 <button type="submit" class="btn btn-asso w-100 shadow-sm">
                                     <i class="bi bi-star me-2"></i>Devenir Cotisant
                                 </button>
@@ -102,7 +100,8 @@
                                 <i class="bi bi-wallet2"></i>
                             </div>
                             <div class="stat-content">
-                                <h3 th:text="${user.soldeReduction != null ? user.soldeReduction : 0} + ' €'">0 €</h3>
+                                <h3 th:text="${user.reductionBalance != null ? user.reductionBalance : 0} + ' €'">0 €
+                                </h3>
                                 <p>Solde Réduction</p>
                             </div>
                         </div>
@@ -127,30 +126,29 @@
                 <div th:if="${!inscriptions.isEmpty()}">
                     <div th:each="ins : ${inscriptions}" class="event-list-item">
                         <div class="event-date-box">
-                            <span class="event-day" th:text="${#temporals.format(ins.evenement.date, 'dd')}">01</span>
-                            <span class="event-month"
-                                th:text="${#temporals.format(ins.evenement.date, 'MMM')}">JAN</span>
+                            <span class="event-day" th:text="${#temporals.format(ins.event.date, 'dd')}">01</span>
+                            <span class="event-month" th:text="${#temporals.format(ins.event.date, 'MMM')}">JAN</span>
                         </div>
 
                         <div class="event-details">
-                            <h5 class="event-title" th:text="${ins.evenement.titre}">Titre de l'événement</h5>
+                            <h5 class="event-title" th:text="${ins.event.title}">Titre de l'événement</h5>
                             <div class="event-meta">
                                 <span><i class="bi bi-clock me-1"></i><span
-                                        th:text="${ins.evenement.heureDebut}">18:00</span></span>
+                                        th:text="${ins.event.startTime}">18:00</span></span>
                                 <span>
                                     <i class="bi bi-tag me-1"></i>
-                                    <span th:if="${ins.montantAPayer != null}" th:text="${ins.montantAPayer} + ' €'">10
+                                    <span th:if="${ins.amountToPay != null}" th:text="${ins.amountToPay} + ' €'">10
                                         €</span>
-                                    <span th:if="${ins.montantAPayer == null}">Gratuit</span>
+                                    <span th:if="${ins.amountToPay == null}">Gratuit</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="event-status">
-                            <span th:if="${!ins.enAttente}" class="status-badge registered">
+                            <span th:if="${!ins.waiting}" class="status-badge registered">
                                 <i class="bi bi-check-circle-fill"></i>Inscrit
                             </span>
-                            <span th:if="${ins.enAttente}" class="status-badge waiting">
+                            <span th:if="${ins.waiting}" class="status-badge waiting">
                                 <i class="bi bi-hourglass-split"></i>En attente
                             </span>
                         </div>

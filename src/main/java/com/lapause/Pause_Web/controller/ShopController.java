@@ -1,6 +1,6 @@
 package com.lapause.Pause_Web.controller;
 
-import com.lapause.Pause_Web.entity.Utilisateur;
+import com.lapause.Pause_Web.entity.User;
 import com.lapause.Pause_Web.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +18,12 @@ public class ShopController {
 
     @GetMapping("/shop")
     public String shop(HttpSession session, Model model) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
-            System.out.println("DEBUG: User session is null in /shop. Redirecting to login.");
             return "redirect:/login";
         }
-        System.out.println("DEBUG: User found in session: " + sessionUser.getEmail());
-        Utilisateur user = userService.getUserById(sessionUser.getId());
+        User user = userService.getUserById(sessionUser.getId());
         if (user == null) {
-            System.out.println("DEBUG: User found in session but not in DB (ID: " + sessionUser.getId() + ")");
             session.invalidate();
             return "redirect:/login";
         }
@@ -36,7 +33,7 @@ public class ShopController {
 
     @PostMapping("/shop/buy")
     public String buyItem(@RequestParam String itemId, @RequestParam int cost, HttpSession session, Model model) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/login";
         }
@@ -44,19 +41,19 @@ public class ShopController {
         boolean success = userService.buyItem(userId, itemId, cost);
         if (success) {
             model.addAttribute("message", "Achat effectué avec succès !");
-            Utilisateur updatedUser = userService.getUserById(userId);
+            User updatedUser = userService.getUserById(userId);
             session.setAttribute("user", updatedUser);
         } else {
             model.addAttribute("error", "Points insuffisants ou erreur.");
         }
-        Utilisateur user = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "shop/shop";
     }
 
     @PostMapping("/shop/equip")
     public String equipIcon(@RequestParam String iconName, HttpSession session, Model model) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/login";
         }
@@ -69,7 +66,7 @@ public class ShopController {
         } else {
             model.addAttribute("error", "Erreur lors de l'équipement.");
         }
-        Utilisateur user = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "shop/shop";
     }

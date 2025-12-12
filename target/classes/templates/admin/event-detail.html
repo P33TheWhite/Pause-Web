@@ -14,7 +14,7 @@
                     </svg>
                 </a>
                 <div>
-                    <h1 class="fw-bold mb-0" th:text="${event.titre}">Titre de l'événement</h1>
+                    <h1 class="fw-bold mb-0" th:text="${event.title}">Titre de l'événement</h1>
                     <div class="text-muted d-flex align-items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                             class="bi bi-calendar-event" viewBox="0 0 16 16">
@@ -40,7 +40,7 @@
                     </svg>
                     Modifier
                 </a>
-                <form th:unless="${event.estArchive}" th:action="@{/admin/event/{id}/archive(id=${event.id})}"
+                <form th:unless="${event.archived}" th:action="@{/admin/event/{id}/archive(id=${event.id})}"
                     method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir clôturer cet événement ?');">
                     <input type="hidden" name="_method" value="delete" />
                     <button type="submit" class="btn btn-danger d-flex align-items-center gap-2">
@@ -122,8 +122,9 @@
                     <input type="hidden" name="_method" value="put" />
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0">€</span>
-                        <input type="number" step="0.01" name="coutCourses" class="form-control border-start-0 ps-0"
-                            th:value="${event.coutCourses}" style="width: 120px; font-weight: bold;" placeholder="0.00">
+                        <input type="number" step="0.01" name="shoppingCost" class="form-control border-start-0 ps-0"
+                            th:value="${event.shoppingCost}" style="width: 120px; font-weight: bold;"
+                            placeholder="0.00">
                     </div>
                     <input type="hidden" name="source" th:value="${param.source}">
                     <button class="btn btn-asso shadow-sm">Enregistrer</button>
@@ -157,7 +158,7 @@
                                     <span class="badge rounded-pill bg-light text-dark border"
                                         th:text="'#' + ${stat.count}">#1</span>
                                 </td>
-                                <td class="fw-bold" th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}">
+                                <td class="fw-bold" th:text="${ins.user.lastName} + ' ' + ${ins.user.firstName}">
                                     Nom</td>
                                 <td>
                                     <span th:if="${stat.count <= 3}" class="text-success fw-bold">+50 pts</span>
@@ -166,13 +167,13 @@
                                     <span th:if="${stat.count > 7}" class="text-secondary fw-bold">+10 pts</span>
                                 </td>
                                 <td>
-                                    <span th:if="${ins.staffValide}" class="badge bg-success">Validé</span>
-                                    <span th:if="${!ins.staffValide}" class="badge bg-warning text-dark">En
+                                    <span th:if="${ins.staffValidated}" class="badge bg-success">Validé</span>
+                                    <span th:if="${!ins.staffValidated}" class="badge bg-warning text-dark">En
                                         attente</span>
                                 </td>
                                 <td>
                                     <form method="post"
-                                        th:action="@{/admin/event/{id}/staff/{userId}/remove(id=${event.id}, userId=${ins.utilisateur.id})}"
+                                        th:action="@{/admin/event/{id}/staff/{userId}/remove(id=${event.id}, userId=${ins.user.id})}"
                                         onsubmit="return confirm('Attention : cela va désinscrire totalement cet utilisateur de l\'événement. Confirmer ?');">
                                         <button type="submit" class="btn btn-outline-danger btn-sm"
                                             title="Ne a pas staffé / Désinscrire">
@@ -221,31 +222,31 @@
                         <tr th:each="ins : ${inscriptions}">
                             <td class="ps-4">
                                 <div class="fw-bold nom-prenom"
-                                    th:text="${ins.utilisateur.nom} + ' ' + ${ins.utilisateur.prenom}">Nom</div>
+                                    th:text="${ins.user.lastName} + ' ' + ${ins.user.firstName}">Nom</div>
                             </td>
-                            <td class="text-muted" th:text="${ins.utilisateur.classe}">Classe</td>
+                            <td class="text-muted" th:text="${ins.user.studentClass}">Classe</td>
                             <td>
-                                <span th:if="${ins.utilisateur.estCotisant}"
+                                <span th:if="${ins.user.contributor}"
                                     class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Cotisant</span>
-                                <span th:if="${!ins.utilisateur.estCotisant}"
+                                <span th:if="${!ins.user.contributor}"
                                     class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">Non
                                     Cotisant</span>
                             </td>
-                            <td class="fw-bold text-dark" th:text="${ins.montantAPayer} + ' €'">0 €</td>
+                            <td class="fw-bold text-dark" th:text="${ins.amountToPay} + ' €'">0 €</td>
 
                             <form method="post" th:action="@{/admin/inscription/{id}/update(id=${ins.id})}">
                                 <input type="hidden" name="source" th:value="${param.source}">
                                 <td class="text-center">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" name="aPaye"
-                                            th:checked="${ins.aPaye}" onchange="this.form.submit()"
+                                            th:checked="${ins.hasPaid}" onchange="this.form.submit()"
                                             style="cursor: pointer; width: 1.2em; height: 1.2em;">
                                     </div>
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" name="aMange"
-                                            th:checked="${ins.aRecupereRepas}" onchange="this.form.submit()"
+                                            th:checked="${ins.hasMeal}" onchange="this.form.submit()"
                                             style="cursor: pointer; width: 1.2em; height: 1.2em;">
                                     </div>
                                 </td>

@@ -70,9 +70,10 @@
                     <div th:if="${!demandes.isEmpty()}">
                         <div th:each="user : ${demandes}" class="request-list-item">
                             <div>
-                                <span class="request-user-name" th:text="${user.prenom} + ' ' + ${user.nom}">Prénom
+                                <span class="request-user-name"
+                                    th:text="${user.firstName} + ' ' + ${user.lastName}">Prénom
                                     Nom</span>
-                                <span class="request-user-class" th:text="${user.classe}">Classe</span>
+                                <span class="request-user-class" th:text="${user.studentClass}">Classe</span>
                             </div>
                             <div class="d-flex gap-2">
                                 <form method="post" th:action="@{/admin/cotisation/{id}/accepter(id=${user.id})}">
@@ -110,7 +111,7 @@
                             </thead>
                             <tbody>
                                 <tr th:each="evt : ${evenements}">
-                                    <td class="ps-4 fw-bold text-dark" th:text="${evt.titre}">Titre</td>
+                                    <td class="fw-bold text-dark" th:text="${evt.title}">Titre</td>
                                     <td class="text-muted"
                                         th:text="${evt.date != null ? #temporals.format(evt.date, 'dd MMM yyyy') : 'Date inconnue'}">
                                         Date
@@ -185,20 +186,21 @@
                     <tbody>
                         <tr th:each="u : ${tousLesUsers}">
                             <td class="ps-4">
-                                <div class="fw-bold text-dark user-info" th:text="${u.nom} + ' ' + ${u.prenom}">Nom
+                                <div class="fw-bold text-dark user-info" th:text="${u.lastName} + ' ' + ${u.firstName}">
+                                    Nom
                                     Prénom</div>
                             </td>
                             <td class="text-muted small" th:text="${u.email}">Email</td>
-                            <td class="user-classe" th:text="${u.classe}">Classe</td>
+                            <td class="user-classe" th:text="${u.studentClass}">Classe</td>
                             <td>
-                                <span th:if="${u.estCotisant}" class="status-badge success">Cotisant</span>
-                                <span th:if="${!u.estCotisant}" class="status-badge secondary">Non Cotisant</span>
-                                <span th:if="${u.demandeCotisationEnCours}" class="status-badge warning">En
+                                <span th:if="${u.contributor}" class="status-badge success">Cotisant</span>
+                                <span th:if="${!u.contributor}" class="status-badge secondary">Non Cotisant</span>
+                                <span th:if="${u.cotisationPending}" class="status-badge warning">En
                                     attente</span>
                             </td>
                             <td>
-                                <span th:if="${u.estStaffeur}" class="badge bg-dark text-white">OUI</span>
-                                <span th:if="${!u.estStaffeur}" class="text-muted small">-</span>
+                                <span th:if="${u.staff}" class="badge bg-dark text-white">OUI</span>
+                                <span th:if="${!u.staff}" class="text-muted small">-</span>
                             </td>
                             <td>
                                 <form method="post" th:action="@{/admin/user/{id}/toggle-vip(id=${u.id})}">
@@ -217,10 +219,10 @@
                             <td class="text-end pe-4">
                                 <form th:if="${u.id != session.user.id}" method="post"
                                     th:action="@{/admin/user/{id}/toggle-cotisant(id=${u.id})}" style="display:inline;">
-                                    <button th:if="${u.estCotisant}"
+                                    <button th:if="${u.contributor}"
                                         class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill"
                                         style="font-size: 0.75rem;">Retirer</button>
-                                    <button th:if="${!u.estCotisant}"
+                                    <button th:if="${!u.contributor}"
                                         class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill"
                                         style="font-size: 0.75rem;">Ajouter</button>
                                 </form>

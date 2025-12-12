@@ -30,16 +30,16 @@
                                 <div class="mb-2">
                                     <span th:each="type : ${event.types}"
                                         class="badge rounded-pill bg-warning text-dark me-1"
-                                        th:text="${type.libelle}">Type</span>
+                                        th:text="${type.label}">Type</span>
                                 </div>
-                                <h5 class="card-title fw-bold" th:text="${event.titre}">Titre Event</h5>
+                                <h5 class="card-title fw-bold" th:text="${event.title}">Titre Event</h5>
                             </a>
                             <p class="card-text text-muted">
                                 <span th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}">Date</span>
-                                <span th:if="${event.heureDebut != null}"
-                                    th:text="' ' + ${#temporals.format(event.heureDebut, 'HH''h''mm')}"></span>
-                                <span th:if="${event.heureFin != null}"
-                                    th:text="'-' + ${#temporals.format(event.heureFin, 'HH''h''mm')}"></span>
+                                <span th:if="${event.startTime != null}"
+                                    th:text="' ' + ${#temporals.format(event.startTime, 'HH''h''mm')}"></span>
+                                <span th:if="${event.endTime != null}"
+                                    th:text="'-' + ${#temporals.format(event.endTime, 'HH''h''mm')}"></span>
                             </p>
                             <p class="card-text" th:text="${event.description}">Description...</p>
                         </div>
@@ -47,19 +47,19 @@
                         <div class="card-footer bg-white border-0 pt-0 pb-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div th:if="${session.user != null}">
-                                    <span class="badge bg-light text-dark border" th:if="${session.user.estCotisant}">
+                                    <span class="badge bg-light text-dark border" th:if="${session.user.contributor}">
                                         Prix Cotisant : <span class="fw-bold"
-                                            th:text="${event.prixCotisant} + ' €'"></span>
+                                            th:text="${event.memberPrice} + ' €'"></span>
                                     </span>
-                                    <span class="badge bg-light text-dark border" th:if="${!session.user.estCotisant}">
+                                    <span class="badge bg-light text-dark border" th:if="${!session.user.contributor}">
                                         Prix Non-Cotisant : <span class="fw-bold"
-                                            th:text="${event.prixNonCotisant} + ' €'"></span>
+                                            th:text="${event.nonMemberPrice} + ' €'"></span>
                                     </span>
                                 </div>
                                 <div th:if="${session.user == null}">
                                     <small class="text-muted">
-                                        <span class="fw-bold" th:text="${event.prixCotisant} + '€'"></span> (Cotisant) /
-                                        <span class="fw-bold" th:text="${event.prixNonCotisant} + '€'"></span> (Non)
+                                        <span class="fw-bold" th:text="${event.memberPrice} + '€'"></span> (Cotisant) /
+                                        <span class="fw-bold" th:text="${event.nonMemberPrice} + '€'"></span> (Non)
                                     </small>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                                         </button>
 
                                         <!-- Staff Toggle (Compact) -->
-                                        <div th:if="${session.user.estStaffeur}">
+                                        <div th:if="${session.user.staff}">
                                             <form th:if="${!userStaffStatus.get(event.id)}" method="post"
                                                 th:action="@{/event/{id}/staff(id=${event.id})}">
                                                 <button type="submit" class="btn btn-outline-dark"
@@ -116,8 +116,8 @@
 
                                     <!-- Row 2: Payment + Unsubscribe -->
                                     <div class="d-flex gap-2">
-                                        <a th:if="${event.lienPaiement != null && !event.lienPaiement.isEmpty()}"
-                                            th:href="${event.lienPaiement}" target="_blank"
+                                        <a th:if="${event.paymentLink != null && !event.paymentLink.isEmpty()}"
+                                            th:href="${event.paymentLink}" target="_blank"
                                             class="btn btn-outline-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2"
                                             title="Payer en ligne">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"

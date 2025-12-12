@@ -1,7 +1,8 @@
 package com.lapause.Pause_Web.controller;
 
-import com.lapause.Pause_Web.entity.Utilisateur;
+import com.lapause.Pause_Web.entity.User;
 import com.lapause.Pause_Web.service.UserService;
+import com.lapause.Pause_Web.repository.RegistrationRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    private com.lapause.Pause_Web.repository.InscriptionRepository inscriptionRepo;
+    private RegistrationRepository registrationRepo;
 
     @GetMapping("/register")
     public String showRegisterForm() {
@@ -26,8 +27,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String processRegister(Utilisateur utilisateur, Model model) {
-        Utilisateur registeredUser = userService.registerUser(utilisateur);
+    public String processRegister(User user, Model model) {
+        User registeredUser = userService.registerUser(user);
         if (registeredUser == null) {
             model.addAttribute("error", "Cet email est déjà utilisé !");
             return "auth/register";
@@ -45,10 +46,10 @@ public class AuthController {
             @RequestParam String password,
             HttpSession session,
             Model model) {
-        Utilisateur user = userService.authenticate(email, password);
+        User user = userService.authenticate(email, password);
         if (user != null) {
             session.setAttribute("user", user);
-            return "redirect:/";
+            return "redirect:/agenda";
         } else {
             model.addAttribute("error", "Email ou mot de passe incorrect.");
             return "auth/login";
@@ -63,19 +64,19 @@ public class AuthController {
 
     @GetMapping("/profil")
     public String showProfile(HttpSession session, Model model) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         if (user == null)
             return "redirect:/login";
 
-        Utilisateur userAJour = userService.getUserById(user.getId());
-        model.addAttribute("user", userAJour);
-        model.addAttribute("inscriptions", inscriptionRepo.findByUtilisateurId(user.getId()));
+        User updatedUser = userService.getUserById(user.getId());
+        model.addAttribute("user", updatedUser);
+        model.addAttribute("inscriptions", registrationRepo.findByUserId(user.getId()));
         return "user/profil";
     }
 
     @PostMapping("/profil/demande-cotisation")
-    public String demanderCotisation(HttpSession session) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+    public String requestCotisation(HttpSession session) {
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser != null) {
             userService.requestCotisation(sessionUser.getId());
             session.setAttribute("user", userService.getUserById(sessionUser.getId()));
@@ -89,7 +90,7 @@ public class AuthController {
             @RequestParam String confirmPassword,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null)
             return "redirect:/login";
 
@@ -104,7 +105,7 @@ public class AuthController {
 
     @PostMapping("/profil/join-staff")
     public String joinStaff(HttpSession session, RedirectAttributes redirectAttributes) {
-        Utilisateur sessionUser = (Utilisateur) session.getAttribute("user");
+        User sessionUser = (User) session.getAttribute("user");
         if (sessionUser != null) {
             userService.becomeStaff(sessionUser.getId());
             session.setAttribute("user", userService.getUserById(sessionUser.getId()));

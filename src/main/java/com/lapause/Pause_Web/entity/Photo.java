@@ -3,6 +3,7 @@ package com.lapause.Pause_Web.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "photo")
 public class Photo {
 
     @Id
@@ -10,20 +11,46 @@ public class Photo {
     private Long id;
 
     private String url;
-    private String titre;
+
+    @Column(name = "titre")
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "evenement_id")
-    private Evenement evenement;
+    private Event event;
 
-    public Photo() {}
+    public Photo() {
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
-    public String getTitre() { return titre; }
-    public void setTitre(String titre) { this.titre = titre; }
-    public Evenement getEvenement() { return evenement; }
-    public void setEvenement(Evenement evenement) { this.evenement = evenement; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 }

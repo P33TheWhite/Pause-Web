@@ -113,7 +113,7 @@
                             Devenir Cotisant
                         </a>
 
-                        <div th:if="${session.user != null && !session.user.estStaffeur}" class="mt-4 pt-4 border-top">
+                        <div th:if="${session.user != null && !session.user.staff}" class="mt-4 pt-4 border-top">
                             <p class="small text-muted mb-3">Envie de t'investir encore plus ?</p>
                             <form method="post" action="/profil/join-staff">
                                 <button type="submit" class="btn btn-outline-dark btn-sm rounded-pill px-4">

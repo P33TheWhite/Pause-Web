@@ -42,7 +42,7 @@
                         <label class="form-label small text-muted text-uppercase fw-bold">Événement</label>
                         <select name="eventId" class="form-select" onchange="this.form.submit()">
                             <option value="">Tous les événements</option>
-                            <option th:each="e : ${allEvents}" th:value="${e.id}" th:text="${e.titre}"
+                            <option th:each="e : ${allEvents}" th:value="${e.id}" th:text="${e.title}"
                                 th:selected="${e.id == selectedEventId}"></option>
                         </select>
                     </div>
@@ -151,9 +151,9 @@
                                                 class="bi bi-calendar-event text-secondary"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-bold text-dark" th:text="${event.titre}">Nom de
+                                            <h6 class="mb-0 fw-bold text-dark" th:text="${event.title}">Nom de
                                                 l'événement</h6>
-                                            <small class="text-muted" th:if="${event.estArchive}">Archivé</small>
+                                            <small class="text-muted" th:if="${event.archived}">Archivé</small>
                                         </div>
                                     </div>
                                 </td>

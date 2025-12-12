@@ -16,11 +16,11 @@
                         <form action="/register" method="post">
                             <div class="mb-3">
                                 <label class="form-label">Prénom</label>
-                                <input type="text" name="prenom" class="form-control" required>
+                                <input type="text" name="firstName" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Nom</label>
-                                <input type="text" name="nom" class="form-control" required>
+                                <input type="text" name="lastName" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
@@ -28,7 +28,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Classe</label>
-                                <select name="classe" class="form-select" required>
+                                <select name="studentClass" class="form-select" required>
                                     <option value="" disabled selected>Choisir votre classe...</option>
                                     <option value="PREPA1">PREPA1</option>
                                     <option value="PREPA2">PREPA2</option>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Mot de passe</label>
-                                <input type="password" name="motDePasse" class="form-control" required>
+                                <input type="password" name="password" class="form-control" required>
                             </div>
 
                             <button type="submit" class="btn btn-asso w-100 mt-3">S'inscrire</button>

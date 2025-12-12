@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PauseWebApplication<Pause-Web>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.lapause.Pause_Web.PauseWebApplication",
+            "projectName": "Pause-Web",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

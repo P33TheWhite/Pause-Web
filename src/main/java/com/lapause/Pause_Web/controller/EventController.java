@@ -1,7 +1,8 @@
 package com.lapause.Pause_Web.controller;
 
-import com.lapause.Pause_Web.entity.Evenement;
-import com.lapause.Pause_Web.entity.Utilisateur;
+import com.lapause.Pause_Web.entity.Event;
+import com.lapause.Pause_Web.entity.Registration;
+import com.lapause.Pause_Web.entity.User;
 import com.lapause.Pause_Web.service.EventService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class EventController {
@@ -23,8 +25,8 @@ public class EventController {
 
     @GetMapping("/agenda")
     public String showAgenda(Model model, HttpSession session) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
-        List<Evenement> events = eventService.getAllActiveEvents();
+        User user = (User) session.getAttribute("user");
+        List<Event> events = eventService.getAllActiveEvents();
 
         model.addAttribute("events", events);
         model.addAttribute("placesRestantes", eventService.getPlacesRestantes(events));
@@ -38,99 +40,135 @@ public class EventController {
 
     @GetMapping("/event/{id}")
     public String eventDetail(@PathVariable Long id, Model model, HttpSession session) {
-        Evenement event = eventService.getEventById(id);
+        Event event = eventService.getEventById(id);
         if (event == null)
             return "redirect:/agenda";
 
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         model.addAttribute("event", event);
 
         Map<String, Object> stats = eventService.getDetailedStats(id);
         model.addAttribute("nbInscrits", stats.get("nbInscrits"));
 
-        boolean estInscrit = false;
-        boolean inscriptionEnAttente = false;
-        boolean estStaff = false;
-        boolean estStaffValide = false;
+        boolean isRegistered = false;
+        boolean isWaiting = false;
+        boolean isStaff = false;
+        boolean isStaffValidated = false;
+
         if (user != null) {
-            List<com.lapause.Pause_Web.entity.Inscription> inscriptions = eventService.getInscriptionsForEvent(id);
-            for (com.lapause.Pause_Web.entity.Inscription ins : inscriptions) {
-                if (ins.getUtilisateur().getId().equals(user.getId())) {
-                    estInscrit = true;
-                    inscriptionEnAttente = ins.isEnAttente();
-                    estStaff = ins.isEstStaff();
-                    estStaffValide = ins.isStaffValide();
+            List<Registration> registrations = eventService.getInscriptionsForEvent(id);
+            for (Registration reg : registrations) {
+                if (reg.getUser().getId().equals(user.getId())) {
+                    isRegistered = true;
+                    isWaiting = reg.isWaiting();
+                    isStaff = reg.isStaff();
+                    isStaffValidated = reg.isStaffValidated();
                     break;
                 }
             }
         }
-        model.addAttribute("estInscrit", estInscrit);
-        model.addAttribute("inscriptionEnAttente", inscriptionEnAttente);
-        model.addAttribute("estStaff", estStaff);
-        model.addAttribute("estStaffValide", estStaffValide);
+        model.addAttribute("estInscrit", isRegistered);
+        model.addAttribute("inscriptionEnAttente", isWaiting);
+        model.addAttribute("estStaff", isStaff);
+        model.addAttribute("estStaffValide", isStaffValidated);
 
         return "event/detail";
     }
 
     @PostMapping("/event/{id}/register")
-    public String registerToEvent(@PathVariable Long id,
+    public String registerToEvent(@PathVariable("id") Optional<Event> eventOpt,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+
+        User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
 
-        String result = eventService.registerUserToEvent(user, id);
-        if (result.startsWith("Complet") || result.startsWith("Inscription")) {
-            redirectAttributes.addFlashAttribute("success", result);
-        } else {
-            redirectAttributes.addFlashAttribute("error", result);
+        try {
+            Event event = eventOpt
+                    .orElseThrow(() -> new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable"));
+
+            eventService.registerUserToEvent(user, event);
+
+            redirectAttributes.addFlashAttribute("success", "Inscription réussie !");
+
+        } catch (com.lapause.Pause_Web.exception.PauseWebException e) {
+            if (e.getMessage().contains("liste d'attente")) {
+                redirectAttributes.addFlashAttribute("success", e.getMessage());
+            } else {
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Une erreur technique est survenue.");
         }
+
         return "redirect:/agenda";
     }
 
     @PostMapping("/event/{id}/unregister")
-    public String unregisterFromEvent(@PathVariable Long id,
+    public String unregisterFromEvent(@PathVariable("id") Optional<Event> eventOpt,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         if (user == null)
             return "redirect:/login";
 
-        String result = eventService.unregisterUserFromEvent(user, id);
-        redirectAttributes.addFlashAttribute("success", result);
+        try {
+            Event event = eventOpt
+                    .orElseThrow(() -> new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable"));
+            eventService.unregisterUserFromEvent(user, event);
+            redirectAttributes.addFlashAttribute("success",
+                    "Désinscription prise en compte. Points et réductions remboursés.");
+        } catch (com.lapause.Pause_Web.exception.PauseWebException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Une erreur technique est survenue.");
+        }
 
         return "redirect:/agenda";
     }
 
     @PostMapping("/event/{id}/staff")
-    public String staffEvent(@PathVariable Long id,
+    public String staffEvent(@PathVariable("id") Optional<Event> eventOpt,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         if (user == null)
             return "redirect:/login";
 
-        String result = eventService.registerStaff(user, id);
-        if (result.contains("validée") || result.contains("mise à jour")) {
-            redirectAttributes.addFlashAttribute("success", result);
-        } else {
-            redirectAttributes.addFlashAttribute("error", result);
+        try {
+            Event event = eventOpt
+                    .orElseThrow(() -> new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable"));
+            eventService.registerStaff(user, event);
+            redirectAttributes.addFlashAttribute("success", "Inscription Staff validée !");
+        } catch (com.lapause.Pause_Web.exception.PauseWebException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Une erreur technique est survenue.");
         }
+
         return "redirect:/agenda";
     }
 
     @PostMapping("/event/{id}/unstaff")
-    public String unstaffEvent(@PathVariable Long id,
+    public String unstaffEvent(@PathVariable("id") Optional<Event> eventOpt,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         if (user == null)
             return "redirect:/login";
 
-        String result = eventService.removeStaff(user, id);
-        redirectAttributes.addFlashAttribute("error", result);
+        try {
+            Event event = eventOpt
+                    .orElseThrow(() -> new com.lapause.Pause_Web.exception.PauseWebException("Event introuvable"));
+            eventService.removeStaff(user, event);
+            redirectAttributes.addFlashAttribute("success", "Vous n'êtes plus staff sur cet événement.");
+        } catch (com.lapause.Pause_Web.exception.PauseWebException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Une erreur technique est survenue.");
+        }
 
         return "redirect:/agenda";
     }
